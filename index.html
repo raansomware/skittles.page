@@ -20,35 +20,6 @@
         <div class="shape shape-3"></div>
     </div>
 
-    <!-- Sticker palette -->
-    <div class="sticker-palette">
-        <div class="palette-header">
-            <h3>✨ Stickers ✨</h3>
-            <button class="palette-close" onclick="togglePalette()">✕</button>
-        </div>
-        <div class="sticker-tools">
-            <div class="sticker-tool" draggable="true" ondragstart="startStickerDrag(event, 'nick.png')">
-                <img src="nick.png" alt="nick sticker" class="sticker-preview">
-                <span>Nick</span>
-            </div>
-            <div class="sticker-tool" draggable="true" ondragstart="startStickerDrag(event, 'rainbow.png')">
-                <img src="rainbow.png" alt="rainbow sticker" class="sticker-preview">
-                <span>Rainbow</span>
-            </div>
-            <div class="sticker-tool" draggable="true" ondragstart="startStickerDrag(event, 'star.png')">
-                <img src="star.png" alt="star sticker" class="sticker-preview">
-                <span>Star</span>
-            </div>
-        </div>
-        <button class="clear-stickers" onclick="clearAllStickers()">Clear All</button>
-    </div>
-
-    <!-- Sticker canvas -->
-    <div class="sticker-canvas" ondrop="dropSticker(event)" ondragover="allowDrop(event)"></div>
-
-    <!-- Toggle button -->
-    <button class="toggle-palette-btn" onclick="togglePalette()">✨ Stickers</button>
-
     <div class="container">
         <!-- Animated header -->
         <div class="header">
@@ -193,6 +164,35 @@
             <p class="footer-credit">© 2026 skittles fan universe</p>
         </div>
     </div>
+
+    <!-- Sticker canvas -->
+    <div class="sticker-canvas" ondrop="dropSticker(event)" ondragover="allowDrop(event)"></div>
+
+    <!-- Sticker palette -->
+    <div class="sticker-palette">
+        <div class="palette-header">
+            <h3>✨ Stickers ✨</h3>
+            <button class="palette-close" onclick="togglePalette()">✕</button>
+        </div>
+        <div class="sticker-tools">
+            <div class="sticker-tool" draggable="true" ondragstart="startStickerDrag(event, 'nick.png')">
+                <img src="nick.png" alt="nick sticker" class="sticker-preview">
+                <span>Nick</span>
+            </div>
+            <div class="sticker-tool" draggable="true" ondragstart="startStickerDrag(event, 'rainbow.png')">
+                <img src="rainbow.png" alt="rainbow sticker" class="sticker-preview">
+                <span>Rainbow</span>
+            </div>
+            <div class="sticker-tool" draggable="true" ondragstart="startStickerDrag(event, 'star.png')">
+                <img src="star.png" alt="star sticker" class="sticker-preview">
+                <span>Star</span>
+            </div>
+        </div>
+        <button class="clear-stickers" onclick="clearAllStickers()">Clear All</button>
+    </div>
+
+    <!-- Toggle button -->
+    <button class="toggle-palette-btn" onclick="togglePalette()">✨ Stickers</button>
 
     <script src="script.js"></script>
 </body>
