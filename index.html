@@ -1,5 +1,4 @@
-
-      <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -8,46 +7,118 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- Sparkles container -->
+    <div class="sparkles-container"></div>
+
     <div class="container">
-        <div class="logo">🐱</div>
-        
-        <h1>skittles.lol fan</h1>
-        
-        <div class="tagline">TAKE US MEDS, THOMASS!!</div>
-        
+        <!-- Header with animated logo -->
+        <div class="header">
+            <div class="logo">🐱</div>
+            <h1>skittles.lol fan</h1>
+            <div class="tagline">TAKE US MEDS, THOMASS!!</div>
+        </div>
+
+        <!-- Rating -->
         <div class="rating">⭐ 5/5 :)</div>
-        
-        <div class="profile">
+
+        <!-- Profile Section (Carrd-style) -->
+        <div class="profile-card">
             <div class="profile-pic">🎨</div>
             <div class="profile-info">
                 <div class="username">raansomware ❤️ +4</div>
                 <div class="bio">lol.goofy url/upon</div>
             </div>
         </div>
-        
-        <div class="social-links">
-            <div class="social-icon">🎵</div>
-            <div class="social-icon">❌</div>
-            <div class="social-icon">📺</div>
-            <div class="social-icon">➡️</div>
-            <div class="social-icon">📌</div>
-            <div class="social-icon">📷</div>
-            <div class="social-icon">🎭</div>
-            <div class="social-icon">🌐</div>
+
+        <!-- Bio Section (Straw.page style) -->
+        <div class="bio-section">
+            <p>✨ welcome to my corner of the internet ✨</p>
+            <p>vibes only | rainbows | chaos | love</p>
         </div>
-        
+
+        <!-- Link Grid (Carrd/Guns.lol style) -->
+        <div class="links-section">
+            <div class="link-card" onclick="clickLink('TikTok')">
+                <span class="link-emoji">🎵</span>
+                <span class="link-text">TikTok</span>
+            </div>
+            <div class="link-card" onclick="clickLink('Twitter')">
+                <span class="link-emoji">❌</span>
+                <span class="link-text">Twitter</span>
+            </div>
+            <div class="link-card" onclick="clickLink('YouTube')">
+                <span class="link-emoji">📺</span>
+                <span class="link-text">YouTube</span>
+            </div>
+            <div class="link-card" onclick="clickLink('Pinterest')">
+                <span class="link-emoji">📌</span>
+                <span class="link-text">Pinterest</span>
+            </div>
+            <div class="link-card" onclick="clickLink('Instagram')">
+                <span class="link-emoji">📷</span>
+                <span class="link-text">Instagram</span>
+            </div>
+            <div class="link-card" onclick="clickLink('Discord')">
+                <span class="link-emoji">🎭</span>
+                <span class="link-text">Discord</span>
+            </div>
+        </div>
+
+        <!-- Interactive Music Player -->
         <div class="music-player">
-            <div class="player-icon">🎵</div>
-            <div class="player-info">
-                <div class="song-name">happy pills!</div>
-                <div class="song-time">1:53</div>
+            <div class="player-header">
+                <div class="player-icon">🎵</div>
+                <div>
+                    <div class="song-name" id="songName">happy pills!</div>
+                    <div class="artist-name">by Weyes Blood</div>
+                </div>
             </div>
+
+            <!-- Progress bar -->
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+                <input type="range" class="progress-slider" id="progressSlider" min="0" max="100" value="0">
+            </div>
+
+            <!-- Time display -->
+            <div class="time-display">
+                <span id="currentTime">0:00</span>
+                <span id="duration">3:45</span>
+            </div>
+
+            <!-- Controls -->
             <div class="player-controls">
-                <button class="control-btn">⏮</button>
-                <button class="control-btn">▶</button>
-                <button class="control-btn">⏭</button>
+                <button class="control-btn" onclick="previousSong()">⏮</button>
+                <button class="control-btn play-btn" id="playBtn" onclick="togglePlay()">▶</button>
+                <button class="control-btn" onclick="nextSong()">⏭</button>
             </div>
+
+            <!-- Volume control -->
+            <div class="volume-control">
+                <span>🔊</span>
+                <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="70">
+            </div>
+
+            <!-- Playlist indicator -->
+            <div class="playlist-info">
+                <span id="currentTrack">Track 1 of 5</span>
+            </div>
+        </div>
+
+        <!-- Interactive buttons section -->
+        <div class="buttons-section">
+            <button class="action-btn glow-btn" onclick="showMessage('You got the vibes! ✨')">vibe check</button>
+            <button class="action-btn rainbow-btn" onclick="createRainbow()">rainbow mode</button>
+            <button class="action-btn sparkle-btn" onclick="triggerSparkles()">sparkles!!</button>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>made with 💕 and chaos</p>
+            <p>© 2026 skittles fan | <span id="visitCount">0</span> visits</p>
         </div>
     </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
