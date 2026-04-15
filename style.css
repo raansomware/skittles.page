@@ -980,3 +980,44 @@ body {
     }
 }
 }
+.typing-text {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 55px;
+    margin: 20px 0 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    min-height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    animation: rainbowText 4s ease-in-out infinite;
+}
+
+/* Rainbow animation for text color */
+@keyframes rainbowText {
+    0% { 
+        color: #ff0080;
+        text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 0, 128, 0.8);
+    }
+    20% { 
+        color: #ff8c00;
+        text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 140, 0, 0.8);
+    }
+    40% { 
+        color: #00ff00;
+        text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.3), 0 0 20px rgba(0, 255, 0, 0.8);
+    }
+    60% { 
+        color: #00ffff;
+        text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.3), 0 0 20px rgba(0, 255, 255, 0.8);
+    }
+    80% { 
+        color: #ff00ff;
+        text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 0, 255, 0.8);
+    }
+    100% { 
+        color: #ff0080;
+        text-shadow: 3px 3px 0px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 0, 128, 0.8);
+    }
+}
