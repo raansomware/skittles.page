@@ -11,32 +11,12 @@ let currentTrack = 0;
 let isPlaying = false;
 let currentTime = 0;
 
-// Text to type
-const textToType = "skittle nick!";
-
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
-    typeTextOnce();
     initializePlayer();
     loadVisitCount();
     createInitialSparkles();
 });
-
-// Typing effect - only once, then stays
-function typeTextOnce() {
-    const element = document.getElementById('typingText');
-    let index = 0;
-    
-    function type() {
-        if (index < textToType.length) {
-            element.textContent += textToType.charAt(index);
-            index++;
-            setTimeout(type, 100); // Speed of typing
-        }
-    }
-    
-    type();
-}
 
 // Initialize player
 function initializePlayer() {
