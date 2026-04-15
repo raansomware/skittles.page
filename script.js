@@ -16,14 +16,14 @@ const textToType = "skittle nick!";
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
-    typeText();
+    typeTextOnce();
     initializePlayer();
     loadVisitCount();
     createInitialSparkles();
 });
 
-// Typing effect
-function typeText() {
+// Typing effect - only once, then stays
+function typeTextOnce() {
     const element = document.getElementById('typingText');
     let index = 0;
     
@@ -32,13 +32,6 @@ function typeText() {
             element.textContent += textToType.charAt(index);
             index++;
             setTimeout(type, 100); // Speed of typing
-        } else {
-            // When done typing, restart after a delay
-            setTimeout(() => {
-                element.textContent = '';
-                index = 0;
-                setTimeout(type, 500);
-            }, 2000); // Wait 2 seconds before retyping
         }
     }
     
