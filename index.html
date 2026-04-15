@@ -4,118 +4,164 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>skittles.lol fan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <!-- Sparkles container -->
     <div class="sparkles-container"></div>
+    
+    <!-- Animated background shapes -->
+    <div class="bg-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
 
     <div class="container">
-        <!-- Header with animated logo -->
+        <!-- Animated header -->
         <div class="header">
-            <div class="logo">🐱</div>
-            <h1>skittles.lol fan</h1>
-            <div class="tagline">TAKE US MEDS, THOMASS!!</div>
-        </div>
-
-        <!-- Rating -->
-        <div class="rating">⭐ 5/5 :)</div>
-
-        <!-- Profile Section (Carrd-style) -->
-        <div class="profile-card">
-            <div class="profile-pic">🎨</div>
-            <div class="profile-info">
-                <div class="username">raansomware ❤️ +4</div>
-                <div class="bio">lol.goofy url/upon</div>
+            <div class="logo-wrapper">
+                <img src="nicky.jpg" alt="nicky" class="logo">
+                <div class="logo-glow"></div>
             </div>
+            
+            <h1>skittles.lol fan</h1>
+            <p class="tagline">✨ TAKE US MEDS, THOMASS!! ✨</p>
         </div>
 
-        <!-- Bio Section (Straw.page style) -->
+        <!-- Gradient divider -->
+        <div class="divider"></div>
+
+        <!-- Rating with stars -->
+        <div class="rating">
+            <span class="stars">⭐⭐⭐⭐⭐</span>
+            <span class="rating-text">5/5 Chaos Approved!</span>
+        </div>
+
+        <!-- Profile Card -->
+        <div class="profile-card">
+            <div class="profile-header">
+                <div class="profile-pic">🎨</div>
+                <div class="profile-text">
+                    <div class="username">raansomware ❤️</div>
+                    <div class="bio">✨ lol.goofy.url/upon ✨</div>
+                </div>
+            </div>
+            <div class="profile-badge">+4 vibes</div>
+        </div>
+
+        <!-- Bio Section -->
         <div class="bio-section">
+            <h2>About Me</h2>
             <p>✨ welcome to my corner of the internet ✨</p>
             <p>vibes only | rainbows | chaos | love</p>
+            <p>aesthetic energy: unmatched 💫</p>
         </div>
 
-        <!-- Link Grid (Carrd/Guns.lol style) -->
-        <div class="links-section">
-            <div class="link-card" onclick="clickLink('TikTok')">
-                <span class="link-emoji">🎵</span>
-                <span class="link-text">TikTok</span>
+        <!-- Social Links Grid -->
+        <div class="social-grid">
+            <div class="social-item" onclick="clickLink('TikTok')">
+                <div class="social-bubble">🎵</div>
+                <span>TikTok</span>
             </div>
-            <div class="link-card" onclick="clickLink('Twitter')">
-                <span class="link-emoji">❌</span>
-                <span class="link-text">Twitter</span>
+            <div class="social-item" onclick="clickLink('Twitter')">
+                <div class="social-bubble">❌</div>
+                <span>Twitter</span>
             </div>
-            <div class="link-card" onclick="clickLink('YouTube')">
-                <span class="link-emoji">📺</span>
-                <span class="link-text">YouTube</span>
+            <div class="social-item" onclick="clickLink('YouTube')">
+                <div class="social-bubble">📺</div>
+                <span>YouTube</span>
             </div>
-            <div class="link-card" onclick="clickLink('Pinterest')">
-                <span class="link-emoji">📌</span>
-                <span class="link-text">Pinterest</span>
+            <div class="social-item" onclick="clickLink('Pinterest')">
+                <div class="social-bubble">📌</div>
+                <span>Pinterest</span>
             </div>
-            <div class="link-card" onclick="clickLink('Instagram')">
-                <span class="link-emoji">📷</span>
-                <span class="link-text">Instagram</span>
+            <div class="social-item" onclick="clickLink('Instagram')">
+                <div class="social-bubble">📷</div>
+                <span>Instagram</span>
             </div>
-            <div class="link-card" onclick="clickLink('Discord')">
-                <span class="link-emoji">🎭</span>
-                <span class="link-text">Discord</span>
+            <div class="social-item" onclick="clickLink('Discord')">
+                <div class="social-bubble">🎭</div>
+                <span>Discord</span>
             </div>
         </div>
 
-        <!-- Interactive Music Player -->
+        <!-- Music Player -->
         <div class="music-player">
-            <div class="player-header">
-                <div class="player-icon">🎵</div>
-                <div>
-                    <div class="song-name" id="songName">happy pills!</div>
-                    <div class="artist-name">by Weyes Blood</div>
+            <div class="player-top">
+                <div class="now-playing">
+                    <span class="pulse-dot"></span>
+                    <span class="now-text">Now Playing</span>
+                </div>
+                <div class="player-header">
+                    <div class="album-art">🎵</div>
+                    <div class="track-info">
+                        <div class="track-name" id="songName">happy pills!</div>
+                        <div class="artist-name">Weyes Blood</div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Progress bar -->
-            <div class="progress-bar">
-                <div class="progress-fill" id="progressFill"></div>
-                <input type="range" class="progress-slider" id="progressSlider" min="0" max="100" value="0">
-            </div>
-
-            <!-- Time display -->
-            <div class="time-display">
-                <span id="currentTime">0:00</span>
-                <span id="duration">3:45</span>
+            <!-- Progress Bar -->
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                    <input type="range" class="progress-slider" id="progressSlider" min="0" max="100" value="0">
+                </div>
+                <div class="time-display">
+                    <span id="currentTime">0:00</span>
+                    <span id="duration">3:45</span>
+                </div>
             </div>
 
             <!-- Controls -->
-            <div class="player-controls">
-                <button class="control-btn" onclick="previousSong()">⏮</button>
-                <button class="control-btn play-btn" id="playBtn" onclick="togglePlay()">▶</button>
-                <button class="control-btn" onclick="nextSong()">⏭</button>
+            <div class="controls-section">
+                <div class="player-controls">
+                    <button class="control-btn prev-btn" onclick="previousSong()" title="Previous">⏮</button>
+                    <button class="control-btn play-btn" id="playBtn" onclick="togglePlay()" title="Play/Pause">▶</button>
+                    <button class="control-btn next-btn" onclick="nextSong()" title="Next">⏭</button>
+                </div>
+
+                <!-- Volume Control -->
+                <div class="volume-section">
+                    <span class="volume-icon">🔊</span>
+                    <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="70">
+                </div>
             </div>
 
-            <!-- Volume control -->
-            <div class="volume-control">
-                <span>🔊</span>
-                <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="70">
-            </div>
-
-            <!-- Playlist indicator -->
+            <!-- Playlist Info -->
             <div class="playlist-info">
                 <span id="currentTrack">Track 1 of 5</span>
             </div>
         </div>
 
-        <!-- Interactive buttons section -->
-        <div class="buttons-section">
-            <button class="action-btn glow-btn" onclick="showMessage('You got the vibes! ✨')">vibe check</button>
-            <button class="action-btn rainbow-btn" onclick="createRainbow()">rainbow mode</button>
-            <button class="action-btn sparkle-btn" onclick="triggerSparkles()">sparkles!!</button>
+        <!-- Interactive Buttons -->
+        <div class="buttons-grid">
+            <button class="action-btn vibe-btn" onclick="showMessage('You got the vibes! ✨')">
+                <span class="btn-emoji">💫</span>
+                <span>Vibe Check</span>
+            </button>
+            <button class="action-btn rainbow-btn" onclick="createRainbow()">
+                <span class="btn-emoji">🌈</span>
+                <span>Rainbow Mode</span>
+            </button>
+            <button class="action-btn sparkle-btn" onclick="triggerSparkles()">
+                <span class="btn-emoji">✨</span>
+                <span>Sparkles!!</span>
+            </button>
         </div>
 
         <!-- Footer -->
         <div class="footer">
-            <p>made with 💕 and chaos</p>
-            <p>© 2026 skittles fan | <span id="visitCount">0</span> visits</p>
+            <p class="footer-text">made with 💕 and pure chaos</p>
+            <p class="footer-stats">
+                <span class="stat">👁️ <span id="visitCount">0</span> visits</span>
+                <span class="stat">💞 infinite love</span>
+            </p>
+            <p class="footer-credit">© 2026 skittles fan universe</p>
         </div>
     </div>
 
