@@ -1,23 +1,49 @@
-// Playlist data
+// Playlist data with more songs
 const playlist = [
-    { name: 'happy pills!', artist: 'Weyes Blood', duration: '3:45' },
-    { name: 'electric feel', artist: 'MGMT', duration: '4:12' },
-    { name: 'dreaming', artist: 'Lizzo', duration: '3:28' },
-    { name: 'rainbow', artist: 'Kehlani', duration: '3:55' },
-    { name: 'good as hell', artist: 'Lizzo', duration: '3:34' }
+    { name: 'happy pills!', artist: 'Weyes Blood', duration: 225 },
+    { name: 'electric feel', artist: 'MGMT', duration: 252 },
+    { name: 'dreaming', artist: 'Lizzo', duration: 208 },
+    { name: 'rainbow', artist: 'Kehlani', duration: 235 },
+    { name: 'good as hell', artist: 'Lizzo', duration: 214 }
 ];
 
 let currentTrack = 0;
 let isPlaying = false;
 let currentTime = 0;
-let duration = 225; // 3:45 in seconds
+
+// Text to type
+const textToType = "skittle nick!";
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
+    typeText();
     initializePlayer();
     loadVisitCount();
-    createSparkles();
+    createInitialSparkles();
 });
+
+// Typing effect
+function typeText() {
+    const element = document.getElementById('typingText');
+    let index = 0;
+    
+    function type() {
+        if (index < textToType.length) {
+            element.textContent += textToType.charAt(index);
+            index++;
+            setTimeout(type, 100); // Speed of typing
+        } else {
+            // When done typing, restart after a delay
+            setTimeout(() => {
+                element.textContent = '';
+                index = 0;
+                setTimeout(type, 500);
+            }, 2000); // Wait 2 seconds before retyping
+        }
+    }
+    
+    type();
+}
 
 // Initialize player
 function initializePlayer() {
@@ -29,7 +55,7 @@ function initializePlayer() {
 function updateSongDisplay() {
     const song = playlist[currentTrack];
     document.getElementById('songName').textContent = song.name;
-    document.getElementById('duration').textContent = song.duration;
+    document.getElementById('duration').textContent = formatTime(song.duration);
 }
 
 // Update track display
@@ -45,9 +71,6 @@ function togglePlay() {
     
     if (isPlaying) {
         simulatePlayback();
-        playBtn.style.animation = 'pulse 1s ease-in-out infinite';
-    } else {
-        playBtn.style.animation = 'none';
     }
 }
 
@@ -55,18 +78,22 @@ function togglePlay() {
 function simulatePlayback() {
     if (!isPlaying) return;
     
-    currentTime += 0.1;
-    if (currentTime >= duration) {
+    const song = playlist[currentTrack];
+    currentTime += 0.05;
+    
+    if (currentTime >= song.duration) {
         nextSong();
+        return;
     }
     
     updateProgress();
-    setTimeout(simulatePlayback, 100);
+    setTimeout(simulatePlayback, 50);
 }
 
 // Update progress
 function updateProgress() {
-    const percent = (currentTime / duration) * 100;
+    const song = playlist[currentTrack];
+    const percent = (currentTime / song.duration) * 100;
     document.getElementById('progressFill').style.width = percent + '%';
     document.getElementById('progressSlider').value = percent;
     document.getElementById('currentTime').textContent = formatTime(currentTime);
@@ -101,48 +128,59 @@ function previousSong() {
 
 // Progress slider
 document.getElementById('progressSlider')?.addEventListener('input', (e) => {
-    currentTime = (e.target.value / 100) * duration;
+    const song = playlist[currentTrack];
+    currentTime = (e.target.value / 100) * song.duration;
     updateProgress();
 });
 
 // Volume slider
 document.getElementById('volumeSlider')?.addEventListener('input', (e) => {
-    console.log('Volume:', e.target.value + '%');
+    console.log('🔊 Volume:', e.target.value + '%');
 });
 
-// Create sparkles
-function createSparkles() {
+// Create initial sparkles
+function createInitialSparkles() {
     const container = document.querySelector('.sparkles-container');
-    for (let i = 0; i < 20; i++) {
-        setTimeout(() => {
-            const sparkle = document.createElement('div');
-            sparkle.textContent = ['✨', '💫', '⭐', '🌟', '💥'][Math.floor(Math.random() * 5)];
-            sparkle.className = 'sparkle';
-            sparkle.style.left = Math.random() * 100 + '%';
-            sparkle.style.top = Math.random() * 100 + '%';
-            sparkle.style.fontSize = (10 + Math.random() * 20) + 'px';
-            sparkle.style.animation = `sparkleFloat ${2 + Math.random() * 2}s ease-out forwards`;
-            container.appendChild(sparkle);
-            
-            setTimeout(() => sparkle.remove(), 4000);
-        }, i * 100);
+    for (let i = 0; i < 15; i++) {
+        setTimeout(() => createSparkle(), i * 200);
     }
+}
+
+// Create single sparkle
+function createSparkle() {
+    const container = document.querySelector('.sparkles-container');
+    const sparkle = document.createElement('div');
+    const emojis = ['✨', '💫', '⭐', '🌟', '💥', '🎆', '🎇'];
+    
+    sparkle.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    sparkle.className = 'sparkle';
+    sparkle.style.left = Math.random() * 100 + '%';
+    sparkle.style.top = Math.random() * 100 + '%';
+    sparkle.style.fontSize = (12 + Math.random() * 24) + 'px';
+    sparkle.style.animation = `sparkleFloat ${2 + Math.random() * 2}s ease-out forwards`;
+    
+    container.appendChild(sparkle);
+    setTimeout(() => sparkle.remove(), 4000);
 }
 
 // Trigger sparkles on click
 function triggerSparkles() {
     const container = document.querySelector('.sparkles-container');
-    for (let i = 0; i < 30; i++) {
-        const sparkle = document.createElement('div');
-        sparkle.textContent = ['✨', '💫', '⭐', '🌟', '💥'][Math.floor(Math.random() * 5)];
-        sparkle.className = 'sparkle';
-        sparkle.style.left = Math.random() * 100 + '%';
-        sparkle.style.top = Math.random() * 100 + '%';
-        sparkle.style.fontSize = (15 + Math.random() * 25) + 'px';
-        sparkle.style.animation = `sparkleFloat ${1.5 + Math.random() * 2}s ease-out forwards`;
-        container.appendChild(sparkle);
-        
-        setTimeout(() => sparkle.remove(), 3500);
+    for (let i = 0; i < 40; i++) {
+        setTimeout(() => {
+            const sparkle = document.createElement('div');
+            const emojis = ['✨', '💫', '⭐', '🌟', '💥', '🎆', '🎇', '🌈', '💖'];
+            
+            sparkle.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+            sparkle.className = 'sparkle';
+            sparkle.style.left = Math.random() * 100 + '%';
+            sparkle.style.top = Math.random() * 100 + '%';
+            sparkle.style.fontSize = (16 + Math.random() * 28) + 'px';
+            sparkle.style.animation = `sparkleFloat ${1.5 + Math.random() * 2}s ease-out forwards`;
+            
+            container.appendChild(sparkle);
+            setTimeout(() => sparkle.remove(), 3500);
+        }, i * 30);
     }
 }
 
@@ -152,18 +190,20 @@ function showMessage(msg) {
     triggerSparkles();
 }
 
-// Create rainbow
+// Create rainbow effect
 function createRainbow() {
-    document.body.style.animation = 'rainbowFlash 0.5s';
+    const container = document.querySelector('.container');
+    container.style.animation = 'rainbowFlash 0.6s';
     setTimeout(() => {
-        document.body.style.animation = 'none';
-    }, 500);
+        container.style.animation = 'slideIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)';
+    }, 600);
     triggerSparkles();
+    showMessage('🌈 RAINBOW MODE ACTIVATED! 🌈');
 }
 
 // Click link
 function clickLink(platform) {
-    showMessage(`You opened ${platform}! 🎉`);
+    showMessage(`Opening ${platform}! 🚀`);
 }
 
 // Visit counter
@@ -178,9 +218,11 @@ function loadVisitCount() {
 const style = document.createElement('style');
 style.textContent = `
     @keyframes rainbowFlash {
-        0% { filter: hue-rotate(0deg); }
-        50% { filter: hue-rotate(360deg); }
-        100% { filter: hue-rotate(0deg); }
+        0%, 100% { filter: hue-rotate(0deg); }
+        20% { filter: hue-rotate(60deg); }
+        40% { filter: hue-rotate(120deg); }
+        60% { filter: hue-rotate(180deg); }
+        80% { filter: hue-rotate(300deg); }
     }
 `;
 document.head.appendChild(style);
