@@ -199,3 +199,145 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+// Sticker functionality
+let draggedStickerType = null;
+let currentDraggedSticker = null;
+
+// Start dragging sticker from palette
+function startStickerDrag(e, stickerType) {
+    draggedStickerType = stickerType;
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', stickerType);
+}
+
+// Allow drop on canvas
+function allowDrop(e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    const canvas = document.querySelector('.sticker-canvas');
+    canvas.classList.add('active');
+}
+
+// Drop sticker on canvas
+function dropSticker(e) {
+    e.preventDefault();
+    const canvas = document.querySelector('.sticker-canvas');
+    canvas.classList.remove('active');
+    
+    const stickerType = e.dataTransfer.getData('text/plain') || draggedStickerType;
+    
+    if (!stickerType) return;
+    
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    createPlacedSticker(stickerType, x, y);
+    triggerSparkles();
+}
+
+// Create placed sticker
+function createPlacedSticker(stickerType, x, y) {
+    const sticker = document.createElement('div');
+    sticker.className = 'placed-sticker';
+    
+    const size = 80 + Math.random() * 40; // Random size between 80-120px
+    sticker.style.width = size + 'px';
+    sticker.style.height = size + 'px';
+    sticker.style.left = (x - size / 2) + 'px';
+    sticker.style.top = (y - size / 2) + 'px';
+    
+    const img = document.createElement('img');
+    img.src = stickerType;
+    img.alt = 'sticker';
+    
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'sticker-delete-btn';
+    deleteBtn.textContent = '✕';
+    deleteBtn.onclick = (e) => {
+        e.stopPropagation();
+        sticker.remove();
+    };
+    
+    sticker.appendChild(img);
+    sticker.appendChild(deleteBtn);
+    
+    // Make sticker draggable
+    makeStickerDraggable(sticker);
+    
+    document.querySelector('.sticker-canvas').appendChild(sticker);
+}
+
+// Make sticker draggable on canvas
+function makeStickerDraggable(sticker) {
+    let offsetX = 0;
+    let offsetY = 0;
+    let isDown = false;
+    
+    sticker.addEventListener('mousedown', (e) => {
+        isDown = true;
+        offsetX = e.clientX - sticker.offsetLeft;
+        offsetY = e.clientY - sticker.offsetTop;
+        sticker.style.zIndex = 30;
+    });
+    
+    document.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        
+        sticker.style.left = (e.clientX - offsetX) + 'px';
+        sticker.style.top = (e.clientY - offsetY) + 'px';
+    });
+    
+    document.addEventListener('mouseup', () => {
+        isDown = false;
+        sticker.style.zIndex = 25;
+    });
+    
+    // Touch support for mobile
+    sticker.addEventListener('touchstart', (e) => {
+        isDown = true;
+        const touch = e.touches[0];
+        offsetX = touch.clientX - sticker.offsetLeft;
+        offsetY = touch.clientY - sticker.offsetTop;
+        sticker.style.zIndex = 30;
+    });
+    
+    document.addEventListener('touchmove', (e) => {
+        if (!isDown) return;
+        
+        const touch = e.touches[0];
+        sticker.style.left = (touch.clientX - offsetX) + 'px';
+        sticker.style.top = (touch.clientY - offsetY) + 'px';
+    });
+    
+    document.addEventListener('touchend', () => {
+        isDown = false;
+        sticker.style.zIndex = 25;
+    });
+}
+
+// Toggle palette visibility
+let paletteVisible = true;
+
+function togglePalette() {
+    const palette = document.querySelector('.sticker-palette');
+    const toggleBtn = document.querySelector('.toggle-palette-btn');
+    
+    paletteVisible = !paletteVisible;
+    
+    if (paletteVisible) {
+        palette.classList.remove('hidden');
+        toggleBtn.classList.add('hidden');
+    } else {
+        palette.classList.add('hidden');
+        toggleBtn.classList.remove('hidden');
+    }
+}
+
+// Clear all stickers
+function clearAllStickers() {
+    if (confirm('Are you sure you want to clear all stickers?')) {
+        document.querySelectorAll('.placed-sticker').forEach(sticker => sticker.remove());
+        triggerSparkles();
+    }
+}
