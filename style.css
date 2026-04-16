@@ -13,6 +13,12 @@
   --dark: #050610;
 }
 
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
 body {
   font-family: "Fredoka", sans-serif;
   background-image: url("bg.gif");
@@ -20,7 +26,6 @@ body {
   background-position: center;
   background-attachment: fixed;
   min-height: 100vh;
-  overflow: hidden;
 }
 
 /* scanlines */
