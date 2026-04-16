@@ -46,7 +46,6 @@
               ransomware.atabook.org
             </a>
           </div>
-
         </div>
       </div>
 
@@ -117,10 +116,11 @@
       <button class="bigBtn" onclick="glitchEffect()">⚡ glitch</button>
     </div>
 
+    <!-- STICKERS -->
     <div class="stickers-box">
       <h2>stickers</h2>
 
-      <div class="stickerGrid">
+      <div class="stickerGrid" id="stickerGrid">
         <div class="stickerTool" draggable="true" ondragstart="startStickerDrag(event,'nick.png')">
           <img src="nick.png" alt="nick">
         </div>
@@ -134,6 +134,13 @@
         </div>
       </div>
 
+      <div class="uploadRow">
+        <label class="uploadBtn">
+          ➕ upload sticker
+          <input type="file" id="stickerUpload" accept="image/*" hidden>
+        </label>
+      </div>
+
       <button class="clearBtn" onclick="clearAllStickers()">clear all</button>
     </div>
 
@@ -144,6 +151,7 @@
     </div>
   </div>
 
+  <!-- sticker canvas -->
   <div class="sticker-canvas" id="stickerCanvas"
        ondrop="dropSticker(event)"
        ondragover="allowDrop(event)">
