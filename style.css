@@ -824,3 +824,32 @@ body::before,
 body::after {
   pointer-events: none;
 }
+/* ===== FIX PAGE MOVING SIDEWAYS ===== */
+
+html, body {
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* evitar que el body sea arrastrable */
+body {
+  user-select: none;
+}
+
+/* pero permitir seleccionar texto donde sí */
+p, span, a, h1, h2, h3 {
+  user-select: text;
+}
+
+/* evitar drag de imágenes */
+img {
+  -webkit-user-drag: none;
+  user-drag: none;
+}
+
+/* evitar que container se mueva */
+.container {
+  transform: none !important;
+  left: auto !important;
+  right: auto !important;
+}
