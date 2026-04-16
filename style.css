@@ -177,6 +177,7 @@ body {
   filter: blur(2px);
   z-index: 1;
   animation: pulseGlow 1.8s ease-in-out infinite;
+  pointer-events: none;
 }
 
 @keyframes bounce {
@@ -587,11 +588,11 @@ body {
   color: rgba(0,234,255,0.7);
 }
 
-/* sticker canvas */
+/* sticker canvas FIXED */
 .sticker-canvas {
   position: fixed;
   inset: 0;
-  pointer-events: auto;
+  pointer-events: none;
   z-index: 999999;
 }
 
@@ -599,6 +600,7 @@ body {
   position: absolute;
   cursor: grab;
   z-index: 9999999;
+  pointer-events: auto;
 }
 
 .placed-sticker:active {
@@ -629,6 +631,28 @@ body {
 
 .placed-sticker:hover .sticker-delete-btn {
   display: block;
+}
+
+/* toast */
+.toast {
+  position: fixed;
+  bottom: 25px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 99999999;
+  background: rgba(0,0,0,0.75);
+  border: 1px solid rgba(0,234,255,0.45);
+  padding: 12px 18px;
+  border-radius: 18px;
+  color: white;
+  font-weight: 900;
+  backdrop-filter: blur(10px);
+  animation: toastIn 0.3s ease;
+}
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0px); }
 }
 
 /* mobile */
