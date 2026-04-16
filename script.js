@@ -341,3 +341,17 @@ function clearAllStickers() {
         triggerSparkles();
     }
 }
+// Rating system
+function rateMe(rating) {
+    const stars = document.querySelectorAll('.star');
+    stars.forEach((star, index) => {
+        if (index < rating) {
+            star.classList.add('active');
+        } else {
+            star.classList.remove('active');
+        }
+    });
+    
+    showMessage('thankz 4 ur feedback! :O');
+    triggerSparkles();
+}
