@@ -1,4 +1,5 @@
 let draggedSticker = null
+let highestZ = 1000
 
 function allowDrop(e){
   e.preventDefault()
@@ -19,6 +20,7 @@ function dropSticker(e){
 
   img.style.left = e.clientX + "px"
   img.style.top = e.clientY + "px"
+  img.style.zIndex = highestZ++
 
   makeDraggable(img)
 
@@ -37,9 +39,15 @@ function makeDraggable(el){
     offsetX = e.offsetX
     offsetY = e.offsetY
 
+    el.style.zIndex = highestZ++
+
     document.addEventListener("mousemove", moveSticker)
     document.addEventListener("mouseup", stopMove)
 
+  })
+
+  el.addEventListener("dblclick", ()=> {
+    el.remove()
   })
 
   function moveSticker(e){
@@ -87,6 +95,7 @@ document.addEventListener("paste", function(e){
 
       img.style.left = "50%"
       img.style.top = "50%"
+      img.style.zIndex = highestZ++
 
       makeDraggable(img)
 
