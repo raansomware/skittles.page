@@ -185,8 +185,8 @@ function rateMe(rating) {
 let placingSticker = null;
 
 function startStickerDrag(e, stickerType) {
-  e.preventDefault();
-  placingSticker = stickerType;
+  createPlacedSticker(stickerType, e.clientX, e.clientY);
+  triggerSparkles();
 }
 
 document.addEventListener("click", (e) => {
