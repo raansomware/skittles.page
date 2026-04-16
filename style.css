@@ -10,15 +10,11 @@
   --neonblue: #00eaff;
   --neonyellow: #fff700;
   --neonpurple: #c800ff;
-  --dark: #050610;
 }
 
 body {
   font-family: "Fredoka", sans-serif;
-  background-image: url("bg.gif");
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
+  background: url("bg.gif") center/cover fixed;
   min-height: 100vh;
   display: flex;
   justify-content: center;
@@ -131,7 +127,13 @@ body {
   inset: 0;
   border-radius: 35px;
   padding: 2px;
-  background: linear-gradient(90deg, var(--neonblue), var(--hotpink), var(--neongreen), var(--neonpurple));
+  background: linear-gradient(
+    90deg,
+    var(--neonblue),
+    var(--hotpink),
+    var(--neongreen),
+    var(--neonpurple)
+  );
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
@@ -272,7 +274,7 @@ body {
 }
 
 /* box */
-.box {
+.box, .music-player, .stickers-box {
   background: rgba(255,255,255,0.05);
   border-radius: 22px;
   border: 1px solid rgba(0,234,255,0.25);
@@ -280,7 +282,7 @@ body {
   margin-bottom: 18px;
 }
 
-.box h2 {
+.box h2, .stickers-box h2 {
   font-size: 18px;
   font-weight: 900;
   color: var(--neongreen);
@@ -295,15 +297,7 @@ body {
   color: rgba(255,255,255,0.9);
 }
 
-/* music player */
-.music-player {
-  background: rgba(255,255,255,0.05);
-  border-radius: 22px;
-  border: 1px solid rgba(255,20,147,0.25);
-  padding: 22px;
-  margin-bottom: 20px;
-}
-
+/* music */
 .now-playing {
   display: flex;
   justify-content: center;
@@ -485,10 +479,6 @@ body {
 }
 
 /* buttons */
-.buttons {
-  margin-bottom: 20px;
-}
-
 .bigBtn {
   width: 100%;
   padding: 14px;
@@ -509,21 +499,6 @@ body {
 }
 
 /* stickers */
-.stickers-box {
-  background: rgba(255,255,255,0.05);
-  border-radius: 22px;
-  border: 1px solid rgba(0,234,255,0.25);
-  padding: 20px;
-  margin-bottom: 20px;
-}
-
-.stickers-box h2 {
-  font-size: 18px;
-  font-weight: 900;
-  color: var(--neongreen);
-  margin-bottom: 12px;
-}
-
 .stickerGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -584,7 +559,7 @@ body {
   color: rgba(0,234,255,0.7);
 }
 
-/* STICKER CANVAS (IMPORTANT) */
+/* sticker canvas */
 .sticker-canvas {
   position: fixed;
   inset: 0;
@@ -596,10 +571,6 @@ body {
   position: fixed;
   cursor: grab;
   z-index: 9999999;
-}
-
-.placed-sticker:active {
-  cursor: grabbing;
 }
 
 .placed-sticker img {
