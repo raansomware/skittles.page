@@ -104,11 +104,11 @@
     <div class="rating-section">
       <div class="rating-title">RATE THIS PAGE</div>
       <div class="star-rating">
-        <button type="button" class="star" onclick="rateMe(1)">★</button>
-        <button type="button" class="star" onclick="rateMe(2)">★</button>
-        <button type="button" class="star" onclick="rateMe(3)">★</button>
-        <button type="button" class="star" onclick="rateMe(4)">★</button>
-        <button type="button" class="star" onclick="rateMe(5)">★</button>
+        <button class="star" onclick="rateMe(1)">★</button>
+        <button class="star" onclick="rateMe(2)">★</button>
+        <button class="star" onclick="rateMe(3)">★</button>
+        <button class="star" onclick="rateMe(4)">★</button>
+        <button class="star" onclick="rateMe(5)">★</button>
       </div>
     </div>
 
@@ -122,16 +122,16 @@
       <h2>stickers</h2>
 
       <div class="stickerGrid">
-        <div class="stickerTool" onclick="startStickerDrag(event,'nick.png')">
-          <img src="nick.png">
+        <div class="stickerTool" draggable="true" ondragstart="startStickerDrag(event,'nick.png')">
+          <img src="nick.png" alt="nick">
         </div>
 
-        <div class="stickerTool" onclick="startStickerDrag(event,'rainbow.png')">
-          <img src="rainbow.png">
+        <div class="stickerTool" draggable="true" ondragstart="startStickerDrag(event,'rainbow.png')">
+          <img src="rainbow.png" alt="rainbow">
         </div>
 
-        <div class="stickerTool" onclick="startStickerDrag(event,'star.png')">
-          <img src="star.png">
+        <div class="stickerTool" draggable="true" ondragstart="startStickerDrag(event,'star.png')">
+          <img src="star.png" alt="star">
         </div>
       </div>
 
@@ -152,6 +152,11 @@
     </div>
   </div>
 
- <script src="script.js" defer></script>
+  <div class="sticker-canvas" id="stickerCanvas"
+       ondrop="dropSticker(event)"
+       ondragover="allowDrop(event)">
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
