@@ -750,3 +750,77 @@ body {
 .bg-shapes div {
   pointer-events: none;
 }
+/* ========================= */
+/* FIX — CLICKABLE ELEMENTS */
+/* ========================= */
+
+/* decoraciones no bloquean clicks */
+.scanlines,
+.sparkles-container,
+.bg-shapes,
+.shape,
+.shape-1,
+.shape-2,
+.shape-3,
+.sparkle,
+.cursor-trail {
+  pointer-events: none !important;
+}
+
+/* sticker canvas */
+.sticker-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* stickers interactivos */
+.placed-sticker {
+  position: absolute;
+  pointer-events: auto;
+  cursor: grab;
+  user-select: none;
+  z-index: 999;
+}
+
+.placed-sticker:active {
+  cursor: grabbing;
+}
+
+/* container encima */
+.container {
+  position: relative;
+  z-index: 2;
+}
+
+/* overlays invisibles */
+.container::before,
+.container::after,
+.box::before,
+.box::after,
+.header::before,
+.header::after {
+  pointer-events: none;
+}
+
+/* background shapes */
+.bg-shapes div {
+  pointer-events: none;
+}
+
+/* sparkles */
+.sparkle {
+  pointer-events: none;
+}
+
+/* scanlines */
+.scanlines {
+  pointer-events: none;
+}
+
+/* evitar overlays globales */
+body::before,
+body::after {
+  pointer-events: none;
+}
