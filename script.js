@@ -8,6 +8,9 @@ let currentTrack = 0;
 let isPlaying = false;
 let currentTime = 0;
 
+// sticker drag
+let draggedStickerType = null;
+
 // on load
 document.addEventListener("DOMContentLoaded", () => {
   updateSongDisplay();
@@ -182,30 +185,32 @@ function rateMe(rating) {
 
 // ======================= STICKERS =======================
 
-let placingSticker = null;
-
 function startStickerDrag(e, stickerType) {
+  draggedStickerType = stickerType;
+  e.dataTransfer.setData("text/plain", stickerType);
+}
+
+function allowDrop(e) {
+  e.preventDefault();
+}
+
+function dropSticker(e) {
+  e.preventDefault();
+
+  const stickerType = e.dataTransfer.getData("text/plain") || draggedStickerType;
+  if (!stickerType) return;
+
   createPlacedSticker(stickerType, e.clientX, e.clientY);
   triggerSparkles();
 }
 
-document.addEventListener("click", (e) => {
-  if (!placingSticker) return;
-
-  createPlacedSticker(placingSticker, e.clientX, e.clientY);
-  placingSticker = null;
-
-  triggerSparkles();
-});
-
 function createPlacedSticker(stickerType, x, y) {
+  const canvas = document.getElementById("stickerCanvas");
+
   const sticker = document.createElement("div");
   sticker.className = "placed-sticker";
 
   const size = 80 + Math.random() * 50;
-
-  sticker.style.position = "fixed";
-  sticker.style.zIndex = "9999";
   sticker.style.width = size + "px";
   sticker.style.height = size + "px";
   sticker.style.left = x - size / 2 + "px";
@@ -221,7 +226,7 @@ function createPlacedSticker(stickerType, x, y) {
 
   sticker.appendChild(img);
   sticker.appendChild(deleteBtn);
-  document.body.appendChild(sticker);
+  canvas.appendChild(sticker);
 
   makeStickerDraggable(sticker);
 }
@@ -253,6 +258,7 @@ function clearAllStickers() {
   document.querySelectorAll(".placed-sticker").forEach(s => s.remove());
   triggerSparkles();
 }
+
 // ======================= CUSTOM STICKERS =======================
 
 document.getElementById("customStickerInput")?.addEventListener("change", (e) => {
