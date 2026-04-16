@@ -8,9 +8,6 @@ let currentTrack = 0;
 let isPlaying = false;
 let currentTime = 0;
 
-// sticker drag
-let draggedStickerType = null;
-
 // on load
 document.addEventListener("DOMContentLoaded", () => {
   updateSongDisplay();
@@ -189,11 +186,11 @@ function startStickerDrag(e, stickerType) {
   e.dataTransfer.setData("text/plain", stickerType);
 }
 
-function allowDrop(e) {
+document.addEventListener("dragover", (e) => {
   e.preventDefault();
-}
+});
 
-function dropSticker(e) {
+document.addEventListener("drop", (e) => {
   e.preventDefault();
 
   const stickerType = e.dataTransfer.getData("text/plain");
@@ -201,11 +198,9 @@ function dropSticker(e) {
 
   createPlacedSticker(stickerType, e.clientX, e.clientY);
   triggerSparkles();
-}
+});
 
 function createPlacedSticker(stickerType, x, y) {
-  const canvas = document.body;
-
   const sticker = document.createElement("div");
   sticker.className = "placed-sticker";
 
@@ -225,63 +220,7 @@ function createPlacedSticker(stickerType, x, y) {
 
   sticker.appendChild(img);
   sticker.appendChild(deleteBtn);
-  canvas.appendChild(sticker);
-
-  makeStickerDraggable(sticker);
-}
-
-function makeStickerDraggable(sticker) {
-  let offsetX = 0;
-  let offsetY = 0;
-  let isDown = false;
-
-  sticker.addEventListener("mousedown", (e) => {
-    isDown = true;
-    offsetX = e.clientX - sticker.offsetLeft;
-    offsetY = e.clientY - sticker.offsetTop;
-  });
-
-  document.addEventListener("mousemove", (e) => {
-    if (!isDown) return;
-    sticker.style.left = e.clientX - offsetX + "px";
-    sticker.style.top = e.clientY - offsetY + "px";
-  });
-
-  document.addEventListener("mouseup", () => {
-    isDown = false;
-  });
-}
-
-function clearAllStickers() {
-  if (!confirm("clear all stickers??")) return;
-  document.querySelectorAll(".placed-sticker").forEach(s => s.remove());
-  triggerSparkles();
-}
-}
-
-function createPlacedSticker(stickerType, x, y) {
-  const canvas = document.getElementById("stickerCanvas");
-
-  const sticker = document.createElement("div");
-  sticker.className = "placed-sticker";
-
-  const size = 80 + Math.random() * 50;
-  sticker.style.width = size + "px";
-  sticker.style.height = size + "px";
-  sticker.style.left = x - size / 2 + "px";
-  sticker.style.top = y - size / 2 + "px";
-
-  const img = document.createElement("img");
-  img.src = stickerType;
-
-  const deleteBtn = document.createElement("button");
-  deleteBtn.className = "sticker-delete-btn";
-  deleteBtn.textContent = "✕";
-  deleteBtn.onclick = () => sticker.remove();
-
-  sticker.appendChild(img);
-  sticker.appendChild(deleteBtn);
-  canvas.appendChild(sticker);
+  document.body.appendChild(sticker);
 
   makeStickerDraggable(sticker);
 }
@@ -355,49 +294,4 @@ function formatTime(seconds) {
   const mins = Math.floor(seconds / 60);
   const secs = Math.floor(seconds % 60);
   return `${mins}:${secs.toString().padStart(2, "0")}`;
-}
-function allowDrop(e) {
-  e.preventDefault();
-}
-
-function startStickerDrag(e, src) {
-  e.dataTransfer.setData("text/plain", src);
-}
-
-function dropSticker(e) {
-  e.preventDefault();
-
-  const src = e.dataTransfer.getData("text/plain");
-  const sticker = document.createElement("img");
-
-  sticker.src = src;
-  sticker.className = "placed-sticker";
-
-  sticker.style.left = e.clientX + "px";
-  sticker.style.top = e.clientY + "px";
-
-  makeDraggable(sticker);
-
-  document.getElementById("stickerCanvas").appendChild(sticker);
-}
-
-function makeDraggable(el) {
-  let offsetX, offsetY, isDragging = false;
-
-  el.addEventListener("mousedown", (e) => {
-    isDragging = true;
-    offsetX = e.offsetX;
-    offsetY = e.offsetY;
-  });
-
-  document.addEventListener("mousemove", (e) => {
-    if (!isDragging) return;
-
-    el.style.left = e.clientX - offsetX + "px";
-    el.style.top = e.clientY - offsetY + "px";
-  });
-
-  document.addEventListener("mouseup", () => {
-    isDragging = false;
-  });
 }
