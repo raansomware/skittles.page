@@ -1,10 +1,7 @@
-// Playlist data with more songs
+// Playlist data
 const playlist = [
-    { name: 'happy pills!', artist: 'Weyes Blood', duration: 225 },
-    { name: 'electric feel', artist: 'MGMT', duration: 252 },
-    { name: 'dreaming', artist: 'Lizzo', duration: 208 },
-    { name: 'rainbow', artist: 'Kehlani', duration: 235 },
-    { name: 'good as hell', artist: 'Lizzo', duration: 214 }
+    { name: 'buttercup', artist: 'Jack Stauber', file: 'buttercup.mp3', duration: 180 },
+    { name: 'resonance', artist: 'Home', file: 'resonance.mp3', duration: 240 }
 ];
 
 let currentTrack = 0;
@@ -27,7 +24,7 @@ function initializePlayer() {
 // Update song display
 function updateSongDisplay() {
     const song = playlist[currentTrack];
-    document.getElementById('songName').textContent = song.name;
+    document.getElementById('songName').textContent = song.name + ' - ' + song.artist + '!';
     document.getElementById('duration').textContent = formatTime(song.duration);
 }
 
@@ -199,6 +196,7 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
 // Sticker functionality
 let draggedStickerType = null;
 let currentDraggedSticker = null;
@@ -241,7 +239,7 @@ function createPlacedSticker(stickerType, x, y) {
     const sticker = document.createElement('div');
     sticker.className = 'placed-sticker';
     
-    const size = 80 + Math.random() * 40; // Random size between 80-120px
+    const size = 80 + Math.random() * 40;
     sticker.style.width = size + 'px';
     sticker.style.height = size + 'px';
     sticker.style.left = (x - size / 2) + 'px';
@@ -262,7 +260,6 @@ function createPlacedSticker(stickerType, x, y) {
     sticker.appendChild(img);
     sticker.appendChild(deleteBtn);
     
-    // Make sticker draggable
     makeStickerDraggable(sticker);
     
     document.querySelector('.sticker-canvas').appendChild(sticker);
@@ -293,7 +290,6 @@ function makeStickerDraggable(sticker) {
         sticker.style.zIndex = 25;
     });
     
-    // Touch support for mobile
     sticker.addEventListener('touchstart', (e) => {
         isDown = true;
         const touch = e.touches[0];
@@ -341,6 +337,7 @@ function clearAllStickers() {
         triggerSparkles();
     }
 }
+
 // Rating system
 function rateMe(rating) {
     const stars = document.querySelectorAll('.star');
