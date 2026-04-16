@@ -960,3 +960,33 @@ body::after,
 .container::after {
   pointer-events: none;
 }
+/* stickers */
+
+.placed-sticker {
+position: fixed;
+pointer-events: auto;
+cursor: grab;
+z-index: 9999;
+user-select: none;
+}
+
+.placed-sticker img {
+width: 100%;
+height: 100%;
+pointer-events: none;
+}
+
+.sticker-delete-btn {
+position: absolute;
+top: -8px;
+right: -8px;
+background: hotpink;
+border: none;
+border-radius: 50%;
+width: 20px;
+height: 20px;
+cursor: pointer;
+font-size: 12px;
+color: white;
+z-index: 10000;
+}
