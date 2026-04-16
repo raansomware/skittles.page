@@ -301,3 +301,48 @@ function formatTime(seconds) {
   const secs = Math.floor(seconds % 60);
   return `${mins}:${secs.toString().padStart(2, "0")}`;
 }
+function allowDrop(e) {
+  e.preventDefault();
+}
+
+function startStickerDrag(e, src) {
+  e.dataTransfer.setData("text/plain", src);
+}
+
+function dropSticker(e) {
+  e.preventDefault();
+
+  const src = e.dataTransfer.getData("text/plain");
+  const sticker = document.createElement("img");
+
+  sticker.src = src;
+  sticker.className = "placed-sticker";
+
+  sticker.style.left = e.clientX + "px";
+  sticker.style.top = e.clientY + "px";
+
+  makeDraggable(sticker);
+
+  document.getElementById("stickerCanvas").appendChild(sticker);
+}
+
+function makeDraggable(el) {
+  let offsetX, offsetY, isDragging = false;
+
+  el.addEventListener("mousedown", (e) => {
+    isDragging = true;
+    offsetX = e.offsetX;
+    offsetY = e.offsetY;
+  });
+
+  document.addEventListener("mousemove", (e) => {
+    if (!isDragging) return;
+
+    el.style.left = e.clientX - offsetX + "px";
+    el.style.top = e.clientY - offsetY + "px";
+  });
+
+  document.addEventListener("mouseup", () => {
+    isDragging = false;
+  });
+}
