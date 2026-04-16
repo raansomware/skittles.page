@@ -175,7 +175,7 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 999;
+  z-index: 9999;
   pointer-events: none;
 }
 
@@ -189,6 +189,11 @@ body {
 
 .sticker:active {
   cursor: grabbing;
+}
+
+/* MUY IMPORTANTE */
+.sticker:hover {
+  transform: scale(1.05);
 }
 
 .clearBtn {
