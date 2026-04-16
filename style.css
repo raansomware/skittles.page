@@ -744,3 +744,12 @@ body {
     display: none;
   }
 }
+
+.pfp-icon {
+  width: 65px;
+  height: 65px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255,255,255,0.25);
+  box-shadow: 0 0 18px rgba(0,234,255,0.35);
+}
