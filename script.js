@@ -1,83 +1,113 @@
-let draggedSticker = null
+// ======================= STICKERS =======================
+
 let highestZ = 1000
 
-function allowDrop(e){
+function startStickerDrag(e, stickerType) {
+  draggedStickerType = stickerType
+  e.dataTransfer.setData("text/plain", stickerType)
+}
+
+function allowDrop(e) {
   e.preventDefault()
 }
 
-function startStickerDrag(e, src){
-  e.dataTransfer.setData("text", src)
-}
-
-function dropSticker(e){
+function dropSticker(e) {
   e.preventDefault()
 
-  const src = e.dataTransfer.getData("text")
+  const stickerType = e.dataTransfer.getData("text/plain") || draggedStickerType
+  if (!stickerType) return
+
+  createPlacedSticker(stickerType, e.clientX, e.clientY)
+  triggerSparkles()
+}
+
+function createPlacedSticker(stickerType, x, y) {
+  const canvas = document.getElementById("stickerCanvas")
+
+  const sticker = document.createElement("div")
+  sticker.className = "placed-sticker"
+
+  const size = 80 + Math.random() * 50
+  sticker.style.width = size + "px"
+  sticker.style.height = size + "px"
+  sticker.style.left = x - size / 2 + "px"
+  sticker.style.top = y - size / 2 + "px"
+  sticker.style.zIndex = highestZ++
 
   const img = document.createElement("img")
-  img.src = src
-  img.className = "sticker"
+  img.src = stickerType
 
-  img.style.left = e.clientX + "px"
-  img.style.top = e.clientY + "px"
-  img.style.zIndex = highestZ++
+  const deleteBtn = document.createElement("button")
+  deleteBtn.className = "sticker-delete-btn"
+  deleteBtn.textContent = "✕"
+  deleteBtn.onclick = () => sticker.remove()
 
-  makeDraggable(img)
+  sticker.appendChild(img)
+  sticker.appendChild(deleteBtn)
+  canvas.appendChild(sticker)
 
-  document.getElementById("stickerCanvas").appendChild(img)
+  makeStickerDraggable(sticker)
 }
 
-function makeDraggable(el){
-
+function makeStickerDraggable(sticker) {
   let offsetX = 0
   let offsetY = 0
+  let isDown = false
 
-  el.addEventListener("mousedown", (e)=>{
+  sticker.addEventListener("mousedown", (e) => {
+    isDown = true
+    offsetX = e.clientX - sticker.offsetLeft
+    offsetY = e.clientY - sticker.offsetTop
 
-    draggedSticker = el
-
-    offsetX = e.offsetX
-    offsetY = e.offsetY
-
-    el.style.zIndex = highestZ++
-
-    document.addEventListener("mousemove", moveSticker)
-    document.addEventListener("mouseup", stopMove)
-
+    sticker.style.zIndex = highestZ++
   })
 
-  el.addEventListener("dblclick", ()=> {
-    el.remove()
+  document.addEventListener("mousemove", (e) => {
+    if (!isDown) return
+    sticker.style.left = e.clientX - offsetX + "px"
+    sticker.style.top = e.clientY - offsetY + "px"
   })
 
-  function moveSticker(e){
+  document.addEventListener("mouseup", () => {
+    isDown = false
+  })
 
-    if(!draggedSticker) return
-
-    draggedSticker.style.left = (e.clientX - offsetX) + "px"
-    draggedSticker.style.top = (e.clientY - offsetY) + "px"
-
-  }
-
-  function stopMove(){
-
-    document.removeEventListener("mousemove", moveSticker)
-    document.removeEventListener("mouseup", stopMove)
-
-    draggedSticker = null
-
-  }
-
+  sticker.addEventListener("dblclick", () => {
+    sticker.remove()
+  })
 }
 
-/* borrar todo */
-
-function clearAllStickers(){
-  document.getElementById("stickerCanvas").innerHTML = ""
+function clearAllStickers() {
+  if (!confirm("clear all stickers??")) return
+  document.querySelectorAll(".placed-sticker").forEach(s => s.remove())
+  triggerSparkles()
 }
 
-/* custom stickers */
 
+// ======================= CUSTOM STICKERS =======================
+
+// file upload
+document.getElementById("customStickerInput")?.addEventListener("change", (e) => {
+  const file = e.target.files[0]
+  if (!file) return
+
+  const reader = new FileReader()
+
+  reader.onload = () => {
+    const imgData = reader.result
+    createPlacedSticker(
+      imgData,
+      window.innerWidth / 2,
+      window.innerHeight / 2
+    )
+    triggerSparkles()
+    showMessage("custom sticker added!! 💖")
+  }
+
+  reader.readAsDataURL(file)
+})
+
+// ctrl + v paste images
 document.addEventListener("paste", function(e){
 
   const items = e.clipboardData.items
@@ -89,17 +119,14 @@ document.addEventListener("paste", function(e){
       const file = items[i].getAsFile()
       const url = URL.createObjectURL(file)
 
-      const img = document.createElement("img")
-      img.src = url
-      img.className = "sticker"
+      createPlacedSticker(
+        url,
+        window.innerWidth / 2,
+        window.innerHeight / 2
+      )
 
-      img.style.left = "50%"
-      img.style.top = "50%"
-      img.style.zIndex = highestZ++
-
-      makeDraggable(img)
-
-      document.getElementById("stickerCanvas").appendChild(img)
+      triggerSparkles()
+      showMessage("pasted sticker!! ✨")
 
     }
 
