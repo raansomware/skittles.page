@@ -1,219 +1,152 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>skittles OS</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>skittles.lol fan</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
-
-  <div class="sparkles-container"></div>
   <div class="scanlines"></div>
+  <div class="sparkles-container"></div>
 
-  <div class="desktop">
-    <div class="gui-container">
+  <div class="bg-shapes">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+  </div>
 
-      <!-- SIDEBAR -->
-      <div class="sidebar">
-        <div class="sidebar-title">SKITTLES OS</div>
+  <div class="container">
+    <div class="header">
+      <div class="logo-wrapper">
+        <img src="nicky.jpg" class="logo" alt="pfp">
+        <div class="logo-glow"></div>
+      </div>
 
-        <button class="side-btn" onclick="openWindow('winProfile')">👾 profile</button>
-        <button class="side-btn" onclick="openWindow('winBio')">🧠 bio</button>
-        <button class="side-btn" onclick="openWindow('winMusic')">🎧 music</button>
-        <button class="side-btn" onclick="openWindow('winRating')">⭐ rate</button>
-        <button class="side-btn" onclick="openWindow('winStickers')">✨ stickers</button>
-        <button class="side-btn" onclick="openWindow('winChaos')">⚡ chaos</button>
+      <h1 class="title">skittle nick!</h1>
+      <p class="tagline">тαкє тнє мє∂ѕ, тнσмαѕ! ^_^</p>
+    </div>
 
-        <div class="sidebar-footer">
-          <div>👁 <span id="visitCount">0</span> visits</div>
-          <div class="tiny">made in 2026</div>
+    <div class="divider"></div>
+
+    <div class="profile-card">
+      <div class="profile-left">
+        <div class="pfp-emoji">🎨</div>
+        <div class="profile-text">
+          <div class="username">raansomware ❤️</div>
+
+          <div class="bio">
+            <a href="https://ransomware.atabook.org" target="_blank">
+              ransomware.atabook.org
+            </a>
+          </div>
+
         </div>
       </div>
 
-      <!-- WINDOWS AREA -->
-      <div class="windows-area" id="desktop">
+      <div class="badge">+4 vibes</div>
+    </div>
 
-        <!-- PROFILE -->
-        <div class="window" id="winProfile" data-default-x="80" data-default-y="60">
-          <div class="titlebar">
-            <div class="title">👾 profile.exe</div>
-            <div class="controls">
-              <button onclick="minimizeWindow('winProfile')">—</button>
-              <button onclick="closeWindow('winProfile')">✕</button>
-            </div>
-          </div>
-          <div class="content">
-            <div class="profileBox">
-              <img src="nicky.jpg" class="pfp" alt="pfp">
-              <div>
-                <div class="name">raansomware ❤️</div>
-                <div class="sub">lol.goofy.url/upon</div>
-                <div class="badge">+4 vibes</div>
-              </div>
-            </div>
-          </div>
-          <div class="resizer"></div>
+    <div class="box">
+      <h2>about me</h2>
+      <p>⠀𝝑𝝔⠀⠀nick / skittles !!</p>
+      <p>⠀⠀she / they⠀⠀17⠀⠀basic dni</p>
+      <p>⠀⠀i like to sleep! ⠀🥳⠀ bmf!! ^_^⠀</p>
+      <p>⠀✚ ˳ #skittles #hwwhp #yummy!⠀❜</p>
+      <p>♡ ノ follow to be moots + appreciated</p>
+    </div>
+
+    <div class="music-player">
+      <div class="now-playing">
+        <span class="dot"></span>
+        <span>NOW PLAYING</span>
+      </div>
+
+      <div class="song-row">
+        <div class="album-art">🎵</div>
+        <div class="song-info">
+          <div class="song-name" id="songName">buttercup</div>
+          <div class="artist-name" id="artistName">Jack Stauber</div>
         </div>
+      </div>
 
-        <!-- BIO -->
-        <div class="window" id="winBio" data-default-x="120" data-default-y="270">
-          <div class="titlebar">
-            <div class="title">🧠 aboutme.txt</div>
-            <div class="controls">
-              <button onclick="pinWindow('winBio')">📌</button>
-              <button onclick="minimizeWindow('winBio')">—</button>
-              <button onclick="closeWindow('winBio')">✕</button>
-            </div>
-          </div>
-          <div class="content">
-            <h2>about me</h2>
-            <p>⠀𝝑𝝔⠀⠀nick / skittles !!</p>
-            <p>⠀⠀she / they⠀⠀17⠀⠀basic dni</p>
-            <p>⠀⠀i like to sleep! 🥳⠀bmf!! ^_^</p>
-            <p>⠀✚ ˳ #skittles #hwwhp #yummy!⠀❜</p>
-            <p>♡ ノ follow to be moots + appreciated</p>
-          </div>
-          <div class="resizer"></div>
-        </div>
+      <div class="progressBar">
+        <div class="progressFill" id="progressFill"></div>
+        <input type="range" id="progressSlider" min="0" max="100" value="0">
+      </div>
 
-        <!-- MUSIC -->
-        <div class="window" id="winMusic" data-default-x="520" data-default-y="60">
-          <div class="titlebar">
-            <div class="title">🎧 music_player.dll</div>
-            <div class="controls">
-              <button onclick="pinWindow('winMusic')">📌</button>
-              <button onclick="minimizeWindow('winMusic')">—</button>
-              <button onclick="closeWindow('winMusic')">✕</button>
-            </div>
-          </div>
+      <div class="timeRow">
+        <span id="currentTime">0:00</span>
+        <span id="duration">0:00</span>
+      </div>
 
-          <div class="content">
-            <div class="nowPlaying">
-              <span class="dot"></span>
-              <span>now playing</span>
-            </div>
+      <div class="playerBtns">
+        <button onclick="previousSong()">⏮</button>
+        <button id="playBtn" onclick="togglePlay()">▶</button>
+        <button onclick="nextSong()">⏭</button>
+      </div>
 
-            <div class="songInfo">
-              <div class="albumArt">🎵</div>
-              <div>
-                <div class="songName" id="songName">loading...</div>
-                <div class="artistName" id="artistName">loading...</div>
-              </div>
-            </div>
+      <div class="volumeRow">
+        <span>🔊</span>
+        <input type="range" id="volumeSlider" min="0" max="100" value="70">
+      </div>
 
-            <div class="progressBar">
-              <div class="progressFill" id="progressFill"></div>
-              <input type="range" id="progressSlider" min="0" max="100" value="0">
-            </div>
+      <div class="trackText" id="trackText">track 1 of 2</div>
+    </div>
 
-            <div class="timeRow">
-              <span id="currentTime">0:00</span>
-              <span id="duration">0:00</span>
-            </div>
-
-            <div class="playerBtns">
-              <button onclick="previousSong()">⏮</button>
-              <button id="playBtn" onclick="togglePlay()">▶</button>
-              <button onclick="nextSong()">⏭</button>
-            </div>
-
-            <div class="volumeRow">
-              <span>🔊</span>
-              <input type="range" id="volumeSlider" min="0" max="100" value="70">
-            </div>
-
-            <div class="trackText" id="currentTrack">Track 1</div>
-          </div>
-
-          <div class="resizer"></div>
-        </div>
-
-        <!-- RATING -->
-        <div class="window" id="winRating" data-default-x="520" data-default-y="360">
-          <div class="titlebar">
-            <div class="title">⭐ rate_skittles.sys</div>
-            <div class="controls">
-              <button onclick="minimizeWindow('winRating')">—</button>
-              <button onclick="closeWindow('winRating')">✕</button>
-            </div>
-          </div>
-          <div class="content center">
-            <div class="rating-title">rate this page</div>
-            <div class="star-rating">
-              <button class="star" onclick="rateMe(1)">★</button>
-              <button class="star" onclick="rateMe(2)">★</button>
-              <button class="star" onclick="rateMe(3)">★</button>
-              <button class="star" onclick="rateMe(4)">★</button>
-              <button class="star" onclick="rateMe(5)">★</button>
-            </div>
-          </div>
-          <div class="resizer"></div>
-        </div>
-
-        <!-- STICKERS -->
-        <div class="window" id="winStickers" data-default-x="80" data-default-y="520">
-          <div class="titlebar">
-            <div class="title">✨ sticker_tool.exe</div>
-            <div class="controls">
-              <button onclick="minimizeWindow('winStickers')">—</button>
-              <button onclick="closeWindow('winStickers')">✕</button>
-            </div>
-          </div>
-
-          <div class="content">
-            <div class="stickerGrid">
-              <div class="stickerTool" draggable="true" ondragstart="startStickerDrag(event, 'nick.png')">
-                <img src="nick.png">
-              </div>
-
-              <div class="stickerTool" draggable="true" ondragstart="startStickerDrag(event, 'rainbow.png')">
-                <img src="rainbow.png">
-              </div>
-
-              <div class="stickerTool" draggable="true" ondragstart="startStickerDrag(event, 'star.png')">
-                <img src="star.png">
-              </div>
-            </div>
-
-            <button class="clearBtn" onclick="clearAllStickers()">clear all</button>
-          </div>
-
-          <div class="resizer"></div>
-        </div>
-
-        <!-- CHAOS -->
-        <div class="window" id="winChaos" data-default-x="930" data-default-y="250">
-          <div class="titlebar">
-            <div class="title">⚡ chaos_panel.bat</div>
-            <div class="controls">
-              <button onclick="minimizeWindow('winChaos')">—</button>
-              <button onclick="closeWindow('winChaos')">✕</button>
-            </div>
-          </div>
-          <div class="content">
-            <button class="bigBtn" onclick="triggerSparkles()">✨ sparkles</button>
-            <button class="bigBtn" onclick="createRainbow()">🌈 rainbow mode</button>
-            <button class="bigBtn" onclick="glitch()">🛸 glitch</button>
-            <button class="bigBtn" onclick="toast('skittles OS is watching u 👁')">👁 message</button>
-          </div>
-          <div class="resizer"></div>
-        </div>
-
-        <!-- STICKER CANVAS -->
-        <div class="sticker-canvas" id="stickerCanvas"
-          ondrop="dropSticker(event)"
-          ondragover="allowDrop(event)">
-        </div>
-
+    <div class="rating-section">
+      <div class="rating-title">RATE THIS PAGE</div>
+      <div class="star-rating">
+        <button class="star" onclick="rateMe(1)">★</button>
+        <button class="star" onclick="rateMe(2)">★</button>
+        <button class="star" onclick="rateMe(3)">★</button>
+        <button class="star" onclick="rateMe(4)">★</button>
+        <button class="star" onclick="rateMe(5)">★</button>
       </div>
     </div>
+
+    <div class="buttons">
+      <button class="bigBtn" onclick="triggerSparkles()">✨ sparkles</button>
+      <button class="bigBtn" onclick="createRainbow()">🌈 rainbow mode</button>
+      <button class="bigBtn" onclick="glitchEffect()">⚡ glitch</button>
+    </div>
+
+    <div class="stickers-box">
+      <h2>stickers</h2>
+
+      <div class="stickerGrid">
+        <div class="stickerTool" draggable="true" ondragstart="startStickerDrag(event,'nick.png')">
+          <img src="nick.png" alt="nick">
+        </div>
+
+        <div class="stickerTool" draggable="true" ondragstart="startStickerDrag(event,'rainbow.png')">
+          <img src="rainbow.png" alt="rainbow">
+        </div>
+
+        <div class="stickerTool" draggable="true" ondragstart="startStickerDrag(event,'star.png')">
+          <img src="star.png" alt="star">
+        </div>
+      </div>
+
+      <button class="clearBtn" onclick="clearAllStickers()">clear all</button>
+    </div>
+
+    <div class="footer">
+      <p>made with 💕 and pure chaos</p>
+      <p class="small">👁️ <span id="visitCount">0</span> visits</p>
+      <p class="small">© 2026 skittles fan universe</p>
+    </div>
+  </div>
+
+  <div class="sticker-canvas" id="stickerCanvas"
+       ondrop="dropSticker(event)"
+       ondragover="allowDrop(event)">
   </div>
 
   <script src="script.js"></script>
