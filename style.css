@@ -156,6 +156,7 @@ body {
   height: 120px;
   margin: 0 auto 15px;
   position: relative;
+  overflow: hidden;
 }
 
 .logo {
@@ -167,6 +168,7 @@ body {
   position: relative;
   z-index: 2;
   animation: bounce 2.4s ease infinite;
+  display: block;
 }
 
 .logo-glow {
@@ -557,6 +559,29 @@ body {
   object-fit: contain;
 }
 
+.uploadRow {
+  margin-top: 12px;
+}
+
+.uploadBtn {
+  display: block;
+  width: 100%;
+  text-align: center;
+  padding: 12px;
+  border-radius: 14px;
+  cursor: pointer;
+  font-weight: 900;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: white;
+  transition: 0.2s;
+}
+
+.uploadBtn:hover {
+  transform: scale(1.03);
+  border: 1px solid rgba(255,20,147,0.35);
+}
+
 .clearBtn {
   margin-top: 12px;
   width: 100%;
@@ -588,7 +613,7 @@ body {
   color: rgba(0,234,255,0.7);
 }
 
-/* sticker canvas FIXED */
+/* sticker canvas */
 .sticker-canvas {
   position: fixed;
   inset: 0;
@@ -639,7 +664,7 @@ body {
   bottom: 25px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 99999999;
+  z-index: 999999999;
   background: rgba(0,0,0,0.75);
   border: 1px solid rgba(0,234,255,0.45);
   padding: 12px 18px;
@@ -647,12 +672,6 @@ body {
   color: white;
   font-weight: 900;
   backdrop-filter: blur(10px);
-  animation: toastIn 0.3s ease;
-}
-
-@keyframes toastIn {
-  from { opacity: 0; transform: translateX(-50%) translateY(20px); }
-  to { opacity: 1; transform: translateX(-50%) translateY(0px); }
 }
 
 /* mobile */
