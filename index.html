@@ -15,6 +15,7 @@
 <body>
   <div class="scanlines"></div>
   <div class="sparkles-container"></div>
+  <div class="cursor-trail"></div>
 
   <div class="bg-shapes">
     <div class="shape shape-1"></div>
@@ -37,7 +38,6 @@
 
     <div class="profile-card">
       <div class="profile-left">
-
         <img src="skit.jpg" class="pfp-icon" alt="pfp icon">
 
         <div class="profile-text">
@@ -48,7 +48,6 @@
               ransomware.atabook.org
             </a>
           </div>
-
         </div>
       </div>
 
@@ -122,7 +121,7 @@
     <div class="stickers-box">
       <h2>stickers</h2>
 
-      <div class="stickerGrid" id="stickerGrid">
+      <div class="stickerGrid">
         <div class="stickerTool" draggable="true" ondragstart="startStickerDrag(event,'nick.png')">
           <img src="nick.png" alt="nick">
         </div>
@@ -138,8 +137,8 @@
 
       <div class="uploadRow">
         <label class="uploadBtn">
-          ➕ upload sticker
-          <input type="file" id="stickerUpload" accept="image/*" hidden>
+          📁 add custom sticker
+          <input type="file" id="customStickerInput" accept="image/*">
         </label>
       </div>
 
@@ -153,7 +152,10 @@
     </div>
   </div>
 
-  <div class="sticker-canvas" id="stickerCanvas"></div>
+  <div class="sticker-canvas" id="stickerCanvas"
+       ondrop="dropSticker(event)"
+       ondragover="allowDrop(event)">
+  </div>
 
   <script src="script.js"></script>
 </body>
