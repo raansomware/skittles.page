@@ -182,21 +182,19 @@ function rateMe(rating) {
 
 // ======================= STICKERS =======================
 
+let placingSticker = null;
+
 function startStickerDrag(e, stickerType) {
-  e.dataTransfer.setData("text/plain", stickerType);
+  e.preventDefault();
+  placingSticker = stickerType;
 }
 
-document.addEventListener("dragover", (e) => {
-  e.preventDefault();
-});
+document.addEventListener("click", (e) => {
+  if (!placingSticker) return;
 
-document.addEventListener("drop", (e) => {
-  e.preventDefault();
+  createPlacedSticker(placingSticker, e.clientX, e.clientY);
+  placingSticker = null;
 
-  const stickerType = e.dataTransfer.getData("text/plain");
-  if (!stickerType) return;
-
-  createPlacedSticker(stickerType, e.clientX, e.clientY);
   triggerSparkles();
 });
 
@@ -205,13 +203,11 @@ function createPlacedSticker(stickerType, x, y) {
   sticker.className = "placed-sticker";
 
   const size = 80 + Math.random() * 50;
-  sticker.style.width = size + "px";
-  sticker.style.height = size + "px";
 
-  // 🔥 ESTA PARTE ES LA IMPORTANTE
   sticker.style.position = "fixed";
   sticker.style.zIndex = "9999";
-
+  sticker.style.width = size + "px";
+  sticker.style.height = size + "px";
   sticker.style.left = x - size / 2 + "px";
   sticker.style.top = y - size / 2 + "px";
 
