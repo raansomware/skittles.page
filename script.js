@@ -16,6 +16,11 @@ prevents browser from trying to drop an image/file */
 document.addEventListener("dragover", (e) => e.preventDefault());
 document.addEventListener("drop", (e) => e.preventDefault());
 
+document.addEventListener("dragend", () => {
+  const canvas = document.getElementById("stickerCanvas");
+  if (canvas) canvas.style.pointerEvents = "none";
+});
+
 // init
 document.addEventListener("DOMContentLoaded", () => {
   updateSongDisplay();
@@ -217,11 +222,16 @@ function startStickerDrag(e, stickerType) {
 // allow drop
 function allowDrop(e) {
   e.preventDefault();
+  document.getElementById("stickerCanvas").style.pointerEvents = "auto";
 }
 
 // drop sticker on screen
 function dropSticker(e) {
   e.preventDefault();
+
+  const canvas = document.getElementById("stickerCanvas");
+  canvas.style.pointerEvents = "none";
+
   const stickerType = e.dataTransfer.getData("text/plain") || draggedStickerType;
   if (!stickerType) return;
 
@@ -269,7 +279,7 @@ function makeStickerDraggable(sticker) {
   sticker.addEventListener("mousedown", (e) => {
     dragging = true;
     offsetX = e.clientX - sticker.offsetLeft;
-    offsetY = e.clientY - sticker.offsetTop;
+    offsetY = e.clientX - sticker.offsetTop;
     sticker.style.zIndex = 99999999;
   });
 
