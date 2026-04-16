@@ -1,5 +1,5 @@
 // ============================
-// MUSIC PLAYER DATA
+// PLAYLIST DATA
 // ============================
 const playlist = [
   { name: "buttercup", artist: "Jack Stauber", duration: 180 },
@@ -18,6 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
   updateTrackDisplay();
   loadVisitCount();
   createInitialSparkles();
+  startCursorTrail();
 });
 
 // ============================
@@ -37,6 +38,7 @@ function updateTrackDisplay() {
 function togglePlay() {
   isPlaying = !isPlaying;
   document.getElementById("playBtn").textContent = isPlaying ? "⏸" : "▶";
+
   if (isPlaying) simulatePlayback();
 }
 
@@ -67,6 +69,7 @@ function updateProgress() {
 function nextSong() {
   currentTrack = (currentTrack + 1) % playlist.length;
   currentTime = 0;
+
   updateSongDisplay();
   updateTrackDisplay();
   updateProgress();
@@ -76,6 +79,7 @@ function nextSong() {
 function previousSong() {
   currentTrack = (currentTrack - 1 + playlist.length) % playlist.length;
   currentTime = 0;
+
   updateSongDisplay();
   updateTrackDisplay();
   updateProgress();
@@ -94,8 +98,13 @@ document.getElementById("progressSlider")?.addEventListener("input", (e) => {
   updateProgress();
 });
 
+// volume slider (fake, just visual)
+document.getElementById("volumeSlider")?.addEventListener("input", (e) => {
+  console.log("🔊 volume:", e.target.value);
+});
+
 // ============================
-// SPARKLES
+// SPARKLES SYSTEM
 // ============================
 function createInitialSparkles() {
   for (let i = 0; i < 15; i++) {
@@ -103,73 +112,141 @@ function createInitialSparkles() {
   }
 }
 
-function createSparkle() {
+function createSparkle(x = null, y = null) {
   const container = document.querySelector(".sparkles-container");
   if (!container) return;
 
   const sparkle = document.createElement("div");
-  const emojis = ["✨", "💫", "⭐", "🌟", "💥", "🎆", "🎇", "🌈", "💖"];
+  const emojis = ["✨", "💫", "⭐", "🌟", "💥", "🎆", "🎇", "💖", "🌈"];
 
   sparkle.textContent = emojis[Math.floor(Math.random() * emojis.length)];
   sparkle.className = "sparkle";
-  sparkle.style.left = Math.random() * 100 + "%";
-  sparkle.style.top = Math.random() * 100 + "%";
+
+  sparkle.style.left = (x !== null ? x : Math.random() * window.innerWidth) + "px";
+  sparkle.style.top = (y !== null ? y : Math.random() * window.innerHeight) + "px";
   sparkle.style.fontSize = 12 + Math.random() * 24 + "px";
 
   container.appendChild(sparkle);
-  setTimeout(() => sparkle.remove(), 4000);
+  setTimeout(() => sparkle.remove(), 3500);
 }
 
 function triggerSparkles() {
-  const container = document.querySelector(".sparkles-container");
-  if (!container) return;
-
   for (let i = 0; i < 40; i++) {
     setTimeout(() => {
-      const sparkle = document.createElement("div");
-      const emojis = ["✨", "💫", "⭐", "🌟", "💥", "🎆", "🎇", "🌈", "💖"];
-
-      sparkle.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-      sparkle.className = "sparkle";
-      sparkle.style.left = Math.random() * 100 + "%";
-      sparkle.style.top = Math.random() * 100 + "%";
-      sparkle.style.fontSize = 16 + Math.random() * 28 + "px";
-
-      container.appendChild(sparkle);
-      setTimeout(() => sparkle.remove(), 3500);
+      createSparkle(
+        Math.random() * window.innerWidth,
+        Math.random() * window.innerHeight
+      );
     }, i * 30);
   }
 }
 
 // ============================
-// CHAOS BUTTONS
+// CURSOR TRAIL (FIXED)
+// ============================
+function startCursorTrail() {
+  document.addEventListener("mousemove", (e) => {
+    const trail = document.createElement("div");
+    const emojis = ["✦", "✧", "★", "☆", "✺", "✹", "✷", "✵"];
+
+    trail.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    trail.style.position = "fixed";
+    trail.style.left = e.clientX + "px";
+    trail.style.top = e.clientY + "px";
+    trail.style.transform = "translate(-50%, -50%)";
+    trail.style.pointerEvents = "none";
+    trail.style.zIndex = "99999999";
+    trail.style.fontSize = (12 + Math.random() * 16) + "px";
+    trail.style.color = "white";
+    trail.style.textShadow =
+      "0 0 10px rgba(0,234,255,0.8), 0 0 18px rgba(255,20,147,0.6)";
+
+    document.body.appendChild(trail);
+
+    setTimeout(() => {
+      trail.style.transition = "0.6s";
+      trail.style.opacity = "0";
+      trail.style.transform = "translate(-50%, -80%) scale(0)";
+    }, 10);
+
+    setTimeout(() => trail.remove(), 650);
+  });
+}
+
+// ============================
+// BUTTON EFFECTS
 // ============================
 function createRainbow() {
-  document.body.style.transition = "0.6s";
-  document.body.style.filter = "hue-rotate(160deg)";
-  setTimeout(() => {
-    document.body.style.filter = "hue-rotate(0deg)";
-  }, 600);
-
   triggerSparkles();
+
+  document.body.style.transition = "0.6s";
+  document.body.style.filter = "hue-rotate(220deg) saturate(2)";
+
+  setTimeout(() => {
+    document.body.style.filter = "none";
+  }, 650);
+
+  toast("🌈 rainbow mode activated");
 }
 
 function glitchEffect() {
+  triggerSparkles();
+
   const container = document.querySelector(".container");
   if (!container) return;
 
-  container.style.transition = "0.1s";
-  container.style.transform = "translateX(8px) rotate(1deg)";
+  container.style.transition = "0.08s";
+  container.style.transform = "translateX(8px) skewX(3deg)";
 
   setTimeout(() => {
-    container.style.transform = "translateX(-8px) rotate(-1deg)";
-  }, 120);
+    container.style.transform = "translateX(-8px) skewX(-3deg)";
+  }, 80);
 
   setTimeout(() => {
-    container.style.transform = "translateX(0px) rotate(0deg)";
+    container.style.transform = "translateX(5px) skewX(2deg)";
+  }, 160);
+
+  setTimeout(() => {
+    container.style.transform = "translateX(0px) skewX(0deg)";
   }, 250);
 
-  triggerSparkles();
+  toast("⚡ glitch");
+}
+
+// ============================
+// TOAST MESSAGE
+// ============================
+function toast(msg) {
+  const old = document.querySelector(".toast");
+  if (old) old.remove();
+
+  const t = document.createElement("div");
+  t.className = "toast";
+  t.textContent = msg;
+
+  t.style.position = "fixed";
+  t.style.bottom = "25px";
+  t.style.left = "50%";
+  t.style.transform = "translateX(-50%)";
+  t.style.zIndex = "999999999";
+  t.style.padding = "12px 18px";
+  t.style.borderRadius = "18px";
+  t.style.background = "rgba(0,0,0,0.75)";
+  t.style.border = "1px solid rgba(0,234,255,0.5)";
+  t.style.color = "white";
+  t.style.fontWeight = "900";
+  t.style.backdropFilter = "blur(10px)";
+  t.style.boxShadow = "0 0 20px rgba(0,234,255,0.25)";
+
+  document.body.appendChild(t);
+
+  setTimeout(() => {
+    t.style.transition = "0.4s";
+    t.style.opacity = "0";
+    t.style.transform = "translateX(-50%) translateY(15px)";
+  }, 1400);
+
+  setTimeout(() => t.remove(), 1900);
 }
 
 // ============================
@@ -179,6 +256,7 @@ function loadVisitCount() {
   let count = localStorage.getItem("visitCount") || 0;
   count = parseInt(count) + 1;
   localStorage.setItem("visitCount", count);
+
   document.getElementById("visitCount").textContent = count;
 }
 
@@ -194,11 +272,11 @@ function rateMe(rating) {
   });
 
   triggerSparkles();
-  alert("thankz 4 ur feedback! :O");
+  toast("thankz 4 rating!!");
 }
 
 // ============================
-// STICKERS SYSTEM (REAL WORKING)
+// STICKERS SYSTEM (WORKING REAL)
 // ============================
 let draggedStickerType = null;
 
@@ -208,16 +286,15 @@ function startStickerDrag(e, stickerType) {
   e.dataTransfer.effectAllowed = "copy";
 }
 
-// allow dragover on whole document
+// allow dropping anywhere
 document.addEventListener("dragover", (e) => {
   e.preventDefault();
 });
 
-// drop anywhere on the page
 document.addEventListener("drop", (e) => {
   e.preventDefault();
 
-  // if user drops a real file (image)
+  // if user drops an image file
   if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
     const file = e.dataTransfer.files[0];
 
@@ -226,16 +303,17 @@ document.addEventListener("drop", (e) => {
       reader.onload = function(ev) {
         createPlacedSticker(ev.target.result, e.clientX, e.clientY);
         triggerSparkles();
+        toast("sticker uploaded!");
       };
       reader.readAsDataURL(file);
+    } else {
+      toast("not an image 😭");
     }
     return;
   }
 
-  // if user drops from your sticker grid
-  const stickerType =
-    e.dataTransfer.getData("text/plain") || draggedStickerType;
-
+  // if user drops from sticker tools
+  const stickerType = e.dataTransfer.getData("text/plain") || draggedStickerType;
   if (!stickerType) return;
 
   createPlacedSticker(stickerType, e.clientX, e.clientY);
@@ -283,7 +361,7 @@ function makeStickerDraggable(sticker) {
 
   sticker.addEventListener("mousedown", (e) => {
     isDragging = true;
-    sticker.style.zIndex = 9999999;
+    sticker.style.zIndex = 999999999;
 
     offsetX = e.clientX - sticker.offsetLeft;
     offsetY = e.clientY - sticker.offsetTop;
@@ -303,7 +381,7 @@ function makeStickerDraggable(sticker) {
   // mobile
   sticker.addEventListener("touchstart", (e) => {
     isDragging = true;
-    sticker.style.zIndex = 9999999;
+    sticker.style.zIndex = 999999999;
 
     const t = e.touches[0];
     offsetX = t.clientX - sticker.offsetLeft;
@@ -326,4 +404,5 @@ function makeStickerDraggable(sticker) {
 function clearAllStickers() {
   document.querySelectorAll(".placed-sticker").forEach((s) => s.remove());
   triggerSparkles();
+  toast("stickers cleared");
 }
