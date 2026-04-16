@@ -1,297 +1,124 @@
-// playlist
-const playlist = [
-  { name: "buttercup", artist: "Jack Stauber", duration: 180 },
-  { name: "resonance", artist: "Home", duration: 240 }
-];
+let draggedSticker = null;
+let offsetX = 0;
+let offsetY = 0;
 
-let currentTrack = 0;
-let isPlaying = false;
-let currentTime = 0;
+const canvas = document.getElementById("stickerCanvas");
 
-// on load
-document.addEventListener("DOMContentLoaded", () => {
-  updateSongDisplay();
-  updateTrackText();
-  loadVisitCount();
-  createInitialSparkles();
-  startCursorTrail();
-});
-
-// ======================= MUSIC PLAYER =======================
-
-function updateSongDisplay() {
-  const song = playlist[currentTrack];
-  document.getElementById("songName").textContent = song.name;
-  document.getElementById("artistName").textContent = song.artist;
-  document.getElementById("duration").textContent = formatTime(song.duration);
+// allow drop
+function allowDrop(e) {
+  e.preventDefault();
 }
 
-function updateTrackText() {
-  document.getElementById("trackText").textContent = `track ${currentTrack + 1} of ${playlist.length}`;
+// start drag from toolbar
+function startStickerDrag(e, src) {
+  e.dataTransfer.setData("sticker", src);
 }
 
-function togglePlay() {
-  isPlaying = !isPlaying;
-  document.getElementById("playBtn").textContent = isPlaying ? "⏸" : "▶";
-  if (isPlaying) simulatePlayback();
+// drop sticker
+function dropSticker(e) {
+  e.preventDefault();
+
+  const src = e.dataTransfer.getData("sticker");
+  if (!src) return;
+
+  createPlacedSticker(src, e.clientX, e.clientY, true);
 }
 
-function simulatePlayback() {
-  if (!isPlaying) return;
-
-  const song = playlist[currentTrack];
-  currentTime += 0.1;
-
-  if (currentTime >= song.duration) {
-    nextSong();
-    return;
-  }
-
-  updateProgress();
-  setTimeout(simulatePlayback, 100);
-}
-
-function updateProgress() {
-  const song = playlist[currentTrack];
-  const percent = (currentTime / song.duration) * 100;
-
-  document.getElementById("progressFill").style.width = percent + "%";
-  document.getElementById("progressSlider").value = percent;
-  document.getElementById("currentTime").textContent = formatTime(currentTime);
-}
-
-function nextSong() {
-  currentTrack = (currentTrack + 1) % playlist.length;
-  currentTime = 0;
-  updateSongDisplay();
-  updateTrackText();
-  updateProgress();
-  triggerSparkles();
-}
-
-function previousSong() {
-  currentTrack = (currentTrack - 1 + playlist.length) % playlist.length;
-  currentTime = 0;
-  updateSongDisplay();
-  updateTrackText();
-  updateProgress();
-  triggerSparkles();
-}
-
-document.getElementById("progressSlider")?.addEventListener("input", (e) => {
-  const song = playlist[currentTrack];
-  currentTime = (e.target.value / 100) * song.duration;
-  updateProgress();
-});
-
-// ======================= VISIT COUNT =======================
-
-function loadVisitCount() {
-  let count = localStorage.getItem("visitCount") || 0;
-  count = parseInt(count) + 1;
-  localStorage.setItem("visitCount", count);
-  document.getElementById("visitCount").textContent = count;
-}
-
-// ======================= SPARKLES =======================
-
-function createInitialSparkles() {
-  for (let i = 0; i < 15; i++) {
-    setTimeout(() => createSparkle(), i * 180);
-  }
-}
-
-function createSparkle() {
-  const container = document.querySelector(".sparkles-container");
-  const sparkle = document.createElement("div");
-  const emojis = ["✨", "💫", "⭐", "🌟", "💥", "🎆", "🎇", "💖"];
-
-  sparkle.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-  sparkle.className = "sparkle";
-  sparkle.style.left = Math.random() * 100 + "%";
-  sparkle.style.top = Math.random() * 100 + "%";
-  sparkle.style.fontSize = 14 + Math.random() * 26 + "px";
-
-  container.appendChild(sparkle);
-  setTimeout(() => sparkle.remove(), 3000);
-}
-
-function triggerSparkles() {
-  for (let i = 0; i < 35; i++) {
-    setTimeout(() => createSparkle(), i * 25);
-  }
-}
-
-// ======================= RAINBOW =======================
-
-function createRainbow() {
-  document.body.style.transition = "0.2s";
-  document.body.style.filter = "hue-rotate(180deg)";
-  triggerSparkles();
-
-  setTimeout(() => {
-    document.body.style.filter = "hue-rotate(0deg)";
-  }, 500);
-}
-
-// ======================= GLITCH =======================
-
-function glitchEffect() {
-  const container = document.querySelector(".container");
-
-  container.style.transition = "0.05s";
-  container.style.transform = "translateX(-4px) skewX(2deg)";
-  container.style.filter = "contrast(160%) saturate(200%)";
-
-  triggerSparkles();
-
-  setTimeout(() => {
-    container.style.transform = "translateX(4px) skewX(-2deg)";
-  }, 80);
-
-  setTimeout(() => {
-    container.style.transform = "none";
-    container.style.filter = "none";
-  }, 160);
-}
-
-// ======================= TOAST =======================
-
-function showMessage(msg) {
-  const toast = document.createElement("div");
-  toast.className = "toast";
-  toast.textContent = msg;
-  document.body.appendChild(toast);
-
-  setTimeout(() => toast.remove(), 1600);
-}
-
-// ======================= RATING =======================
-
-function rateMe(rating) {
-  const stars = document.querySelectorAll(".star");
-
-  stars.forEach((star, index) => {
-    if (index < rating) star.classList.add("active");
-    else star.classList.remove("active");
-  });
-
-  triggerSparkles();
-  showMessage("thankz 4 ur feedback! :O");
-}
-
-// ======================= STICKERS =======================
-
-let placingSticker = null;
-
-function startStickerDrag(e, stickerType) {
-  createPlacedSticker(stickerType, e.clientX, e.clientY);
-  triggerSparkles();
-}
-
-document.addEventListener("click", (e) => {
-  if (!placingSticker) return;
-
-  createPlacedSticker(placingSticker, e.clientX, e.clientY);
-  placingSticker = null;
-
-  triggerSparkles();
-});
-
-function createPlacedSticker(stickerType, x, y) {
-  const sticker = document.createElement("div");
-  sticker.className = "placed-sticker";
-
-  const size = 80 + Math.random() * 50;
-
-  sticker.style.position = "fixed";
-  sticker.style.zIndex = "9999";
-  sticker.style.width = size + "px";
-  sticker.style.height = size + "px";
-  sticker.style.left = x - size / 2 + "px";
-  sticker.style.top = y - size / 2 + "px";
-
+// create sticker
+function createPlacedSticker(src, x, y, save = true) {
   const img = document.createElement("img");
-  img.src = stickerType;
 
-  const deleteBtn = document.createElement("button");
-  deleteBtn.className = "sticker-delete-btn";
-  deleteBtn.textContent = "✕";
-  deleteBtn.onclick = () => sticker.remove();
+  img.src = src;
+  img.className = "placedSticker";
 
-  sticker.appendChild(img);
-  sticker.appendChild(deleteBtn);
-  document.body.appendChild(sticker);
+  img.style.left = x + "px";
+  img.style.top = y + "px";
 
-  makeStickerDraggable(sticker);
+  img.addEventListener("mousedown", startMoveSticker);
+
+  canvas.appendChild(img);
+
+  if (save) saveStickers();
 }
 
-function makeStickerDraggable(sticker) {
-  let offsetX = 0;
-  let offsetY = 0;
-  let isDown = false;
+// move sticker
+function startMoveSticker(e) {
+  draggedSticker = e.target;
 
-  sticker.addEventListener("mousedown", (e) => {
-    isDown = true;
-    offsetX = e.clientX - sticker.offsetLeft;
-    offsetY = e.clientY - sticker.offsetTop;
+  offsetX = e.clientX - draggedSticker.offsetLeft;
+  offsetY = e.clientY - draggedSticker.offsetTop;
+
+  document.addEventListener("mousemove", moveSticker);
+  document.addEventListener("mouseup", stopMoveSticker);
+}
+
+function moveSticker(e) {
+  if (!draggedSticker) return;
+
+  draggedSticker.style.left = e.clientX - offsetX + "px";
+  draggedSticker.style.top = e.clientY - offsetY + "px";
+}
+
+function stopMoveSticker() {
+  if (draggedSticker) saveStickers();
+
+  document.removeEventListener("mousemove", moveSticker);
+  document.removeEventListener("mouseup", stopMoveSticker);
+
+  draggedSticker = null;
+}
+
+// save stickers
+function saveStickers() {
+  const stickers = [];
+
+  document.querySelectorAll(".placedSticker").forEach(sticker => {
+    stickers.push({
+      src: sticker.src,
+      x: sticker.style.left,
+      y: sticker.style.top
+    });
   });
 
-  document.addEventListener("mousemove", (e) => {
-    if (!isDown) return;
-    sticker.style.left = e.clientX - offsetX + "px";
-    sticker.style.top = e.clientY - offsetY + "px";
-  });
+  localStorage.setItem("stickers", JSON.stringify(stickers));
+}
 
-  document.addEventListener("mouseup", () => {
-    isDown = false;
+// load stickers
+function loadStickers() {
+  const saved = localStorage.getItem("stickers");
+  if (!saved) return;
+
+  const stickers = JSON.parse(saved);
+
+  stickers.forEach(sticker => {
+    createPlacedSticker(sticker.src, parseInt(sticker.x), parseInt(sticker.y), false);
   });
 }
 
+// clear stickers
 function clearAllStickers() {
-  if (!confirm("clear all stickers??")) return;
-  document.querySelectorAll(".placed-sticker").forEach(s => s.remove());
-  triggerSparkles();
+  document.querySelectorAll(".placedSticker").forEach(s => s.remove());
+  localStorage.removeItem("stickers");
 }
-// ======================= CUSTOM STICKERS =======================
 
-document.getElementById("customStickerInput")?.addEventListener("change", (e) => {
+// custom sticker upload
+document.getElementById("customStickerInput")?.addEventListener("change", e => {
   const file = e.target.files[0];
   if (!file) return;
 
   const reader = new FileReader();
 
-  reader.onload = () => {
-    const imgData = reader.result;
-    createPlacedSticker(imgData, window.innerWidth / 2, window.innerHeight / 2);
-    triggerSparkles();
-    showMessage("custom sticker added!! 💖");
+  reader.onload = function(event) {
+    createPlacedSticker(
+      event.target.result,
+      window.innerWidth / 2,
+      window.innerHeight / 2,
+      true
+    );
   };
 
   reader.readAsDataURL(file);
 });
 
-// ======================= CURSOR TRAIL =======================
-
-function startCursorTrail() {
-  document.addEventListener("mousemove", (e) => {
-    const dot = document.createElement("div");
-    dot.className = "trail-dot";
-    dot.style.left = e.clientX + "px";
-    dot.style.top = e.clientY + "px";
-
-    document.body.appendChild(dot);
-
-    setTimeout(() => {
-      dot.remove();
-    }, 350);
-  });
-}
-
-// ======================= UTILS =======================
-
-function formatTime(seconds) {
-  const mins = Math.floor(seconds / 60);
-  const secs = Math.floor(seconds % 60);
-  return `${mins}:${secs.toString().padStart(2, "0")}`;
-}
+// load on start
+window.addEventListener("load", loadStickers);
