@@ -10,12 +10,24 @@ let currentTime = 0;
 
 // stickers
 let draggedStickerType = null;
-let stickerData = []; // saved stickers list
+let stickerData = [];
 
-// prevent browser image drop
-document.addEventListener("dragover", (e) => e.preventDefault());
-document.addEventListener("drop", (e) => e.preventDefault());
+// allow drop anywhere
+document.addEventListener("dragover", (e) => {
+  e.preventDefault();
+});
 
+document.addEventListener("drop", (e) => {
+  e.preventDefault();
+
+  const stickerType = e.dataTransfer.getData("text/plain") || draggedStickerType;
+  if (!stickerType) return;
+
+  createPlacedSticker(stickerType, e.clientX, e.clientY, true);
+  triggerSparkles();
+});
+
+// init
 document.addEventListener("DOMContentLoaded", () => {
   updateSongDisplay();
   updateTrackText();
@@ -25,18 +37,12 @@ document.addEventListener("DOMContentLoaded", () => {
   loadSavedStickers();
   loadCustomStickerPalette();
 
-  // music sliders
   document.getElementById("progressSlider").addEventListener("input", (e) => {
     const song = playlist[currentTrack];
     currentTime = (e.target.value / 100) * song.duration;
     updateProgress();
   });
 
-  document.getElementById("volumeSlider").addEventListener("input", (e) => {
-    console.log("volume:", e.target.value);
-  });
-
-  // upload custom sticker
   document.getElementById("stickerUpload").addEventListener("change", handleStickerUpload);
 });
 
@@ -48,7 +54,7 @@ function loadVisitCount() {
   document.getElementById("visitCount").textContent = count;
 }
 
-// song display
+// music display
 function updateSongDisplay() {
   const song = playlist[currentTrack];
   document.getElementById("songName").textContent = song.name;
@@ -215,33 +221,12 @@ function toast(text) {
 }
 
 /* ==========================
-   STICKERS SYSTEM (REAL)
+   STICKERS SYSTEM
 ========================== */
 
-// drag from palette
 function startStickerDrag(e, stickerType) {
   draggedStickerType = stickerType;
   e.dataTransfer.setData("text/plain", stickerType);
-}
-
-// allow drop
-function allowDrop(e) {
-  e.preventDefault();
-  document.getElementById("stickerCanvas").style.pointerEvents = "auto";
-}
-
-// drop sticker
-function dropSticker(e) {
-  e.preventDefault();
-
-  const canvas = document.getElementById("stickerCanvas");
-  canvas.style.pointerEvents = "none";
-
-  const stickerType = e.dataTransfer.getData("text/plain") || draggedStickerType;
-  if (!stickerType) return;
-
-  createPlacedSticker(stickerType, e.clientX, e.clientY, true);
-  triggerSparkles();
 }
 
 // create sticker widget
@@ -292,7 +277,7 @@ function createPlacedSticker(stickerType, x, y, save = false, id = null, size = 
   }
 }
 
-// make draggable + save movement
+// draggable + save
 function makeStickerDraggable(sticker) {
   let offsetX = 0;
   let offsetY = 0;
@@ -307,7 +292,6 @@ function makeStickerDraggable(sticker) {
 
   document.addEventListener("mousemove", (e) => {
     if (!dragging) return;
-
     sticker.style.left = (e.clientX - offsetX) + "px";
     sticker.style.top = (e.clientY - offsetY) + "px";
   });
@@ -316,12 +300,10 @@ function makeStickerDraggable(sticker) {
     if (!dragging) return;
     dragging = false;
     sticker.style.zIndex = 9999999;
-
     updateStickerPosition(sticker);
   });
 }
 
-// update position after drag
 function updateStickerPosition(sticker) {
   const id = sticker.dataset.id;
   const found = stickerData.find(s => s.id === id);
@@ -333,18 +315,15 @@ function updateStickerPosition(sticker) {
   saveStickerData();
 }
 
-// delete one sticker
 function deleteSticker(id) {
   stickerData = stickerData.filter(s => s.id !== id);
   saveStickerData();
 }
 
-// save stickers
 function saveStickerData() {
   localStorage.setItem("placedStickers", JSON.stringify(stickerData));
 }
 
-// load stickers
 function loadSavedStickers() {
   const saved = localStorage.getItem("placedStickers");
   if (!saved) return;
@@ -356,7 +335,6 @@ function loadSavedStickers() {
   });
 }
 
-// clear all
 function clearAllStickers() {
   if (!confirm("clear all stickers?")) return;
 
@@ -416,4 +394,5 @@ function addStickerToPalette(src) {
 
   tool.appendChild(img);
   grid.appendChild(tool);
+}
 }
