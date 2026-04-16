@@ -621,45 +621,21 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  pointer-events: auto;
-  z-index: 9999;
+  z-index: 999;
+  pointer-events: none;
 }
 
-.sticker-canvas img {
+.sticker {
   position: absolute;
   width: 100px;
-  pointer-events: auto;
   cursor: grab;
+  pointer-events: auto;
+  user-select: none;
 }
 
-.sticker-canvas img:active {
+.sticker:active {
   cursor: grabbing;
 }
-
-.placed-sticker img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  filter: drop-shadow(0 0 18px rgba(0,234,255,0.55));
-}
-
-.sticker-delete-btn {
-  position: absolute;
-  top: -10px;
-  right: -10px;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  border: none;
-  cursor: pointer;
-  background: var(--hotpink);
-  color: white;
-  font-weight: 900;
-  display: none;
-}
-
-.placed-sticker:hover .sticker-delete-btn {
-  display: block;
 }
 
 /* cursor trail */
