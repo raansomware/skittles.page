@@ -990,3 +990,22 @@ font-size: 12px;
 color: white;
 z-index: 10000;
 }
+button {
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.star {
+  font-size: 28px;
+  cursor: pointer;
+}
+
+.star-rating {
+  display: flex;
+  gap: 6px;
+}
+
+body {
+  overflow-x: hidden;
+}
