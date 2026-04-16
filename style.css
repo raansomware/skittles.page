@@ -850,3 +850,13 @@ body::after {
         gap: 8px;
     }
 }
+
+body {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+.container {
+  margin: 0 auto !important;
+}
