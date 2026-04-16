@@ -186,7 +186,6 @@ function rateMe(rating) {
 // ======================= STICKERS =======================
 
 function startStickerDrag(e, stickerType) {
-  draggedStickerType = stickerType;
   e.dataTransfer.setData("text/plain", stickerType);
 }
 
@@ -197,11 +196,67 @@ function allowDrop(e) {
 function dropSticker(e) {
   e.preventDefault();
 
-  const stickerType = e.dataTransfer.getData("text/plain") || draggedStickerType;
+  const stickerType = e.dataTransfer.getData("text/plain");
   if (!stickerType) return;
 
   createPlacedSticker(stickerType, e.clientX, e.clientY);
   triggerSparkles();
+}
+
+function createPlacedSticker(stickerType, x, y) {
+  const canvas = document.body;
+
+  const sticker = document.createElement("div");
+  sticker.className = "placed-sticker";
+
+  const size = 80 + Math.random() * 50;
+  sticker.style.width = size + "px";
+  sticker.style.height = size + "px";
+  sticker.style.left = x - size / 2 + "px";
+  sticker.style.top = y - size / 2 + "px";
+
+  const img = document.createElement("img");
+  img.src = stickerType;
+
+  const deleteBtn = document.createElement("button");
+  deleteBtn.className = "sticker-delete-btn";
+  deleteBtn.textContent = "✕";
+  deleteBtn.onclick = () => sticker.remove();
+
+  sticker.appendChild(img);
+  sticker.appendChild(deleteBtn);
+  canvas.appendChild(sticker);
+
+  makeStickerDraggable(sticker);
+}
+
+function makeStickerDraggable(sticker) {
+  let offsetX = 0;
+  let offsetY = 0;
+  let isDown = false;
+
+  sticker.addEventListener("mousedown", (e) => {
+    isDown = true;
+    offsetX = e.clientX - sticker.offsetLeft;
+    offsetY = e.clientY - sticker.offsetTop;
+  });
+
+  document.addEventListener("mousemove", (e) => {
+    if (!isDown) return;
+    sticker.style.left = e.clientX - offsetX + "px";
+    sticker.style.top = e.clientY - offsetY + "px";
+  });
+
+  document.addEventListener("mouseup", () => {
+    isDown = false;
+  });
+}
+
+function clearAllStickers() {
+  if (!confirm("clear all stickers??")) return;
+  document.querySelectorAll(".placed-sticker").forEach(s => s.remove());
+  triggerSparkles();
+}
 }
 
 function createPlacedSticker(stickerType, x, y) {
