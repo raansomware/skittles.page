@@ -693,3 +693,43 @@ body {
         font-size: 40px;
     }
 }
+/* Rating Section */
+.rating-section {
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.rating-title {
+    color: var(--tertiary);
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.star-rating {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+
+.star {
+    font-size: 40px;
+    cursor: pointer;
+    color: rgba(255, 255, 0, 0.5);
+    transition: all 0.3s;
+    text-shadow: 0 0 10px rgba(255, 255, 0, 0.3);
+    user-select: none;
+}
+
+.star:hover,
+.star.active {
+    color: var(--tertiary);
+    text-shadow: 0 0 20px rgba(255, 255, 0, 0.8);
+    transform: scale(1.2);
+}
+
+.star:active {
+    transform: scale(0.9);
+}
