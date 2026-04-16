@@ -690,3 +690,63 @@ body {
 }
   }
 }
+/* ===== FIX CLICKABLE ELEMENTS ===== */
+
+.scanlines,
+.sparkles-container,
+.bg-shapes,
+.shape,
+.shape-1,
+.shape-2,
+.shape-3 {
+  pointer-events: none;
+}
+
+/* sticker canvas no bloquea clicks */
+.sticker-canvas {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 999;
+}
+
+/* stickers si son interactivos */
+.placed-sticker {
+  position: absolute;
+  pointer-events: auto;
+  cursor: grab;
+  user-select: none;
+}
+
+/* cuando se arrastran */
+.placed-sticker:active {
+  cursor: grabbing;
+}
+
+/* evita overlays invisibles */
+.container::before,
+.container::after,
+.box::before,
+.box::after {
+  pointer-events: none;
+}
+
+/* sparkles individuales */
+.sparkle {
+  pointer-events: none;
+}
+
+/* cursor trail */
+.cursor-trail {
+  pointer-events: none;
+}
+
+/* scanlines overlay */
+.scanlines {
+  pointer-events: none;
+}
+
+/* shapes decorativas */
+.bg-shapes div {
+  pointer-events: none;
+}
