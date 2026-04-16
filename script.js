@@ -207,6 +207,11 @@ function createPlacedSticker(stickerType, x, y) {
   const size = 80 + Math.random() * 50;
   sticker.style.width = size + "px";
   sticker.style.height = size + "px";
+
+  // 🔥 ESTA PARTE ES LA IMPORTANTE
+  sticker.style.position = "fixed";
+  sticker.style.zIndex = "9999";
+
   sticker.style.left = x - size / 2 + "px";
   sticker.style.top = y - size / 2 + "px";
 
@@ -252,7 +257,6 @@ function clearAllStickers() {
   document.querySelectorAll(".placed-sticker").forEach(s => s.remove());
   triggerSparkles();
 }
-
 // ======================= CUSTOM STICKERS =======================
 
 document.getElementById("customStickerInput")?.addEventListener("change", (e) => {
