@@ -1,6 +1,8 @@
 // ============================
 // PLAYLIST
 // ============================
+alert("SCRIPT LOADED");
+
 const playlist = [
   { name: "buttercup", artist: "Jack Stauber", duration: 180 },
   { name: "resonance", artist: "Home", duration: 240 }
