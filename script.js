@@ -1,5 +1,5 @@
 // ============================
-// PLAYLIST DATA
+// PLAYLIST
 // ============================
 const playlist = [
   { name: "buttercup", artist: "Jack Stauber", duration: 180 },
@@ -19,10 +19,11 @@ document.addEventListener("DOMContentLoaded", () => {
   loadVisitCount();
   createInitialSparkles();
   startCursorTrail();
+  setupCustomStickerUpload();
 });
 
 // ============================
-// MUSIC PLAYER
+// MUSIC
 // ============================
 function updateSongDisplay() {
   const song = playlist[currentTrack];
@@ -32,7 +33,8 @@ function updateSongDisplay() {
 }
 
 function updateTrackDisplay() {
-  document.getElementById("trackText").textContent = `track ${currentTrack + 1} of ${playlist.length}`;
+  document.getElementById("trackText").textContent =
+    `track ${currentTrack + 1} of ${playlist.length}`;
 }
 
 function togglePlay() {
@@ -69,7 +71,6 @@ function updateProgress() {
 function nextSong() {
   currentTrack = (currentTrack + 1) % playlist.length;
   currentTime = 0;
-
   updateSongDisplay();
   updateTrackDisplay();
   updateProgress();
@@ -80,7 +81,6 @@ function nextSong() {
 function previousSong() {
   currentTrack = (currentTrack - 1 + playlist.length) % playlist.length;
   currentTime = 0;
-
   updateSongDisplay();
   updateTrackDisplay();
   updateProgress();
@@ -101,14 +101,15 @@ document.getElementById("progressSlider")?.addEventListener("input", (e) => {
 });
 
 // ============================
-// VISIT COUNTER
+// VISITS
 // ============================
 function loadVisitCount() {
   let count = localStorage.getItem("visitCount") || 0;
   count = parseInt(count) + 1;
   localStorage.setItem("visitCount", count);
 
-  document.getElementById("visitCount").textContent = count;
+  const el = document.getElementById("visitCount");
+  if (el) el.textContent = count;
 }
 
 // ============================
@@ -191,7 +192,6 @@ function toast(msg) {
   const t = document.createElement("div");
   t.className = "toast";
   t.textContent = msg;
-
   document.body.appendChild(t);
 
   setTimeout(() => {
@@ -204,11 +204,10 @@ function toast(msg) {
 }
 
 // ============================
-// EFFECT BUTTONS
+// BUTTON FUNCTIONS
 // ============================
 function createRainbow() {
   triggerSparkles();
-
   document.body.style.transition = "0.6s";
   document.body.style.filter = "hue-rotate(220deg) saturate(2)";
 
@@ -244,7 +243,7 @@ function glitchEffect() {
 }
 
 // ============================
-// RATING SYSTEM
+// RATING
 // ============================
 function rateMe(rating) {
   const stars = document.querySelectorAll(".star");
@@ -259,7 +258,7 @@ function rateMe(rating) {
 }
 
 // ============================
-// STICKERS SYSTEM
+// STICKERS (WORKING)
 // ============================
 let draggedStickerType = null;
 
@@ -269,7 +268,6 @@ function startStickerDrag(e, stickerType) {
   e.dataTransfer.effectAllowed = "copy";
 }
 
-// allow drop
 document.addEventListener("dragover", (e) => {
   e.preventDefault();
 });
@@ -277,25 +275,27 @@ document.addEventListener("dragover", (e) => {
 document.addEventListener("drop", (e) => {
   e.preventDefault();
 
-  // if user drops an image file
+  // dropped image file
   if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
     const file = e.dataTransfer.files[0];
 
-    if (file.type.startsWith("image/")) {
-      const reader = new FileReader();
-      reader.onload = function (ev) {
-        createPlacedSticker(ev.target.result, e.clientX, e.clientY);
-        triggerSparkles();
-        toast("custom sticker dropped!");
-      };
-      reader.readAsDataURL(file);
-    } else {
+    if (!file.type.startsWith("image/")) {
       toast("not an image 😭");
+      return;
     }
+
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      createPlacedSticker(ev.target.result, e.clientX, e.clientY);
+      triggerSparkles();
+      toast("custom sticker dropped!");
+    };
+
+    reader.readAsDataURL(file);
     return;
   }
 
-  // normal stickers
+  // dropped from palette
   const stickerType = e.dataTransfer.getData("text/plain") || draggedStickerType;
   if (!stickerType) return;
 
@@ -313,7 +313,6 @@ function createPlacedSticker(src, x, y) {
   const size = 80 + Math.random() * 50;
   sticker.style.width = size + "px";
   sticker.style.height = size + "px";
-
   sticker.style.left = x - size / 2 + "px";
   sticker.style.top = y - size / 2 + "px";
 
@@ -344,14 +343,12 @@ function makeStickerDraggable(sticker) {
   sticker.addEventListener("mousedown", (e) => {
     isDragging = true;
     sticker.style.zIndex = 999999999;
-
     offsetX = e.clientX - sticker.offsetLeft;
     offsetY = e.clientY - sticker.offsetTop;
   });
 
   document.addEventListener("mousemove", (e) => {
     if (!isDragging) return;
-
     sticker.style.left = e.clientX - offsetX + "px";
     sticker.style.top = e.clientY - offsetY + "px";
   });
@@ -359,32 +356,10 @@ function makeStickerDraggable(sticker) {
   document.addEventListener("mouseup", () => {
     isDragging = false;
   });
-
-  // mobile
-  sticker.addEventListener("touchstart", (e) => {
-    isDragging = true;
-    sticker.style.zIndex = 999999999;
-
-    const t = e.touches[0];
-    offsetX = t.clientX - sticker.offsetLeft;
-    offsetY = t.clientY - sticker.offsetTop;
-  });
-
-  document.addEventListener("touchmove", (e) => {
-    if (!isDragging) return;
-
-    const t = e.touches[0];
-    sticker.style.left = t.clientX - offsetX + "px";
-    sticker.style.top = t.clientY - offsetY + "px";
-  });
-
-  document.addEventListener("touchend", () => {
-    isDragging = false;
-  });
 }
 
 function clearAllStickers() {
-  document.querySelectorAll(".placed-sticker").forEach((s) => s.remove());
+  document.querySelectorAll(".placed-sticker").forEach((s) => s.remove();
   triggerSparkles();
   toast("stickers cleared");
 }
@@ -392,21 +367,26 @@ function clearAllStickers() {
 // ============================
 // CUSTOM STICKER UPLOAD BUTTON
 // ============================
-document.getElementById("customStickerInput")?.addEventListener("change", (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
+function setupCustomStickerUpload() {
+  const input = document.getElementById("customStickerInput");
+  if (!input) return;
 
-  if (!file.type.startsWith("image/")) {
-    toast("only images 😭");
-    return;
-  }
+  input.addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
 
-  const reader = new FileReader();
-  reader.onload = () => {
-    createPlacedSticker(reader.result, window.innerWidth / 2, window.innerHeight / 2);
-    triggerSparkles();
-    toast("custom sticker added!! 💖");
-  };
+    if (!file.type.startsWith("image/")) {
+      toast("only images 😭");
+      return;
+    }
 
-  reader.readAsDataURL(file);
-});
+    const reader = new FileReader();
+    reader.onload = () => {
+      createPlacedSticker(reader.result, window.innerWidth / 2, window.innerHeight / 2);
+      triggerSparkles();
+      toast("custom sticker added!! 💖");
+    };
+
+    reader.readAsDataURL(file);
+  });
+}
