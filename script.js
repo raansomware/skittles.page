@@ -258,7 +258,7 @@ function rateMe(rating) {
 }
 
 // ============================
-// STICKERS (WORKING)
+// STICKERS
 // ============================
 let draggedStickerType = null;
 
@@ -275,38 +275,42 @@ document.addEventListener("dragover", (e) => {
 document.addEventListener("drop", (e) => {
   e.preventDefault();
 
-  // drop file image
+  // drop custom file image anywhere
   if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
     const file = e.dataTransfer.files[0];
 
-    if (!file.type.startsWith("image/")) return;
+    if (!file.type.startsWith("image/")) {
+      toast("not an image 😭");
+      return;
+    }
 
     const reader = new FileReader();
     reader.onload = () => {
       createPlacedSticker(reader.result, e.clientX, e.clientY);
+      triggerSparkles();
+      toast("custom sticker dropped!!");
     };
+
     reader.readAsDataURL(file);
     return;
   }
 
-  // drop palette sticker
+  // drop from palette
   const stickerType = e.dataTransfer.getData("text/plain") || draggedStickerType;
   if (!stickerType) return;
 
   createPlacedSticker(stickerType, e.clientX, e.clientY);
+  triggerSparkles();
 });
 
 function createPlacedSticker(src, x, y) {
   const canvas = document.getElementById("stickerCanvas");
-  if (!canvas) {
-    alert("stickerCanvas missing");
-    return;
-  }
+  if (!canvas) return;
 
   const sticker = document.createElement("div");
   sticker.className = "placed-sticker";
 
-  const size = 90;
+  const size = 80 + Math.random() * 50;
   sticker.style.width = size + "px";
   sticker.style.height = size + "px";
   sticker.style.left = x - size / 2 + "px";
@@ -316,9 +320,19 @@ function createPlacedSticker(src, x, y) {
   img.src = src;
   img.draggable = false;
 
-  sticker.appendChild(img);
-  canvas.appendChild(sticker);
+  const del = document.createElement("button");
+  del.className = "sticker-delete-btn";
+  del.textContent = "✕";
+  del.onclick = (ev) => {
+    ev.stopPropagation();
+    sticker.remove();
+    triggerSparkles();
+  };
 
+  sticker.appendChild(img);
+  sticker.appendChild(del);
+
+  canvas.appendChild(sticker);
   makeStickerDraggable(sticker);
 }
 
@@ -329,6 +343,7 @@ function makeStickerDraggable(sticker) {
 
   sticker.addEventListener("mousedown", (e) => {
     dragging = true;
+    sticker.style.zIndex = 999999999;
     offsetX = e.clientX - sticker.offsetLeft;
     offsetY = e.clientY - sticker.offsetTop;
   });
@@ -344,18 +359,11 @@ function makeStickerDraggable(sticker) {
   });
 }
 
-// upload custom sticker
-document.getElementById("customStickerInput")?.addEventListener("change", (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-  if (!file.type.startsWith("image/")) return;
-
-  const reader = new FileReader();
-  reader.onload = () => {
-    createPlacedSticker(reader.result, window.innerWidth / 2, window.innerHeight / 2);
-  };
-  reader.readAsDataURL(file);
-});
+function clearAllStickers() {
+  document.querySelectorAll(".placed-sticker").forEach((s) => s.remove();
+  triggerSparkles();
+  toast("stickers cleared");
+}
 
 // ============================
 // CUSTOM STICKER UPLOAD BUTTON
@@ -382,15 +390,4 @@ function setupCustomStickerUpload() {
 
     reader.readAsDataURL(file);
   });
-}
-function triggerSparkles() {
-  alert("sparkles button works");
-}
-
-function createRainbow() {
-  alert("rainbow button works");
-}
-
-function glitchEffect() {
-  alert("glitch button works");
 }
