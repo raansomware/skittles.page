@@ -383,4 +383,14 @@ function setupCustomStickerUpload() {
     reader.readAsDataURL(file);
   });
 }
+function triggerSparkles() {
+  alert("sparkles button works");
+}
 
+function createRainbow() {
+  alert("rainbow button works");
+}
+
+function glitchEffect() {
+  alert("glitch button works");
+}
