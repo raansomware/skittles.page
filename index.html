@@ -15,7 +15,6 @@
 <body>
   <div class="scanlines"></div>
   <div class="sparkles-container"></div>
-  <div class="cursor-trail"></div>
 
   <div class="bg-shapes">
     <div class="shape shape-1"></div>
@@ -24,6 +23,12 @@
   </div>
 
   <div class="container">
+
+    <!-- BANNER -->
+    <div class="banner">
+      <img src="thomas.png" alt="banner">
+    </div>
+
     <div class="header">
       <div class="logo-wrapper">
         <img src="nicky.jpg" class="logo" alt="pfp">
@@ -135,6 +140,7 @@
         </div>
       </div>
 
+      <!-- CUSTOM STICKER UPLOAD -->
       <div class="uploadRow">
         <label class="uploadBtn">
           📁 add custom sticker
@@ -152,10 +158,8 @@
     </div>
   </div>
 
-  <div class="sticker-canvas" id="stickerCanvas"
-       ondrop="dropSticker(event)"
-       ondragover="allowDrop(event)">
-  </div>
+  <!-- sticker canvas -->
+  <div class="sticker-canvas" id="stickerCanvas"></div>
 
   <script src="script.js"></script>
 </body>
