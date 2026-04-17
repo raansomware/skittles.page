@@ -362,9 +362,10 @@ function makeStickerDraggable(sticker) {
 }
 
 function clearAllStickers() {
-  document.querySelectorAll(".placed-sticker").forEach((s) => s.remove();
+  document.querySelectorAll(".placed-sticker").forEach((s) => s.remove());
   triggerSparkles();
   toast("stickers cleared");
+}
 }
 
 // ============================
