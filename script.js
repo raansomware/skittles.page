@@ -1,5 +1,7 @@
+
+```js
 // ============================
-// REAL MUSIC PLAYER
+// PLAYLIST (REAL MP3 PLAYER)
 // ============================
 const playlist = [
   { name: "buttercup", artist: "Jack Stauber", file: "buttercup.mp3" },
@@ -7,130 +9,137 @@ const playlist = [
 ];
 
 let currentTrack = 0;
+let isPlaying = false;
 
+const audio = document.getElementById("audioPlayer");
+
+// ============================
+// INIT
+// ============================
 document.addEventListener("DOMContentLoaded", () => {
-  loadTrack(currentTrack);
-  updateTrackDisplay();
+  console.log("SCRIPT LOADED ✅");
+
+  loadSong(currentTrack);
   loadVisitCount();
   createInitialSparkles();
   startCursorTrail();
   setupCustomStickerUpload();
-  
-  const enterScreen = document.getElementById("enterScreen");
 
-if (enterScreen) {
-  enterScreen.addEventListener("click", () => {
-    enterScreen.classList.add("fadeOut");
-
-    setTimeout(() => {
-      enterScreen.remove();
-      toast("welcome 😈");
-      triggerSparkles();
-    }, 650);
-  });
-}
-
+  // buttons
   document.getElementById("sparkleBtn")?.addEventListener("click", triggerSparkles);
   document.getElementById("rainbowBtn")?.addEventListener("click", createRainbow);
   document.getElementById("glitchBtn")?.addEventListener("click", glitchEffect);
 
-  setupAudioEvents();
+  // click to enter screen
+  const enterScreen = document.getElementById("enterScreen");
+  if (enterScreen) {
+    enterScreen.addEventListener("click", () => {
+      enterScreen.classList.add("fadeOut");
+
+      setTimeout(() => {
+        enterScreen.remove();
+        toast("welcome 😈");
+        triggerSparkles();
+      }, 650);
+    });
+  }
+
+  // volume slider
+  document.getElementById("volumeSlider")?.addEventListener("input", (e) => {
+    audio.volume = e.target.value;
+  });
+
+  // progress slider
+  document.getElementById("progressSlider")?.addEventListener("input", (e) => {
+    const percent = e.target.value;
+    audio.currentTime = (percent / 100) * audio.duration;
+  });
+
+  // update progress live
+  audio.addEventListener("timeupdate", updateProgress);
+
+  // auto next song
+  audio.addEventListener("ended", () => {
+    nextSong();
+  });
 });
 
 // ============================
-// AUDIO
+// LOAD SONG
 // ============================
-function getAudio() {
-  return document.getElementById("audioPlayer");
-}
-
-function loadTrack(index) {
-  const audio = getAudio();
+function loadSong(index) {
   const song = playlist[index];
 
   audio.src = song.file;
-  audio.load();
 
   document.getElementById("songName").textContent = song.name;
   document.getElementById("artistName").textContent = song.artist;
+  document.getElementById("trackText").textContent =
+    `track ${index + 1} of ${playlist.length}`;
+
+  audio.addEventListener("loadedmetadata", () => {
+    document.getElementById("duration").textContent = formatTime(audio.duration);
+  });
+
+  updateProgress();
 }
 
+// ============================
+// MUSIC CONTROLS
+// ============================
 function togglePlay() {
-  const audio = getAudio();
-  const playBtn = document.getElementById("playBtn");
+  if (!audio.src) loadSong(currentTrack);
 
   if (audio.paused) {
     audio.play();
-    playBtn.textContent = "⏸";
+    isPlaying = true;
+    document.getElementById("playBtn").textContent = "⏸";
     toast("playing 🎵");
   } else {
     audio.pause();
-    playBtn.textContent = "▶";
+    isPlaying = false;
+    document.getElementById("playBtn").textContent = "▶";
     toast("paused ⏸");
   }
+
+  triggerSparkles();
 }
 
 function nextSong() {
   currentTrack = (currentTrack + 1) % playlist.length;
-  loadTrack(currentTrack);
-  updateTrackDisplay();
-
-  const audio = getAudio();
+  loadSong(currentTrack);
   audio.play();
-
   document.getElementById("playBtn").textContent = "⏸";
+  toast("next song 🎶");
   triggerSparkles();
-  toast("next song 🎵");
 }
 
 function previousSong() {
   currentTrack = (currentTrack - 1 + playlist.length) % playlist.length;
-  loadTrack(currentTrack);
-  updateTrackDisplay();
-
-  const audio = getAudio();
+  loadSong(currentTrack);
   audio.play();
-
   document.getElementById("playBtn").textContent = "⏸";
+  toast("previous song 🎶");
   triggerSparkles();
-  toast("previous song 🎵");
 }
 
-function updateTrackDisplay() {
-  document.getElementById("trackText").textContent =
-    `track ${currentTrack + 1} of ${playlist.length}`;
+// ============================
+// PROGRESS BAR
+// ============================
+function updateProgress() {
+  if (!audio.duration) return;
+
+  const percent = (audio.currentTime / audio.duration) * 100;
+
+  document.getElementById("progressFill").style.width = percent + "%";
+  document.getElementById("progressSlider").value = percent;
+
+  document.getElementById("currentTime").textContent = formatTime(audio.currentTime);
 }
 
-function setupAudioEvents() {
-  const audio = getAudio();
-  const slider = document.getElementById("progressSlider");
-  const fill = document.getElementById("progressFill");
-
-  audio.addEventListener("timeupdate", () => {
-    if (!audio.duration) return;
-
-    const percent = (audio.currentTime / audio.duration) * 100;
-    slider.value = percent;
-    fill.style.width = percent + "%";
-
-    document.getElementById("currentTime").textContent = formatTime(audio.currentTime);
-    document.getElementById("duration").textContent = formatTime(audio.duration);
-  });
-
-  slider.addEventListener("input", (e) => {
-    if (!audio.duration) return;
-    audio.currentTime = (e.target.value / 100) * audio.duration;
-  });
-
-  document.getElementById("volumeSlider").addEventListener("input", (e) => {
-    audio.volume = e.target.value;
-  });
-
-  audio.addEventListener("ended", () => {
-    nextSong();
-  });
-}
-
+// ============================
+// FORMAT TIME
+// ============================
 function formatTime(seconds) {
   const mins = Math.floor(seconds / 60);
   const secs = Math.floor(seconds % 60);
@@ -201,7 +210,7 @@ function startCursorTrail() {
     trail.style.top = e.clientY + "px";
     trail.style.transform = "translate(-50%, -50%)";
     trail.style.pointerEvents = "none";
-    trail.style.zIndex = "999999999";
+    trail.style.zIndex = "99999999";
     trail.style.fontSize = (12 + Math.random() * 16) + "px";
     trail.style.color = "white";
     trail.style.textShadow =
@@ -241,7 +250,7 @@ function toast(msg) {
 }
 
 // ============================
-// BUTTON FX
+// BUTTON EFFECTS
 // ============================
 function createRainbow() {
   triggerSparkles();
@@ -252,7 +261,7 @@ function createRainbow() {
     document.body.style.filter = "none";
   }, 650);
 
-  toast("🌈 rainbow mode activated");
+  toast("🌈 rainbow mode");
 }
 
 function glitchEffect() {
@@ -312,25 +321,23 @@ document.addEventListener("dragover", (e) => {
 document.addEventListener("drop", (e) => {
   e.preventDefault();
 
+  // drop file image
   if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
     const file = e.dataTransfer.files[0];
 
-    if (!file.type.startsWith("image/")) {
-      toast("not an image 😭");
-      return;
-    }
+    if (!file.type.startsWith("image/")) return;
 
     const reader = new FileReader();
     reader.onload = () => {
       createPlacedSticker(reader.result, e.clientX, e.clientY);
       triggerSparkles();
-      toast("custom sticker dropped!!");
+      toast("custom sticker added!! 💖");
     };
-
     reader.readAsDataURL(file);
     return;
   }
 
+  // drop palette sticker
   const stickerType = e.dataTransfer.getData("text/plain") || draggedStickerType;
   if (!stickerType) return;
 
@@ -345,7 +352,7 @@ function createPlacedSticker(src, x, y) {
   const sticker = document.createElement("div");
   sticker.className = "placed-sticker";
 
-  const size = 80 + Math.random() * 50;
+  const size = 90;
   sticker.style.width = size + "px";
   sticker.style.height = size + "px";
   sticker.style.left = x - size / 2 + "px";
@@ -358,16 +365,13 @@ function createPlacedSticker(src, x, y) {
   const del = document.createElement("button");
   del.className = "sticker-delete-btn";
   del.textContent = "✕";
-  del.onclick = (ev) => {
-    ev.stopPropagation();
-    sticker.remove();
-    triggerSparkles();
-  };
+  del.onclick = () => sticker.remove();
 
   sticker.appendChild(img);
   sticker.appendChild(del);
 
   canvas.appendChild(sticker);
+
   makeStickerDraggable(sticker);
 }
 
@@ -400,9 +404,7 @@ function clearAllStickers() {
   toast("stickers cleared");
 }
 
-// ============================
-// CUSTOM STICKER UPLOAD
-// ============================
+// upload custom sticker
 function setupCustomStickerUpload() {
   const input = document.getElementById("customStickerInput");
   if (!input) return;
@@ -426,3 +428,6 @@ function setupCustomStickerUpload() {
     reader.readAsDataURL(file);
   });
 }
+```
+
+---
