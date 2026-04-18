@@ -759,3 +759,7 @@ img {
     display: none;
   }
 }
+
+.sticker-canvas {
+  display: none;
+}
