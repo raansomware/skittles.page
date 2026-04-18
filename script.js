@@ -15,6 +15,20 @@ document.addEventListener("DOMContentLoaded", () => {
   createInitialSparkles();
   startCursorTrail();
   setupCustomStickerUpload();
+  
+  const enterScreen = document.getElementById("enterScreen");
+
+if (enterScreen) {
+  enterScreen.addEventListener("click", () => {
+    enterScreen.classList.add("fadeOut");
+
+    setTimeout(() => {
+      enterScreen.remove();
+      toast("welcome 😈");
+      triggerSparkles();
+    }, 650);
+  });
+}
 
   document.getElementById("sparkleBtn")?.addEventListener("click", triggerSparkles);
   document.getElementById("rainbowBtn")?.addEventListener("click", createRainbow);
