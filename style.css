@@ -763,3 +763,42 @@ body {
     display: none;
   }
 }
+ /* ============================
+   CLICK TO ENTER SCREEN
+============================ */
+#enterScreen {
+  position: fixed;
+  inset: 0;
+  z-index: 999999999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+#enterScreen .enterText {
+  font-size: 40px;
+  font-weight: 900;
+  color: white;
+  text-shadow: 0 0 20px rgba(0, 234, 255, 0.8),
+               0 0 25px rgba(255, 20, 147, 0.6);
+
+  animation: enterPulse 1.2s infinite ease-in-out;
+  user-select: none;
+}
+
+@keyframes enterPulse {
+  0%, 100% { transform: scale(1); opacity: 0.85; }
+  50% { transform: scale(1.08); opacity: 1; }
+}
+
+#enterScreen.fadeOut {
+  opacity: 0;
+  transform: scale(1.05);
+  pointer-events: none;
+}
