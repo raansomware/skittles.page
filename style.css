@@ -763,42 +763,133 @@ body {
     display: none;
   }
 }
- /* ============================
+/* ============================
    CLICK TO ENTER SCREEN
 ============================ */
 #enterScreen {
   position: fixed;
   inset: 0;
-  z-index: 999999999;
+  background: rgba(0,0,0,0.72);
+  backdrop-filter: blur(12px);
   display: flex;
   justify-content: center;
   align-items: center;
-
-  background: rgba(0, 0, 0, 0.45);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-
-  transition: opacity 0.6s ease, transform 0.6s ease;
+  z-index: 999999999;
+  cursor: pointer;
 }
 
-#enterScreen .enterText {
-  font-size: 40px;
+.enterText {
+  font-size: 55px;
   font-weight: 900;
+  text-transform: lowercase;
   color: white;
-  text-shadow: 0 0 20px rgba(0, 234, 255, 0.8),
-               0 0 25px rgba(255, 20, 147, 0.6);
-
-  animation: enterPulse 1.2s infinite ease-in-out;
-  user-select: none;
+  text-shadow: 0 0 25px rgba(0,234,255,0.8),
+               0 0 35px rgba(255,20,147,0.7);
+  animation: enterPulse 1.2s infinite;
 }
 
 @keyframes enterPulse {
-  0%, 100% { transform: scale(1); opacity: 0.85; }
-  50% { transform: scale(1.08); opacity: 1; }
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.08); opacity: 0.7; }
 }
 
 #enterScreen.fadeOut {
-  opacity: 0;
-  transform: scale(1.05);
+  animation: fadeOutScreen 0.6s forwards;
+}
+
+@keyframes fadeOutScreen {
+  to {
+    opacity: 0;
+    transform: scale(1.06);
+  }
+}
+
+/* ============================
+   BANNER SECRET HINT
+============================ */
+.banner {
+  position: relative;
+  cursor: pointer;
+}
+
+.bannerHint {
+  position: absolute;
+  bottom: 10px;
+  right: 14px;
+  font-weight: 900;
+  font-size: 13px;
+  color: rgba(255,255,255,0.85);
+  text-shadow: 0 0 12px rgba(0,234,255,0.7),
+               0 0 15px rgba(255,20,147,0.5);
+  opacity: 0.6;
   pointer-events: none;
+  animation: hintPulse 1.4s infinite;
+}
+
+@keyframes hintPulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.85; }
+}
+
+/* ============================
+   SECRET MODE THEME
+============================ */
+body.secretMode {
+  background-image: url("dark.gif") !important;
+  filter: contrast(1.2) saturate(1.1);
+}
+
+body.secretMode .container::before {
+  background: linear-gradient(90deg, black, red, black) !important;
+  opacity: 1;
+}
+
+body.secretMode .container {
+  border: 2px solid rgba(255,0,0,0.75) !important;
+  box-shadow: 0 0 35px rgba(255,0,0,0.35),
+              0 0 90px rgba(0,0,0,0.7) !important;
+}
+
+body.secretMode .title {
+  color: white;
+  text-shadow: 0 0 18px rgba(255,0,0,0.85),
+               0 0 30px rgba(0,0,0,1);
+}
+
+body.secretMode .badge {
+  background: linear-gradient(90deg, black, red) !important;
+  color: white !important;
+}
+
+body.secretMode .box h2,
+body.secretMode .rating-title {
+  color: red !important;
+  text-shadow: 0 0 12px rgba(255,0,0,0.5) !important;
+}
+
+body.secretMode .bio a {
+  color: red !important;
+  text-shadow: 0 0 12px rgba(255,0,0,0.5) !important;
+}
+
+body.secretMode .star.active {
+  color: red !important;
+  text-shadow: 0 0 20px rgba(255,0,0,0.9) !important;
+}
+
+body.secretMode .bigBtn {
+  border: 1px solid rgba(255,0,0,0.35) !important;
+}
+
+body.secretMode .bigBtn:hover {
+  box-shadow: 0 0 18px rgba(255,0,0,0.35) !important;
+}
+
+body.secretMode .dot {
+  background: red !important;
+  box-shadow: 0 0 18px rgba(255,0,0,0.9) !important;
+}
+
+body.secretMode .progressFill {
+  background: linear-gradient(90deg, red, black, red) !important;
 }
