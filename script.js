@@ -572,7 +572,7 @@ function unlockAchievement(name) {
 
   if (!unlocked.includes(name)) {
     unlocked.push(name);
-    localStorage.setItem("achievementsUnlocked", JSON.stringify(unlocked));
+    localStorage.setItem("unlockedAchievements", JSON.stringify(unlocked));
     toast("achievement unlocked: " + name);
     renderAchievements();
   }
