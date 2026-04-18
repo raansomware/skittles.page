@@ -651,3 +651,121 @@ function animateBars() {
 
   requestAnimationFrame(animateBars);
 }
+
+// ============================
+// MINI TERMINAL
+// ============================
+document.addEventListener("DOMContentLoaded", () => {
+  createTerminalUI();
+});
+
+function createTerminalUI() {
+  // avoid duplicate
+  if (document.getElementById("miniTerminal")) return;
+
+  const terminal = document.createElement("div");
+  terminal.id = "miniTerminal";
+
+  terminal.innerHTML = `
+    <div class="terminalHeader">terminal.exe</div>
+    <div class="terminalLog" id="terminalLog"></div>
+    <input class="terminalInput" id="terminalInput" placeholder="type command... (help)" autocomplete="off">
+  `;
+
+  document.body.appendChild(terminal);
+
+  const input = document.getElementById("terminalInput");
+  const log = document.getElementById("terminalLog");
+
+  terminalPrint("type 'help' to see commands");
+
+  input.addEventListener("keydown", (e) => {
+    if (e.key !== "Enter") return;
+
+    const cmd = input.value.trim().toLowerCase();
+    input.value = "";
+
+    if (!cmd) return;
+
+    terminalPrint("> " + cmd);
+
+    runTerminalCommand(cmd);
+  });
+}
+
+function terminalPrint(msg) {
+  const log = document.getElementById("terminalLog");
+  if (!log) return;
+
+  const line = document.createElement("div");
+  line.className = "terminalLine";
+  line.textContent = msg;
+
+  log.appendChild(line);
+  log.scrollTop = log.scrollHeight;
+}
+
+function runTerminalCommand(cmd) {
+  const audio = document.getElementById("audioPlayer");
+
+  if (cmd === "help") {
+    terminalPrint("commands:");
+    terminalPrint("help - show this");
+    terminalPrint("play - start music");
+    terminalPrint("panic - activate panic.exe");
+    terminalPrint("leon - summon leon");
+    terminalPrint("skittles - summon skittlez");
+    terminalPrint("clear - delete all stickers");
+    terminalPrint("");
+    terminalPrint("hint: click the banner if you want something darker...");
+    terminalPrint("hint: achievements exist. you were warned.");
+    return;
+  }
+
+  if (cmd === "play") {
+    if (!audio) {
+      terminalPrint("audioPlayer missing 💀");
+      return;
+    }
+
+    audio.play().then(() => {
+      terminalPrint("playing music 🎵");
+      toast("🎵 music started");
+    }).catch(() => {
+      terminalPrint("can't autoplay. click play button first 😭");
+      toast("click play first (browser blocked autoplay)");
+    });
+
+    return;
+  }
+
+  if (cmd === "panic") {
+    terminalPrint("running panic.exe...");
+    panicMode();
+    return;
+  }
+
+  if (cmd === "clear") {
+    clearAllStickers();
+    terminalPrint("stickers cleared");
+    return;
+  }
+
+  if (cmd === "leon") {
+    terminalPrint("leon kennedy deployed.");
+    createPlacedSticker("leon.png", window.innerWidth / 2, window.innerHeight / 2);
+    triggerSparkles();
+    toast("🦁 leon spawned");
+    return;
+  }
+
+  if (cmd === "skittles") {
+    terminalPrint("summoning skittlez...");
+    createPlacedSticker("skittlez.png", window.innerWidth / 2, window.innerHeight / 2);
+    triggerSparkles();
+    toast("🍬 skittlez spawned");
+    return;
+  }
+
+  terminalPrint("unknown command. try: help");
+}
