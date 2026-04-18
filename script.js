@@ -1,20 +1,15 @@
 // ============================
-// PLAYLIST
+// REAL MUSIC PLAYER
 // ============================
 const playlist = [
-  { name: "buttercup", artist: "Jack Stauber", duration: 180 },
-  { name: "resonance", artist: "Home", duration: 240 }
+  { name: "buttercup", artist: "Jack Stauber", file: "buttercup.mp3" },
+  { name: "resonance", artist: "Home", file: "resonance.mp3" }
 ];
 
 let currentTrack = 0;
-let isPlaying = false;
-let currentTime = 0;
 
-// ============================
-// INIT
-// ============================
 document.addEventListener("DOMContentLoaded", () => {
-  updateSongDisplay();
+  loadTrack(currentTrack);
   updateTrackDisplay();
   loadVisitCount();
   createInitialSparkles();
@@ -24,16 +19,67 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("sparkleBtn")?.addEventListener("click", triggerSparkles);
   document.getElementById("rainbowBtn")?.addEventListener("click", createRainbow);
   document.getElementById("glitchBtn")?.addEventListener("click", glitchEffect);
+
+  setupAudioEvents();
 });
 
 // ============================
-// MUSIC
+// AUDIO
 // ============================
-function updateSongDisplay() {
-  const song = playlist[currentTrack];
+function getAudio() {
+  return document.getElementById("audioPlayer");
+}
+
+function loadTrack(index) {
+  const audio = getAudio();
+  const song = playlist[index];
+
+  audio.src = song.file;
+  audio.load();
+
   document.getElementById("songName").textContent = song.name;
   document.getElementById("artistName").textContent = song.artist;
-  document.getElementById("duration").textContent = formatTime(song.duration);
+}
+
+function togglePlay() {
+  const audio = getAudio();
+  const playBtn = document.getElementById("playBtn");
+
+  if (audio.paused) {
+    audio.play();
+    playBtn.textContent = "⏸";
+    toast("playing 🎵");
+  } else {
+    audio.pause();
+    playBtn.textContent = "▶";
+    toast("paused ⏸");
+  }
+}
+
+function nextSong() {
+  currentTrack = (currentTrack + 1) % playlist.length;
+  loadTrack(currentTrack);
+  updateTrackDisplay();
+
+  const audio = getAudio();
+  audio.play();
+
+  document.getElementById("playBtn").textContent = "⏸";
+  triggerSparkles();
+  toast("next song 🎵");
+}
+
+function previousSong() {
+  currentTrack = (currentTrack - 1 + playlist.length) % playlist.length;
+  loadTrack(currentTrack);
+  updateTrackDisplay();
+
+  const audio = getAudio();
+  audio.play();
+
+  document.getElementById("playBtn").textContent = "⏸";
+  triggerSparkles();
+  toast("previous song 🎵");
 }
 
 function updateTrackDisplay() {
@@ -41,55 +87,34 @@ function updateTrackDisplay() {
     `track ${currentTrack + 1} of ${playlist.length}`;
 }
 
-function togglePlay() {
-  isPlaying = !isPlaying;
-  document.getElementById("playBtn").textContent = isPlaying ? "⏸" : "▶";
+function setupAudioEvents() {
+  const audio = getAudio();
+  const slider = document.getElementById("progressSlider");
+  const fill = document.getElementById("progressFill");
 
-  if (isPlaying) simulatePlayback();
-}
+  audio.addEventListener("timeupdate", () => {
+    if (!audio.duration) return;
 
-function simulatePlayback() {
-  if (!isPlaying) return;
+    const percent = (audio.currentTime / audio.duration) * 100;
+    slider.value = percent;
+    fill.style.width = percent + "%";
 
-  const song = playlist[currentTrack];
-  currentTime += 0.05;
+    document.getElementById("currentTime").textContent = formatTime(audio.currentTime);
+    document.getElementById("duration").textContent = formatTime(audio.duration);
+  });
 
-  if (currentTime >= song.duration) {
+  slider.addEventListener("input", (e) => {
+    if (!audio.duration) return;
+    audio.currentTime = (e.target.value / 100) * audio.duration;
+  });
+
+  document.getElementById("volumeSlider").addEventListener("input", (e) => {
+    audio.volume = e.target.value;
+  });
+
+  audio.addEventListener("ended", () => {
     nextSong();
-    return;
-  }
-
-  updateProgress();
-  setTimeout(simulatePlayback, 50);
-}
-
-function updateProgress() {
-  const song = playlist[currentTrack];
-  const percent = (currentTime / song.duration) * 100;
-
-  document.getElementById("progressFill").style.width = percent + "%";
-  document.getElementById("progressSlider").value = percent;
-  document.getElementById("currentTime").textContent = formatTime(currentTime);
-}
-
-function nextSong() {
-  currentTrack = (currentTrack + 1) % playlist.length;
-  currentTime = 0;
-  updateSongDisplay();
-  updateTrackDisplay();
-  updateProgress();
-  triggerSparkles();
-  toast("next song 🎵");
-}
-
-function previousSong() {
-  currentTrack = (currentTrack - 1 + playlist.length) % playlist.length;
-  currentTime = 0;
-  updateSongDisplay();
-  updateTrackDisplay();
-  updateProgress();
-  triggerSparkles();
-  toast("previous song 🎵");
+  });
 }
 
 function formatTime(seconds) {
@@ -97,12 +122,6 @@ function formatTime(seconds) {
   const secs = Math.floor(seconds % 60);
   return `${mins}:${secs.toString().padStart(2, "0")}`;
 }
-
-document.getElementById("progressSlider")?.addEventListener("input", (e) => {
-  const song = playlist[currentTrack];
-  currentTime = (e.target.value / 100) * song.duration;
-  updateProgress();
-});
 
 // ============================
 // VISITS
@@ -208,7 +227,7 @@ function toast(msg) {
 }
 
 // ============================
-// BUTTONS
+// BUTTON FX
 // ============================
 function createRainbow() {
   triggerSparkles();
@@ -279,7 +298,6 @@ document.addEventListener("dragover", (e) => {
 document.addEventListener("drop", (e) => {
   e.preventDefault();
 
-  // drop custom image file
   if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
     const file = e.dataTransfer.files[0];
 
@@ -299,7 +317,6 @@ document.addEventListener("drop", (e) => {
     return;
   }
 
-  // drop from palette
   const stickerType = e.dataTransfer.getData("text/plain") || draggedStickerType;
   if (!stickerType) return;
 
