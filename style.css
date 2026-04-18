@@ -683,8 +683,9 @@ img {
 .sticker-canvas {
   position: fixed;
   inset: 0;
-  pointer-events: auto;
   z-index: 999999;
+  pointer-events: none; /* THIS IS IMPORTANT */
+}
 }
 
 .placed-sticker {
