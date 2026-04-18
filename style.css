@@ -904,3 +904,80 @@ body.secret-mode .stickers-box {
     display: none;
   }
 }
+
+/* ============================
+   MINI TERMINAL
+============================ */
+#miniTerminal {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 320px;
+  height: 240px;
+  z-index: 99999999;
+
+  background: rgba(0,0,0,0.78);
+  border: 1px solid rgba(0,234,255,0.35);
+  border-radius: 18px;
+  backdrop-filter: blur(12px);
+
+  box-shadow: 0 0 25px rgba(0,234,255,0.15),
+              0 0 35px rgba(255,20,147,0.12);
+
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.terminalHeader {
+  padding: 10px 12px;
+  font-weight: 900;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+
+  color: var(--neonblue);
+  background: rgba(255,255,255,0.05);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+
+  text-shadow: 0 0 12px rgba(0,234,255,0.5);
+}
+
+.terminalLog {
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto;
+  font-size: 12px;
+  font-weight: 800;
+  color: rgba(255,255,255,0.85);
+}
+
+.terminalLine {
+  margin-bottom: 6px;
+  white-space: pre-wrap;
+}
+
+.terminalInput {
+  border: none;
+  outline: none;
+  padding: 12px;
+  font-weight: 900;
+  font-size: 12px;
+
+  background: rgba(0,0,0,0.65);
+  color: white;
+
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+.terminalInput::placeholder {
+  color: rgba(255,255,255,0.45);
+  font-weight: 900;
+}
+
+/* mobile hide */
+@media (max-width: 750px) {
+  #miniTerminal {
+    display: none;
+  }
+}
