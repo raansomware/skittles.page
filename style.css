@@ -981,3 +981,69 @@ body.secret-mode .stickers-box {
     display: none;
   }
 }
+.smallText {
+  font-size: 12px;
+  margin-top: 8px;
+  color: rgba(255,255,255,0.7);
+  font-weight: 800;
+}
+
+.mootsGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.mootCard {
+  background: rgba(0,0,0,0.5);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 18px;
+  padding: 14px;
+}
+
+.mootPfp {
+  width: 60px;
+  height: 60px;
+  border-radius: 16px;
+  object-fit: cover;
+  margin-bottom: 8px;
+}
+
+.mootName {
+  font-weight: 900;
+  color: var(--neonblue);
+  margin-bottom: 4px;
+}
+
+.mootPhrase {
+  font-weight: 900;
+  color: var(--neonyellow);
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+.mootDesc {
+  font-size: 13px;
+  font-weight: 800;
+  color: rgba(255,255,255,0.85);
+}
+
+.stampGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.stamp {
+  width: 100%;
+  border-radius: 14px;
+  cursor: pointer;
+  opacity: 0.4;
+  transition: 0.2s;
+}
+
+.stamp.collected {
+  opacity: 1;
+  transform: scale(1.05);
+}
