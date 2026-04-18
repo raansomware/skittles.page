@@ -1,6 +1,5 @@
-
 // ============================
-// PLAYLIST (REAL MP3 PLAYER)
+// PLAYLIST (REAL MP3)
 // ============================
 const playlist = [
   { name: "buttercup", artist: "Jack Stauber", file: "buttercup.mp3" },
@@ -9,136 +8,195 @@ const playlist = [
 
 let currentTrack = 0;
 let isPlaying = false;
+let draggedStickerType = null;
 
-const audio = document.getElementById("audioPlayer");
+// achievement counters
+let sparkleClicks = parseInt(localStorage.getItem("sparkleClicks") || "0");
+let rainbowClicks = parseInt(localStorage.getItem("rainbowClicks") || "0");
+let glitchClicks = parseInt(localStorage.getItem("glitchClicks") || "0");
+
+// achievements data
+const achievements = {
+  sparkle10: { name: "sparkle addict", desc: "click sparkles 10 times", unlocked: false },
+  rainbow5: { name: "rainbow demon", desc: "use rainbow mode 5 times", unlocked: false },
+  glitch5: { name: "glitch gremlin", desc: "use glitch 5 times", unlocked: false },
+  guestbook: { name: "guestbook signer", desc: "sign the guestbook", unlocked: false },
+  secret: { name: "secret mode", desc: "clicked thomas banner", unlocked: false }
+};
 
 // ============================
 // INIT
 // ============================
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("SCRIPT LOADED ✅");
-
-  loadSong(currentTrack);
+  setupEnterScreen();
+  setupButtons();
+  setupMusic();
+  setupStickers();
+  setupCustomStickerUpload();
   loadVisitCount();
   createInitialSparkles();
-  startCursorTrail();
-  setupCustomStickerUpload();
 
-  // buttons
-  document.getElementById("sparkleBtn")?.addEventListener("click", triggerSparkles);
-  document.getElementById("rainbowBtn")?.addEventListener("click", createRainbow);
-  document.getElementById("glitchBtn")?.addEventListener("click", glitchEffect);
+  loadGuestbook();
+  loadAchievements();
+  setupAchievementTracking();
 
-  // click to enter screen
-  const enterScreen = document.getElementById("enterScreen");
-  if (enterScreen) {
-    enterScreen.addEventListener("click", () => {
-      enterScreen.classList.add("fadeOut");
-
-      setTimeout(() => {
-        enterScreen.remove();
-        toast("welcome 😈");
-        triggerSparkles();
-      }, 650);
-    });
-  }
-
-  // volume slider
-  document.getElementById("volumeSlider")?.addEventListener("input", (e) => {
-    audio.volume = e.target.value;
-  });
-
-  // progress slider
-  document.getElementById("progressSlider")?.addEventListener("input", (e) => {
-    const percent = e.target.value;
-    audio.currentTime = (percent / 100) * audio.duration;
-  });
-
-  // update progress live
-  audio.addEventListener("timeupdate", updateProgress);
-
-  // auto next song
-  audio.addEventListener("ended", () => {
-    nextSong();
-  });
+  setupSecretBanner();
 });
 
 // ============================
-// LOAD SONG
+// CLICK TO ENTER
 // ============================
-function loadSong(index) {
-  const song = playlist[index];
+function setupEnterScreen() {
+  const enterScreen = document.getElementById("enterScreen");
+  if (!enterScreen) return;
 
-  audio.src = song.file;
+  enterScreen.addEventListener("click", () => {
+    enterScreen.classList.add("fadeOut");
+    setTimeout(() => enterScreen.remove(), 650);
+  });
+}
+
+// ============================
+// SECRET MODE (BANNER CLICK)
+// ============================
+function setupSecretBanner() {
+  const banner = document.getElementById("secretBanner");
+  if (!banner) return;
+
+  banner.addEventListener("click", () => {
+    document.body.classList.toggle("secretMode");
+
+    if (document.body.classList.contains("secretMode")) {
+      toast("🩸 SECRET MODE ENABLED");
+      unlockAchievement("secret");
+    } else {
+      toast("secret mode off");
+    }
+
+    triggerSparkles();
+  });
+}
+
+// ============================
+// BUTTONS
+// ============================
+function setupButtons() {
+  document.getElementById("sparkleBtn")?.addEventListener("click", () => {
+    triggerSparkles();
+    toast("✨ sparkles");
+  });
+
+  document.getElementById("rainbowBtn")?.addEventListener("click", () => {
+    createRainbow();
+  });
+
+  document.getElementById("glitchBtn")?.addEventListener("click", () => {
+    glitchEffect();
+  });
+}
+
+// ============================
+// MUSIC PLAYER REAL
+// ============================
+function setupMusic() {
+  const audio = document.getElementById("audioPlayer");
+  if (!audio) return;
+
+  audio.volume = 0.7;
+
+  loadTrack();
+
+  document.getElementById("volumeSlider")?.addEventListener("input", (e) => {
+    audio.volume = parseFloat(e.target.value);
+  });
+
+  document.getElementById("progressSlider")?.addEventListener("input", (e) => {
+    if (!audio.duration) return;
+    audio.currentTime = (parseFloat(e.target.value) / 100) * audio.duration;
+  });
+
+  audio.addEventListener("timeupdate", () => {
+    if (!audio.duration) return;
+
+    const percent = (audio.currentTime / audio.duration) * 100;
+    document.getElementById("progressFill").style.width = percent + "%";
+    document.getElementById("progressSlider").value = percent;
+
+    document.getElementById("currentTime").textContent = formatTime(audio.currentTime);
+    document.getElementById("duration").textContent = formatTime(audio.duration);
+  });
+
+  audio.addEventListener("ended", () => {
+    nextSong();
+  });
+
+  audio.addEventListener("error", () => {
+    document.getElementById("songName").textContent = "MP3 missing";
+    document.getElementById("artistName").textContent = "file not found 💀";
+
+    document.getElementById("duration").textContent = "0:00";
+    document.getElementById("currentTime").textContent = "0:00";
+
+    document.getElementById("progressFill").style.width = "0%";
+    document.getElementById("progressSlider").value = 0;
+
+    toast("❌ MP3 missing (check filename)");
+  });
+}
+
+function loadTrack() {
+  const audio = document.getElementById("audioPlayer");
+  const song = playlist[currentTrack];
 
   document.getElementById("songName").textContent = song.name;
   document.getElementById("artistName").textContent = song.artist;
   document.getElementById("trackText").textContent =
-    `track ${index + 1} of ${playlist.length}`;
+    `track ${currentTrack + 1} of ${playlist.length}`;
 
-  audio.addEventListener("loadedmetadata", () => {
-    document.getElementById("duration").textContent = formatTime(audio.duration);
-  });
-
-  updateProgress();
+  audio.src = song.file;
 }
 
-// ============================
-// MUSIC CONTROLS
-// ============================
 function togglePlay() {
-  if (!audio.src) loadSong(currentTrack);
+  const audio = document.getElementById("audioPlayer");
+  if (!audio) return;
 
-  if (audio.paused) {
+  isPlaying = !isPlaying;
+
+  document.getElementById("playBtn").textContent = isPlaying ? "⏸" : "▶";
+
+  if (isPlaying) {
     audio.play();
-    isPlaying = true;
-    document.getElementById("playBtn").textContent = "⏸";
-    toast("playing 🎵");
+    toast("▶ playing");
   } else {
     audio.pause();
-    isPlaying = false;
-    document.getElementById("playBtn").textContent = "▶";
-    toast("paused ⏸");
+    toast("⏸ paused");
   }
-
-  triggerSparkles();
 }
 
 function nextSong() {
+  const audio = document.getElementById("audioPlayer");
+
   currentTrack = (currentTrack + 1) % playlist.length;
-  loadSong(currentTrack);
-  audio.play();
-  document.getElementById("playBtn").textContent = "⏸";
-  toast("next song 🎶");
+  loadTrack();
+
+  if (isPlaying) audio.play();
+
   triggerSparkles();
+  toast("next song 🎵");
 }
 
 function previousSong() {
+  const audio = document.getElementById("audioPlayer");
+
   currentTrack = (currentTrack - 1 + playlist.length) % playlist.length;
-  loadSong(currentTrack);
-  audio.play();
-  document.getElementById("playBtn").textContent = "⏸";
-  toast("previous song 🎶");
+  loadTrack();
+
+  if (isPlaying) audio.play();
+
   triggerSparkles();
+  toast("previous song 🎵");
 }
 
-// ============================
-// PROGRESS BAR
-// ============================
-function updateProgress() {
-  if (!audio.duration) return;
-
-  const percent = (audio.currentTime / audio.duration) * 100;
-
-  document.getElementById("progressFill").style.width = percent + "%";
-  document.getElementById("progressSlider").value = percent;
-
-  document.getElementById("currentTime").textContent = formatTime(audio.currentTime);
-}
-
-// ============================
-// FORMAT TIME
-// ============================
 function formatTime(seconds) {
   const mins = Math.floor(seconds / 60);
   const secs = Math.floor(seconds % 60);
@@ -146,15 +204,14 @@ function formatTime(seconds) {
 }
 
 // ============================
-// VISITS
+// VISIT COUNTER
 // ============================
 function loadVisitCount() {
   let count = localStorage.getItem("visitCount") || 0;
   count = parseInt(count) + 1;
   localStorage.setItem("visitCount", count);
 
-  const el = document.getElementById("visitCount");
-  if (el) el.textContent = count;
+  document.getElementById("visitCount").textContent = count;
 }
 
 // ============================
@@ -171,7 +228,13 @@ function createSparkle(x = null, y = null) {
   if (!container) return;
 
   const sparkle = document.createElement("div");
-  const emojis = ["✨", "💫", "⭐", "🌟", "💥", "🎆", "🎇", "💖", "🌈"];
+
+  const emojisNormal = ["✨", "💫", "⭐", "🌟", "💥", "🎆", "🎇", "💖", "🌈"];
+  const emojisSecret = ["🩸", "🔥", "☠️", "🖤", "💀", "🔪"];
+
+  const emojis = document.body.classList.contains("secretMode")
+    ? emojisSecret
+    : emojisNormal;
 
   sparkle.textContent = emojis[Math.floor(Math.random() * emojis.length)];
   sparkle.className = "sparkle";
@@ -196,38 +259,6 @@ function triggerSparkles() {
 }
 
 // ============================
-// CURSOR TRAIL
-// ============================
-function startCursorTrail() {
-  document.addEventListener("mousemove", (e) => {
-    const trail = document.createElement("div");
-    const emojis = ["✦", "✧", "★", "☆", "✺", "✹", "✷", "✵"];
-
-    trail.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-    trail.style.position = "fixed";
-    trail.style.left = e.clientX + "px";
-    trail.style.top = e.clientY + "px";
-    trail.style.transform = "translate(-50%, -50%)";
-    trail.style.pointerEvents = "none";
-    trail.style.zIndex = "99999999";
-    trail.style.fontSize = (12 + Math.random() * 16) + "px";
-    trail.style.color = "white";
-    trail.style.textShadow =
-      "0 0 10px rgba(0,234,255,0.8), 0 0 18px rgba(255,20,147,0.6)";
-
-    document.body.appendChild(trail);
-
-    setTimeout(() => {
-      trail.style.transition = "0.6s";
-      trail.style.opacity = "0";
-      trail.style.transform = "translate(-50%, -80%) scale(0)";
-    }, 10);
-
-    setTimeout(() => trail.remove(), 650);
-  });
-}
-
-// ============================
 // TOAST
 // ============================
 function toast(msg) {
@@ -249,10 +280,16 @@ function toast(msg) {
 }
 
 // ============================
-// BUTTON EFFECTS
+// RAINBOW + GLITCH
 // ============================
 function createRainbow() {
   triggerSparkles();
+
+  if (document.body.classList.contains("secretMode")) {
+    toast("🩸 no rainbow in secret mode");
+    return;
+  }
+
   document.body.style.transition = "0.6s";
   document.body.style.filter = "hue-rotate(220deg) saturate(2)";
 
@@ -305,44 +342,36 @@ function rateMe(rating) {
 // ============================
 // STICKERS
 // ============================
-let draggedStickerType = null;
+function setupStickers() {
+  document.addEventListener("dragover", (e) => e.preventDefault());
+
+  document.addEventListener("drop", (e) => {
+    e.preventDefault();
+
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      const file = e.dataTransfer.files[0];
+      if (!file.type.startsWith("image/")) return;
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        createPlacedSticker(reader.result, e.clientX, e.clientY);
+      };
+      reader.readAsDataURL(file);
+      return;
+    }
+
+    const stickerType = e.dataTransfer.getData("text/plain") || draggedStickerType;
+    if (!stickerType) return;
+
+    createPlacedSticker(stickerType, e.clientX, e.clientY);
+  });
+}
 
 function startStickerDrag(e, stickerType) {
   draggedStickerType = stickerType;
   e.dataTransfer.setData("text/plain", stickerType);
   e.dataTransfer.effectAllowed = "copy";
 }
-
-document.addEventListener("dragover", (e) => {
-  e.preventDefault();
-});
-
-document.addEventListener("drop", (e) => {
-  e.preventDefault();
-
-  // drop file image
-  if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-    const file = e.dataTransfer.files[0];
-
-    if (!file.type.startsWith("image/")) return;
-
-    const reader = new FileReader();
-    reader.onload = () => {
-      createPlacedSticker(reader.result, e.clientX, e.clientY);
-      triggerSparkles();
-      toast("custom sticker added!! 💖");
-    };
-    reader.readAsDataURL(file);
-    return;
-  }
-
-  // drop palette sticker
-  const stickerType = e.dataTransfer.getData("text/plain") || draggedStickerType;
-  if (!stickerType) return;
-
-  createPlacedSticker(stickerType, e.clientX, e.clientY);
-  triggerSparkles();
-});
 
 function createPlacedSticker(src, x, y) {
   const canvas = document.getElementById("stickerCanvas");
@@ -361,17 +390,23 @@ function createPlacedSticker(src, x, y) {
   img.src = src;
   img.draggable = false;
 
-  const del = document.createElement("button");
-  del.className = "sticker-delete-btn";
-  del.textContent = "✕";
-  del.onclick = () => sticker.remove();
+  const deleteBtn = document.createElement("button");
+  deleteBtn.className = "sticker-delete-btn";
+  deleteBtn.textContent = "✕";
+
+  deleteBtn.onclick = (ev) => {
+    ev.stopPropagation();
+    sticker.remove();
+    toast("sticker deleted");
+  };
 
   sticker.appendChild(img);
-  sticker.appendChild(del);
-
+  sticker.appendChild(deleteBtn);
   canvas.appendChild(sticker);
 
   makeStickerDraggable(sticker);
+
+  triggerSparkles();
 }
 
 function makeStickerDraggable(sticker) {
@@ -403,7 +438,9 @@ function clearAllStickers() {
   toast("stickers cleared");
 }
 
-// upload custom sticker
+// ============================
+// CUSTOM STICKER UPLOAD
+// ============================
 function setupCustomStickerUpload() {
   const input = document.getElementById("customStickerInput");
   if (!input) return;
@@ -420,10 +457,144 @@ function setupCustomStickerUpload() {
     const reader = new FileReader();
     reader.onload = () => {
       createPlacedSticker(reader.result, window.innerWidth / 2, window.innerHeight / 2);
-      triggerSparkles();
       toast("custom sticker added!! 💖");
     };
 
     reader.readAsDataURL(file);
+  });
+}
+
+// ============================
+// GUESTBOOK
+// ============================
+function loadGuestbook() {
+  const list = document.getElementById("guestbookList");
+  if (!list) return;
+
+  list.innerHTML = "";
+
+  const entries = JSON.parse(localStorage.getItem("guestbookEntries") || "[]");
+
+  entries.reverse().forEach((entry) => {
+    const div = document.createElement("div");
+    div.className = "guestEntry";
+
+    div.innerHTML = `
+      <div class="guestTop">
+        <span>${entry.name}</span>
+        <span>${entry.date}</span>
+      </div>
+      <div class="guestMsg">${entry.msg}</div>
+    `;
+
+    list.appendChild(div);
+  });
+
+  document.getElementById("guestSubmit")?.addEventListener("click", () => {
+    const name = document.getElementById("guestName").value.trim();
+    const msg = document.getElementById("guestMsg").value.trim();
+
+    if (!name || !msg) {
+      toast("fill name + message 😭");
+      return;
+    }
+
+    addGuestbookEntry(name, msg);
+
+    document.getElementById("guestName").value = "";
+    document.getElementById("guestMsg").value = "";
+  });
+}
+
+function addGuestbookEntry(name, msg) {
+  const entries = JSON.parse(localStorage.getItem("guestbookEntries") || "[]");
+
+  entries.push({
+    name,
+    msg,
+    date: new Date().toLocaleDateString()
+  });
+
+  localStorage.setItem("guestbookEntries", JSON.stringify(entries));
+  loadGuestbook();
+
+  triggerSparkles();
+  toast("signed guestbook 💖");
+
+  unlockAchievement("guestbook");
+}
+
+// ============================
+// ACHIEVEMENTS
+// ============================
+function loadAchievements() {
+  const saved = JSON.parse(localStorage.getItem("achievementsUnlocked") || "{}");
+
+  for (const key in achievements) {
+    if (saved[key]) achievements[key].unlocked = true;
+  }
+
+  renderAchievements();
+}
+
+function renderAchievements() {
+  const box = document.getElementById("achievementsList");
+  if (!box) return;
+
+  box.innerHTML = "";
+
+  for (const key in achievements) {
+    const ach = achievements[key];
+
+    const div = document.createElement("div");
+    div.className = "achievement" + (ach.unlocked ? "" : " locked");
+
+    div.innerHTML = `
+      <div>
+        ${ach.name}<br>
+        <span>${ach.desc}</span>
+      </div>
+      <div>${ach.unlocked ? "✅" : "🔒"}</div>
+    `;
+
+    box.appendChild(div);
+  }
+}
+
+function unlockAchievement(key) {
+  if (!achievements[key]) return;
+  if (achievements[key].unlocked) return;
+
+  achievements[key].unlocked = true;
+
+  const saved = JSON.parse(localStorage.getItem("achievementsUnlocked") || "{}");
+  saved[key] = true;
+  localStorage.setItem("achievementsUnlocked", JSON.stringify(saved));
+
+  renderAchievements();
+  toast("🏆 achievement unlocked: " + achievements[key].name);
+  triggerSparkles();
+}
+
+function setupAchievementTracking() {
+  document.getElementById("sparkleBtn")?.addEventListener("click", () => {
+    sparkleClicks++;
+    localStorage.setItem("sparkleClicks", sparkleClicks);
+
+    if (sparkleClicks >= 10) unlockAchievement("sparkle10");
+  });
+
+  document.getElementById("rainbowBtn")?.addEventListener("click", () => {
+    rainbowClicks++;
+    localStorage.setItem("rainbowClicks", rainbowClicks);
+
+    if (rainbowClicks >= 5) unlockAchievement("rainbow5");
+  });
+
+  document.getElementById("glitchBtn")?.addEventListener("click", () => {
+    glitchClicks++;
+    localStorage.setItem("glitchClicks", glitchClicks);
+
+    if (glitchClicks >= 5) unlockAchievement("glitch5");
   });
 }
