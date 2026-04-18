@@ -568,7 +568,7 @@ function setupAchievements() {
 }
 
 function unlockAchievement(name) {
-  let unlocked = JSON.parse(localStorage.getItem("achievementsUnlocked") || "[]");
+  let unlocked = JSON.parse(localStorage.getItem("unlockedAchievements") || "[]");
 
   if (!unlocked.includes(name)) {
     unlocked.push(name);
