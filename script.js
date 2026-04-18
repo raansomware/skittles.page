@@ -427,6 +427,5 @@ function setupCustomStickerUpload() {
     reader.readAsDataURL(file);
   });
 }
-```
 
 ---
