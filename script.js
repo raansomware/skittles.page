@@ -1,8 +1,6 @@
 // ============================
 // PLAYLIST
 // ============================
-console.log("SCRIPT RUNNING 2026");
-
 const playlist = [
   { name: "buttercup", artist: "Jack Stauber", duration: 180 },
   { name: "resonance", artist: "Home", duration: 240 }
@@ -22,9 +20,10 @@ document.addEventListener("DOMContentLoaded", () => {
   createInitialSparkles();
   startCursorTrail();
   setupCustomStickerUpload();
+
   document.getElementById("sparkleBtn")?.addEventListener("click", triggerSparkles);
-document.getElementById("rainbowBtn")?.addEventListener("click", createRainbow);
-document.getElementById("glitchBtn")?.addEventListener("click", glitchEffect);
+  document.getElementById("rainbowBtn")?.addEventListener("click", createRainbow);
+  document.getElementById("glitchBtn")?.addEventListener("click", glitchEffect);
 });
 
 // ============================
@@ -169,7 +168,7 @@ function startCursorTrail() {
     trail.style.top = e.clientY + "px";
     trail.style.transform = "translate(-50%, -50%)";
     trail.style.pointerEvents = "none";
-    trail.style.zIndex = "99999999";
+    trail.style.zIndex = "999999999";
     trail.style.fontSize = (12 + Math.random() * 16) + "px";
     trail.style.color = "white";
     trail.style.textShadow =
@@ -209,7 +208,7 @@ function toast(msg) {
 }
 
 // ============================
-// BUTTON FUNCTIONS
+// BUTTONS
 // ============================
 function createRainbow() {
   triggerSparkles();
@@ -280,7 +279,7 @@ document.addEventListener("dragover", (e) => {
 document.addEventListener("drop", (e) => {
   e.preventDefault();
 
-  // drop custom file image anywhere
+  // drop custom image file
   if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
     const file = e.dataTransfer.files[0];
 
@@ -371,7 +370,7 @@ function clearAllStickers() {
 }
 
 // ============================
-// CUSTOM STICKER UPLOAD BUTTON
+// CUSTOM STICKER UPLOAD
 // ============================
 function setupCustomStickerUpload() {
   const input = document.getElementById("customStickerInput");
