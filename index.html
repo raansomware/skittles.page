@@ -78,6 +78,8 @@
     <div class="music-player">
       <audio id="audioPlayer"></audio>
 
+      <div id="visualizer"></div>
+
       <div class="now-playing">
         <span class="dot"></span>
         <span>NOW PLAYING</span>
@@ -87,8 +89,8 @@
         <div class="album-art">🎵</div>
 
         <div class="song-info">
-          <div class="song-name" id="songName">buttercup</div>
-          <div class="artist-name" id="artistName">Jack Stauber</div>
+          <div class="song-name" id="songName">loading...</div>
+          <div class="artist-name" id="artistName">...</div>
         </div>
       </div>
 
@@ -113,7 +115,7 @@
         <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.7">
       </div>
 
-      <div class="trackText" id="trackText">track 1 of 2</div>
+      <div class="trackText" id="trackText">track ?</div>
     </div>
 
     <div class="rating-section">
@@ -131,6 +133,7 @@
       <button class="bigBtn" id="sparkleBtn">✨ sparkles</button>
       <button class="bigBtn" id="rainbowBtn">🌈 rainbow mode</button>
       <button class="bigBtn" id="glitchBtn">⚡ glitch</button>
+      <button class="bigBtn panicBtn" id="panicBtn">🚨 PANIC.exe</button>
     </div>
 
     <div class="stickers-box">
@@ -187,6 +190,10 @@
 
   <div class="sticker-canvas" id="stickerCanvas"></div>
 
-  <script src="script.js?v=999"></script>
+  <div id="panicOverlay">
+    <div class="panicText">nothing to see here.</div>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
