@@ -67,43 +67,45 @@
       <p>♡ ノ follow to be moots + appreciated</p>
     </div>
 
-    <div class="music-player">
-      <div class="now-playing">
-        <span class="dot"></span>
-        <span>NOW PLAYING</span>
-      </div>
+<div class="music-player">
+  <audio id="audioPlayer"></audio>
 
-      <div class="song-row">
-        <div class="album-art">🎵</div>
-        <div class="song-info">
-          <div class="song-name" id="songName">buttercup</div>
-          <div class="artist-name" id="artistName">Jack Stauber</div>
-        </div>
-      </div>
+  <div class="now-playing">
+    <span class="dot"></span>
+    <span>NOW PLAYING</span>
+  </div>
 
-      <div class="progressBar">
-        <div class="progressFill" id="progressFill"></div>
-        <input type="range" id="progressSlider" min="0" max="100" value="0">
-      </div>
-
-      <div class="timeRow">
-        <span id="currentTime">0:00</span>
-        <span id="duration">0:00</span>
-      </div>
-
-      <div class="playerBtns">
-        <button onclick="previousSong()">⏮</button>
-        <button id="playBtn" onclick="togglePlay()">▶</button>
-        <button onclick="nextSong()">⏭</button>
-      </div>
-
-      <div class="volumeRow">
-        <span>🔊</span>
-        <input type="range" id="volumeSlider" min="0" max="100" value="70">
-      </div>
-
-      <div class="trackText" id="trackText">track 1 of 2</div>
+  <div class="song-row">
+    <div class="album-art">🎵</div>
+    <div class="song-info">
+      <div class="song-name" id="songName">buttercup</div>
+      <div class="artist-name" id="artistName">Jack Stauber</div>
     </div>
+  </div>
+
+  <div class="progressBar">
+    <div class="progressFill" id="progressFill"></div>
+    <input type="range" id="progressSlider" min="0" max="100" value="0">
+  </div>
+
+  <div class="timeRow">
+    <span id="currentTime">0:00</span>
+    <span id="duration">0:00</span>
+  </div>
+
+  <div class="playerBtns">
+    <button onclick="previousSong()">⏮</button>
+    <button id="playBtn" onclick="togglePlay()">▶</button>
+    <button onclick="nextSong()">⏭</button>
+  </div>
+
+  <div class="volumeRow">
+    <span>🔊</span>
+    <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.7">
+  </div>
+
+  <div class="trackText" id="trackText">track 1 of 2</div>
+</div>
 
     <div class="rating-section">
       <div class="rating-title">RATE THIS PAGE</div>
