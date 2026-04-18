@@ -769,3 +769,56 @@ function runTerminalCommand(cmd) {
 
   terminalPrint("unknown command. try: help");
 }
+// ========================
+// MOOT REQUEST
+// ========================
+
+const mootBtn = document.getElementById("mootRequestBtn");
+const mootCountEl = document.getElementById("mootCount");
+
+if (mootBtn) {
+  let count = parseInt(localStorage.getItem("mootRequests") || "0");
+  if (mootCountEl) mootCountEl.textContent = count;
+
+  mootBtn.addEventListener("click", () => {
+    count++;
+    localStorage.setItem("mootRequests", count);
+    if (mootCountEl) mootCountEl.textContent = count;
+    toast("moot request sent 💌");
+  });
+}
+
+// ========================
+// STAMPS
+// ========================
+
+const stamps = document.querySelectorAll(".stamp");
+const stampCountEl = document.getElementById("stampCount");
+
+let collected = JSON.parse(localStorage.getItem("collectedStamps") || "[]");
+
+function updateStampUI() {
+  stamps.forEach(stamp => {
+    const id = stamp.dataset.stamp;
+    if (collected.includes(id)) {
+      stamp.classList.add("collected");
+    }
+  });
+
+  if (stampCountEl) stampCountEl.textContent = collected.length;
+}
+
+stamps.forEach(stamp => {
+  stamp.addEventListener("click", () => {
+    const id = stamp.dataset.stamp;
+
+    if (!collected.includes(id)) {
+      collected.push(id);
+      localStorage.setItem("collectedStamps", JSON.stringify(collected));
+      updateStampUI();
+      toast("stamp collected ✨");
+    }
+  });
+});
+
+updateStampUI();
