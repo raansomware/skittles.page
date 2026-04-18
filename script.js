@@ -366,7 +366,6 @@ function clearAllStickers() {
   triggerSparkles();
   toast("stickers cleared");
 }
-}
 
 // ============================
 // CUSTOM STICKER UPLOAD BUTTON
