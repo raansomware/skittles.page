@@ -1,7 +1,7 @@
 // ============================
 // PLAYLIST
 // ============================
-alert("SCRIPT LOADED");
+console.log("SCRIPT RUNNING 2026");
 
 const playlist = [
   { name: "buttercup", artist: "Jack Stauber", duration: 180 },
