@@ -22,6 +22,9 @@ document.addEventListener("DOMContentLoaded", () => {
   createInitialSparkles();
   startCursorTrail();
   setupCustomStickerUpload();
+  document.getElementById("sparkleBtn")?.addEventListener("click", triggerSparkles);
+document.getElementById("rainbowBtn")?.addEventListener("click", createRainbow);
+document.getElementById("glitchBtn")?.addEventListener("click", glitchEffect);
 });
 
 // ============================
