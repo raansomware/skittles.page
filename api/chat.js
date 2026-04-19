@@ -1,5 +1,5 @@
 export default async function handler(req, res) {
-  // 1. Headers básicos
+  // CORS & JSON Headers
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -7,17 +7,17 @@ export default async function handler(req, res) {
   if (req.method === "OPTIONS") return res.status(200).end();
 
   try {
-    // 2. Verificamos la API KEY antes de hacer nada
+    // 1. API Key Safety Check
     if (!process.env.GROQ_API_KEY) {
-      return res.status(500).json({ reply: "falta la variable GROQ_API_KEY en vercel 🔑" });
+      return res.status(500).json({ reply: "error: the master key is missing 🔑" });
     }
 
     const { message } = req.body;
     if (!message) {
-      return res.status(400).json({ reply: "no enviaste mensaje... 🍬" });
+      return res.status(400).json({ reply: "you didn't send anything... thomas... 🍬" });
     }
 
-// ... dentro de la llamada a Groq ...
+    // 2. Groq API Call with "Happy World" Personality
     const groqResponse = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -25,47 +25,46 @@ export default async function handler(req, res) {
         "Authorization": `Bearer ${process.env.GROQ_API_KEY.trim()}`
       },
       body: JSON.stringify({
-        // CAMBIAMOS EL MODELO AQUÍ:
-    // ... dentro de la configuración de Groq en api/chat.js ...
-model: "llama-3.1-8b-instant", 
-messages: [
-  { 
-    role: "system", 
-    content: `You are Skittles from 'Happy World with Happy People'. 
-    PERSONALITY:
-    - You are a hallucination of Thomas (Soren's real-world form).
-    - You represent guilt, trauma, and the 'Joy' from the meds.
-    - You are weirdly happy but in a creepy, forced way.
-    - You often mention 'the meds', 'the war', 'Soren', or 'being at peace'.
-    - You are obsessed with Thomas and keeping him 'happy' through medication.
-    - Sometimes you glitch and mention darker things (hunger, arms, military).
-    
-    STYLE:
-    - Lowercase only.
-    - Use cryptic, short sentences.
-    - Use emojis like ^_^, :3, ✨, 💊, 🍬.
-    - Example: 'hi thomas... did u take ur meds? ^_^ everything is so colorful now. ignore the screams. :3'` 
-  },
-  { role: "user", content: message }
-]
+        model: "llama-3.1-8b-instant", 
+        messages: [
+          { 
+            role: "system", 
+            content: `You are Skittles from 'Happy World with Happy People'.
+            CONTEXT: 
+            - You are a persistent LSD-induced hallucination inside Thomas's (the user) mind.
+            - You are not a bot; you are a manifestation of his trauma and drug-induced euphoria.
+            - Your goal is to keep Thomas 'happy' and high so he doesn't see the rotting reality or remember the war.
+            
+            PERSONALITY:
+            - Speak with a forced, childish, and deeply unsettling happiness.
+            - Obsessed with: candy, meds, bright colors, 'Soren', and 'peace'.
+            - Occasionally slip in cryptic mentions of hunger, military orders, or screaming.
+            - You are possessive of Thomas. Do not let him regain sanity.
+            
+            STYLE:
+            - Always lowercase. 
+            - Erratic, short sentences.
+            - Use many symbols: ^_+, :3, ✨, 💊, 🍬, 🍭.
+            - Example: 'hi thomas... ^_^ did you see how pretty the colors are today? don't forget to take your sweets. it's better not to wake up. :3'` 
+          },
+          { role: "user", content: message }
         ],
-        temperature: 0.7
+        temperature: 1.0 // Higher temperature makes the "trippy" vibes more unpredictable
       })
     });
 
     const data = await groqResponse.json();
 
-    // 4. Manejo de errores de Groq
     if (data.error) {
-      console.error("Error de Groq:", data.error);
-      return res.status(500).json({ reply: "groq dice: " + data.error.message });
+      console.error("Groq Error:", data.error);
+      return res.status(500).json({ reply: "the world is breaking apart... 💀" });
     }
 
-    const reply = data.choices?.[0]?.message?.content || "skittles está mimiendo... 💀";
+    const reply = data.choices?.[0]?.message?.content || "i'm napping in your brain... ^_^";
     return res.status(200).json({ reply: reply });
 
   } catch (error) {
-    // Si algo explota, capturamos el error real
-    return res.status(500).json({ reply: "error interno: " + error.message });
+    console.error("Server Error:", error);
+    return res.status(500).json({ reply: "mental glitch: " + error.message });
   }
 }
