@@ -83,8 +83,8 @@ async function askSkittles(text) {
     npcChat.appendChild(loadingLine);
     npcChat.scrollTop = npcChat.scrollHeight;
 
-    // IMPORTANTE: Si usas Vercel cambia esto a '/api/chat'
-    const response = await fetch(const response = await fetch('/api/chat', {
+    // LÍNEA CORREGIDA AQUÍ:
+    const response = await fetch('/api/chat', {
       method: 'POST',
       mode: 'cors',
       headers: { 
@@ -99,7 +99,7 @@ async function askSkittles(text) {
         throw new Error("vibe check failed: server sent html instead of glitter");
     }
 
- const data = await response.json();
+    const data = await response.json();
     document.getElementById(loadingId)?.remove();
     
     addNPCLine("skittles", data.reply || "*stares blankly* :3", true);
@@ -112,34 +112,6 @@ async function askSkittles(text) {
     console.error("DEBUG ERROR:", error);
     addNPCLine("skittles", `*glitches* error: ${error.message} >_<`, true);
   }
-} // ESTA LLAVE CIERRA askSkittles. DESPUÉS DE ESTA NO DEBE HABER NADA HASTA LA SIGUIENTE FUNCIÓN.
-  // ... resto del código
-
-function addNPCLine(sender, msg, isSkittles = false) {
-  const npcChat = document.getElementById("npcChat");
-  if (!npcChat) return;
-  const line = document.createElement("div");
-  line.className = "npcLine";
-  const labelClass = isSkittles ? 'skittles-label' : 'user-label';
-  line.innerHTML = `<b class="${labelClass}">${sender}:</b> ${msg}`;
-  npcChat.appendChild(line);
-  npcChat.scrollTop = npcChat.scrollHeight;
-}
-
-function setupSkittlesBot() {
-  const input = document.getElementById("npcInput");
-  const send = document.getElementById("npcSend");
-  if (!input || !send) return;
-
-  send.onclick = () => {
-    const m = input.value.trim();
-    if (m) {
-      addNPCLine("you", m);
-      askSkittles(m);
-      input.value = "";
-    }
-  };
-  input.onkeydown = (e) => { if (e.key === "Enter") send.click(); };
 }
 
 // ============================
