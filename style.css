@@ -920,7 +920,7 @@ body.secret-mode .stickers-box {
 .sticker-canvas {
   position: fixed;
   inset: 0;
-  pointer-events: auto;
+  pointer-events: none
   z-index: 999999;
 }
 
