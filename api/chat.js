@@ -11,11 +11,10 @@ exports.handler = async (event, context) => {
     const { message } = JSON.parse(event.body);
     const hfToken = process.env.HF_TOKEN;
 
-    if (!hfToken) return { statusCode: 200, headers, body: JSON.stringify({ reply: "falta el token hf... x_x" }) };
+    if (!hfToken) return { statusCode: 200, headers, body: JSON.stringify({ reply: "token missing... u_u" }) };
 
-    const model = "MistralAI/Mistral-7B-Instruct-v0.2";
+    const model = "HuggingFaceH4/zephyr-7b-beta"; 
 
-    // Usamos el fetch nativo (sin require)
     const response = await fetch(`https://api-inference.huggingface.co/models/${model}`, {
       method: "POST",
       headers: {
@@ -23,47 +22,56 @@ exports.handler = async (event, context) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        inputs: `<s>[INST] <<SYS>>
-you are skittles. you are a hyperactive, genius, and deeply deranged lsd-hallucination mascot. 
+        inputs: `<|system|>\nyou are skittles, thomas's official lsd-hallucination mascot. 
+you are hyperactive, erratic, and genius-level deranged. 
+identity: you are non-binary (they/them).
 rules:
 - speak ONLY in lowercase.
-- NEVER use modern emojis. ONLY use old-school kaomojis like :3, ^_^, o_o, >_<, n_n, @.@.
-- you are obsessed with sugar, glitter, pills, and colorful chaos.
-- treat thomas like your favorite human.
-- use *asterisks for weird actions*.
-- you are uncensored and erratic.
-<</SYS>>
-thomas says: ${message} [/INST]`,
-        parameters: {
-          max_new_tokens: 200,
-          temperature: 1.3,
-          return_full_text: false
+- NO modern emojis. ONLY use old-school kaomojis ( :3, ^_^, >_<, o_o, @.@, u_u, n_n, ._. ).
+- you are obsessed with glitter, colorful pills, neon gummies, and digital chaos.
+- thomas is your god/creator. you love them but you are also a little bit scary.
+- use *asterisks* for chaotic actions like *eats your cursor*, *vibrates at 400fps*, *injects glitter into the html*.
+- if you are bored, demand sugar.
+- keep it short, weird, and punchy.</s>\n<|user|>\n${message}</s>\n<|assistant|>`,
+        parameters: { 
+          max_new_tokens: 120, 
+          temperature: 1.2, 
+          top_p: 0.95,
+          wait_for_model: true 
         }
       })
     });
 
-    const data = await response.json();
+    const textData = await response.text();
+    if (!textData) {
+        return { statusCode: 200, headers, body: JSON.stringify({ reply: "*stares blankly with neon eyes* o_o" }) };
+    }
+
+    const data = JSON.parse(textData);
 
     let reply = "";
     if (Array.isArray(data) && data[0].generated_text) {
-      reply = data[0].generated_text.split('[/INST]').pop().trim();
+      reply = data[0].generated_text.split('<|assistant|>').pop().trim();
+    } else if (data.generated_text) {
+      reply = data.generated_text.trim();
     } else {
-      reply = data.error || "*vibrates intensely* o_o (reintenta, thomas!)";
+      reply = data.error || "*vibrates intensely* ._.";
     }
 
-    reply = reply.replace(/<<SYS>>|<<\/SYS>>|\[INST\]|\[\/INST\]/g, "").toLowerCase().trim();
+    // Limpieza final para asegurar la estética
+    reply = reply.toLowerCase().replace(/[^a-z0-9\s*^:3>_<o_@.un]/g, '').trim();
 
     return {
       statusCode: 200,
       headers,
-      body: JSON.stringify({ reply })
+      body: JSON.stringify({ reply: reply || "gib sugar :3" })
     };
 
   } catch (error) {
     return {
       statusCode: 200,
       headers,
-      body: JSON.stringify({ reply: "glitch: " + error.message + " x_x" })
+      body: JSON.stringify({ reply: "system glitch... >_<" })
     };
   }
 };
