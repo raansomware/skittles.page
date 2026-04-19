@@ -217,3 +217,74 @@ function setupSecretMode() { /* Tu lógica secreta aquí */ }
 function setupPanicMode() { /* Tu lógica de pánico aquí */ }
 function setupStamps() { /* Tu lógica de stamps aquí */ }
 function setupKonami() { /* Tu lógica Konami aquí */ }
+
+// ==========================================
+// FIX: FUNCIONES DE EFECTOS Y SISTEMAS
+// ==========================================
+
+function createInitialSparkles() {
+  // Crea una ráfaga inicial de brillos al cargar
+  for (let i = 0; i < 15; i++) {
+    setTimeout(() => createSparkle(), i * 200);
+  }
+}
+
+function startCursorTrail() {
+  document.addEventListener("mousemove", (e) => {
+    const trail = document.createElement("div");
+    trail.textContent = "✨";
+    trail.style.position = "fixed";
+    trail.style.left = e.clientX + "px";
+    trail.style.top = e.clientY + "px";
+    trail.style.pointerEvents = "none";
+    trail.style.zIndex = "1000000";
+    trail.style.fontSize = "12px";
+    document.body.appendChild(trail);
+    
+    setTimeout(() => {
+      trail.style.transition = "0.5s";
+      trail.style.opacity = "0";
+      trail.style.transform = "translateY(-20px)";
+    }, 50);
+    setTimeout(() => trail.remove(), 600);
+  });
+}
+
+function setupSecretMode() {
+  console.log("secret mode ready... try clicking the banner");
+}
+
+function setupPanicMode() {
+  const panicBtn = document.getElementById("panicBtn");
+  if (panicBtn) {
+    panicBtn.onclick = () => {
+      window.location.href = "https://www.google.com"; // Modo pánico clásico
+    };
+  }
+}
+
+function setupStamps() {
+  document.querySelectorAll(".stamp").forEach(s => {
+    s.onclick = () => {
+      s.classList.add("collected");
+      toast("stamp collected!");
+    };
+  });
+}
+
+function setupKonami() {
+  let pattern = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+  let current = 0;
+  document.addEventListener('keydown', (e) => {
+    if (e.key === pattern[current]) {
+      current++;
+      if (current === pattern.length) {
+        toast("KONAMI CODE ACTIVATED 🍄");
+        triggerSparkles();
+        current = 0;
+      }
+    } else {
+      current = 0;
+    }
+  });
+}
