@@ -918,3 +918,5 @@ function setupNickBot() {
 
   addNPCLine("nick.bot", "hi. welcome to skittlesOS.");
 }
+
+const API_URL = "https://nick-bot-api-nj7j-11hki2zmw-raansomwares-projects.vercel.app/api/chat";
