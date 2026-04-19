@@ -11,8 +11,8 @@ export default async function handler(req, res) {
 
     if (!hfToken) return res.status(200).json({ reply: "¡falta el token hf! 🔑" });
 
-    // Mistral 7B v0.2 es el mejor balance entre estabilidad y falta de filtros
-    const model = "mistralai/Mistral-7B-Instruct-v0.2";
+    // es el mejor balance entre estabilidad y falta de filtros
+   const model = "HuggingFaceH4/zephyr-7b-beta";;
 
     const response = await fetch(`https://api-inference.huggingface.co/models/${model}`, {
       method: "POST",
