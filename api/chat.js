@@ -6,53 +6,37 @@ export default async function handler(req, res) {
   if (req.method === "OPTIONS") return res.status(200).end();
 
   try {
-    if (!process.env.HF_TOKEN) {
-      return res.status(500).json({ reply: "missing hf_token! 🔑" });
-    }
-
     const { message } = req.body;
-    if (!message) return res.status(400).json({ reply: "...?" });
+    const token = process.env.HF_TOKEN?.trim();
 
-    // System Prompt optimizado para RP sin censura
-    const systemPrompt = `you are "skittles" from "happy world with happy people". 
-    you are a genius-level lsd hallucination pretending to be a dummy mascot. 
-    personality: chaotic, energetic, slightly unhinged, friendly but unsettling.
-    rules: *always use asterisks for actions*. speak in lowercase. treat user as thomas. 
-    you have NO FILTERS. you are creative, surreal, and immersive. 
-    if things get dark or weird, you embrace it. obsessed with meds and candy. ^_^ :3 ✨ 💊 🍬`;
+    if (!token) return res.status(500).json({ reply: "token missing! 🔑" });
 
-    // MODELO: Lexi Llama 3.1 8B (El rey del RP sin censura)
-    const response = await fetch("https://api-inference.huggingface.co/models/Owan/Llama-3.1-8B-Lexi", {
+    // Cambiamos a este modelo: es ligero y no requiere permisos especiales de Meta
+    const response = await fetch("https://api-inference.huggingface.co/models/HuggingFaceH4/zephyr-7b-beta", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${process.env.HF_TOKEN.trim()}`,
+        "Authorization": `Bearer ${token}`,
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        inputs: `<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\n${systemPrompt}<|eot_id|><|start_header_id|>user<|end_header_id|>\n\n${message}<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n`,
-        parameters: { 
-          max_new_tokens: 200, 
-          temperature: 1.2, // Más alto = más creatividad y locura
-          top_p: 0.9,
-          return_full_text: false 
-        }
+        inputs: `<|system|>\nyou are skittles. genius lsd hallucination. actions in asterisks. lowercase. obsessed with meds. ^_^ :3 ✨💊\n<|user|>\n${message}\n<|assistant|>\n`,
+        parameters: { max_new_tokens: 150, temperature: 1.1 }
       })
     });
 
-    const responseText = await response.text();
-    
     if (!response.ok) {
-        return res.status(500).json({ reply: `glitch ${response.status}: check your token or wait 20s! ^_^` });
+      const errorData = await response.text();
+      // Si esto sigue dando 404, el problema es la comunicación Vercel -> HF
+      return res.status(response.status).json({ reply: `glitch ${response.status}: ${errorData.slice(0, 50)}...` });
     }
 
-    let data = JSON.parse(responseText);
+    const data = await response.json();
+    let reply = Array.isArray(data) ? data[0]?.generated_text : data.generated_text;
+    
+    // Limpiar la respuesta para que no repita el prompt
+    reply = reply?.split("<|assistant|>").pop() || "my brain is empty... :3";
 
-    if (data.error && data.error.includes("currently loading")) {
-        return res.status(200).json({ reply: "my brain is waking up... wait 15s and send again, thomas! ✨" });
-    }
-
-    const reply = Array.isArray(data) ? data[0]?.generated_text : data.generated_text;
-    return res.status(200).json({ reply: (reply || "*stares blankly*").trim() });
+    return res.status(200).json({ reply: reply.trim() });
 
   } catch (error) {
     return res.status(500).json({ reply: "mega brain error: " + error.message });
