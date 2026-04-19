@@ -219,10 +219,10 @@
       <h2>skittles.bot ^_^</h2>
       <p class="npcHint">he's hungry for candies (and English!)</p>
 
-      <div class="npcChat" id="npcChat" style="max-height: 200px; overflow-y: auto; margin-bottom: 10px; text-align: left;"></div>
+      <div class="npcChat" id="npcChat" style="max-height: 200px; overflow-y: auto; margin-bottom: 10px; text-align: left; font-family: 'Fredoka', sans-serif;"></div>
 
       <div class="npcRow">
-        <input type="text" id="npcInput" placeholder="say something to Soren..." maxlength="100">
+        <input type="text" id="npcInput" placeholder="say something to Skittles..." maxlength="100">
         <button class="npcBtn" id="npcSend" onclick="askSkittles()">send</button>
       </div>
     </div>
@@ -267,31 +267,39 @@
     async function askSkittles() {
       const input = document.getElementById('npcInput');
       const chat = document.getElementById('npcChat');
-      const text = input.value;
+      const text = input.value.trim();
 
       if (!text) return;
 
-      // Mostrar tu mensaje
-      chat.innerHTML += `<div><b>You:</b> ${text}</div>`;
+      // Mostrar tu mensaje en el chat
+      chat.innerHTML += `<div style="margin-bottom: 8px;"><b>You:</b> ${text}</div>`;
       input.value = "";
       chat.scrollTop = chat.scrollHeight;
 
       try {
+        // Llamada a la API de Vercel
         const res = await fetch('/api/chat', {
           method: 'POST',
-          body: JSON.stringify({ prompt: text })
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ message: text }) // Enviamos "message"
         });
+
         const data = await res.json();
 
-        // Mostrar respuesta de Skittles
-        chat.innerHTML += `<div style="color: #ff69b4;"><b>Skittles:</b> ${data.content}</div>`;
+        // Mostrar respuesta de Skittles usando "reply"
+        const skittlesReply = data.reply || "*está distraído con un caramelo*";
+        chat.innerHTML += `<div style="color: #ff69b4; margin-bottom: 8px;"><b>Skittles:</b> ${skittlesReply}</div>`;
         chat.scrollTop = chat.scrollHeight;
+
       } catch (e) {
-        chat.innerHTML += `<div style="color: red;">^_^ Opsie! Skittles is busy eating candies!</div>`;
+        console.error("Error:", e);
+        chat.innerHTML += `<div style="color: red; margin-bottom: 8px;"><b>Skittles:</b> ^_^ Opsie! The brain is melting!</div>`;
       }
     }
 
-    // Para que funcione al presionar ENTER
+    // Escuchar la tecla Enter para enviar
     document.getElementById('npcInput').addEventListener('keypress', function (e) {
       if (e.key === 'Enter') {
         askSkittles();
