@@ -36,14 +36,14 @@ your personality:
 <</SYS>>
 
 ${message} [/INST]`,
-        parameters: {
+        pparameters: {
           max_new_tokens: 250,
-          temperature: 0.95, // Más alto para que sea más creativo y loco
-          top_p: 0.9,
-          repetition_penalty: 1.2,
+          temperature: 1.3, // <--- Súbelo aquí para la locura
+          top_p: 0.95,      // <--- Ayuda a que no se bloquee en una sola palabra
+          repetition_penalty: 1.15, // <--- Evita que repita la misma frase mil veces
           return_full_text: false
         }
-      })
+        }
     });
 
     const rawResponse = await response.text();
