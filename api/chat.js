@@ -1,5 +1,5 @@
 export default async function handler(req, res) {
-  // Configuración de CORS
+  // Configuración de CORS para que tu página pueda hablar con la API
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -15,15 +15,14 @@ export default async function handler(req, res) {
     }
 
     const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-      method: "POST",
+      method: "POST", // Corregido: method completo
       headers: {
-        "Authorization": `Bearer ${apiKey}`,
+        "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
         "HTTP-Referer": "https://skittles-page.vercel.app", 
         "X-Title": "Skittles Page",
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        // Usamos Gemini Flash 1.5, que es muy difícil que esté caído
         "model": "google/gemini-flash-1.5-8b:free", 
         "messages": [
           {
@@ -40,17 +39,16 @@ export default async function handler(req, res) {
 
     const data = await response.json();
 
-    // Si el modelo gratuito falla, devolvemos un mensaje divertido
     if (data.error) {
       return res.status(500).json({ 
-        reply: `error de ia: ${data.error.message || "los servidores están llenos de caramelos"}` 
+        reply: `error de ia: ${data.error.message || "los servidores tienen demasiados caramelos"}` 
       });
     }
 
     const reply = data.choices?.[0]?.message?.content || data.choices?.[0]?.text;
 
     if (!reply) {
-      return res.status(200).json({ reply: "*se queda mirando al infinito* (intenta decir algo más!)" });
+      return res.status(200).json({ reply: "*se queda mirando al infinito* (¡intenta de nuevo!)" });
     }
 
     return res.status(200).json({ reply: reply.trim() });
