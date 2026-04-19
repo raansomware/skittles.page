@@ -848,13 +848,10 @@ function renderBadges() {
 // SKITTLES BOT - UNIFICADO Y SIN ERRORES
 // ==========================================
 
-// 1. La función que habla con la API
 async function askSkittles(text) {
   const npcChat = document.getElementById("npcChat");
-  if (!npcChat) return;
-
   const loadingId = "loading-" + Date.now();
-  
+
   try {
     const loadingLine = document.createElement("div");
     loadingLine.id = loadingId;
@@ -868,6 +865,33 @@ async function askSkittles(text) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ message: text }) 
     });
+
+    const data = await response.json();
+    
+    const loader = document.getElementById(loadingId);
+    if (loader) loader.remove();
+
+    // --- EL FIX AQUÍ ---
+    // Buscamos en data.reply, o en data.content, o en data.choices... 
+    // Si nada funciona, mostramos el error real.
+    const finalMsg = data.reply || data.content || (data.choices && data.choices[0].message.content);
+
+    if (finalMsg) {
+      addNPCLine("skittles", finalMsg, true);
+      if (typeof triggerSparkles === "function") triggerSparkles();
+    } else {
+      // Si sigue saliendo esto, imprime en consola qué recibió realmente
+      console.log("Datos recibidos de la API:", data);
+      addNPCLine("skittles", "i got an empty response... 🍬", true);
+    }
+
+  } catch (error) {
+    console.error("API Error:", error);
+    const loader = document.getElementById(loadingId);
+    if (loader) loader.remove();
+    addNPCLine("skittles", "oopsie! skittles is busy eating candy ^_^", true);
+  }
+}
 
     const data = await response.json();
     
