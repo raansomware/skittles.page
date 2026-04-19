@@ -1,250 +1,283 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>skittles.lol fan</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>skittles.lol fan</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
 
-  <!-- CLICK TO ENTER -->
-  <div id="enterScreen">
-    <div class="enterText">click 2 funsies!</div>
-  </div>
+  <!-- LOADING BIOS SCREEN -->
+  <div id="enterScreen">
+    <div class="bootLog" id="bootLog"></div>
+    <div class="enterText" id="enterText">click 2 funsies!</div>
+  </div>
 
-  <div class="scanlines"></div>
-  <div class="sparkles-container"></div>
+  <div class="scanlines"></div>
+  <div class="sparkles-container"></div>
 
-  <div class="bg-shapes">
-    <div class="shape shape-1"></div>
-    <div class="shape shape-2"></div>
-    <div class="shape shape-3"></div>
-  </div>
+  <div class="bg-shapes">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+  </div>
 
-  <div class="container">
+  <div class="container">
 
-    <!-- SECRET MODE TRIGGER -->
-    <div class="banner" id="secretBanner">
-      <img src="thomas.png" alt="banner">
-      <div class="bannerHint">click me...</div>
-    </div>
+    <!-- SECRET MODE TRIGGER -->
+    <div class="banner" id="secretBanner">
+      <img src="thomas.png" alt="banner">
+      <div class="bannerHint">click me...</div>
+    </div>
 
-    <div class="header">
-      <div class="logo-wrapper">
-        <img src="nicky.jpg" class="logo" alt="pfp">
-        <div class="logo-glow"></div>
-      </div>
+    <div class="header">
+      <div class="logo-wrapper">
+        <img src="nicky.jpg" class="logo" alt="pfp">
+        <div class="logo-glow"></div>
+      </div>
 
-      <h1 class="title">skittle nick!</h1>
-      <p class="tagline">тαкє тнє мє∂ѕ, тнσмαѕ! ^_^</p>
-    </div>
+      <h1 class="title">skittle nick!</h1>
+      <p class="tagline">тαкє тнє мє∂ѕ, тнσмαѕ! ^_^</p>
+    </div>
 
-    <div class="divider"></div>
+    <div class="divider"></div>
 
-    <div class="profile-card">
-      <div class="profile-left">
-        <img src="skit.jpg" class="pfp-icon" alt="pfp icon">
+    <div class="profile-card">
+      <div class="profile-left">
+        <img src="skit.jpg" class="pfp-icon" alt="pfp icon">
 
-        <div class="profile-text">
-          <div class="username">raansomware ❤️</div>
+        <div class="profile-text">
+          <div class="username">raansomware ❤️</div>
 
-          <div class="bio">
-            <a href="https://ransomware.atabook.org" target="_blank">
-              ransomware.atabook.org
-            </a>
-          </div>
-        </div>
-      </div>
+          <div class="bio">
+            <a href="https://ransomware.atabook.org" target="_blank">
+              ransomware.atabook.org
+            </a>
+          </div>
+        </div>
+      </div>
 
-      <div class="badge">+4 vibes</div>
-    </div>
+      <div class="badge">+4 vibes</div>
+    </div>
 
-    <div class="box">
-      <h2>about me</h2>
-      <p>nick / skittles !!</p>
-      <p>she / they 17 basic dni</p>
-      <p>i like to sleep! 🥳 bmf!! ^_^</p>
-      <p>#skittles #hwwhp #yummy!</p>
-      <p>♡ follow to be moots + appreciated</p>
-    </div>
+    <div class="box">
+      <h2>about me</h2>
+      <p>nick / skittles !!</p>
+      <p>she / they 17 basic dni</p>
+      <p>i like to sleep! 🥳 bmf!! ^_^</p>
+      <p>#skittles #hwwhp #yummy!</p>
+      <p>♡ follow to be moots + appreciated</p>
+    </div>
 
-    <div class="music-player">
-      <audio id="audioPlayer"></audio>
+    <!-- QUOTE -->
+    <div class="box" id="quoteBox">
+      <h2>quote of the day</h2>
+      <p id="quoteText">loading quote...</p>
+    </div>
 
-      <div id="visualizer"></div>
+    <!-- MUSIC PLAYER -->
+    <div class="music-player">
+      <audio id="audioPlayer"></audio>
 
-      <div class="now-playing">
-        <span class="dot"></span>
-        <span>NOW PLAYING</span>
-      </div>
+      <div id="visualizer"></div>
 
-      <div class="song-row">
-        <div class="album-art">🎵</div>
+      <div class="now-playing">
+        <span class="dot"></span>
+        <span>NOW PLAYING</span>
+      </div>
 
-        <div class="song-info">
-          <div class="song-name" id="songName">loading...</div>
-          <div class="artist-name" id="artistName">...</div>
-        </div>
-      </div>
+      <div class="song-row">
+        <div class="album-art">🎵</div>
 
-      <div class="progressBar">
-        <div class="progressFill" id="progressFill"></div>
-        <input type="range" id="progressSlider" min="0" max="100" value="0">
-      </div>
+        <div class="song-info">
+          <div class="song-name" id="songName">loading...</div>
+          <div class="artist-name" id="artistName">...</div>
+        </div>
+      </div>
 
-      <div class="timeRow">
-        <span id="currentTime">0:00</span>
-        <span id="duration">0:00</span>
-      </div>
+      <div class="progressBar">
+        <div class="progressFill" id="progressFill"></div>
+        <input type="range" id="progressSlider" min="0" max="100" value="0">
+      </div>
 
-      <div class="playerBtns">
-        <button onclick="previousSong()">⏮</button>
-        <button id="playBtn" onclick="togglePlay()">▶</button>
-        <button onclick="nextSong()">⏭</button>
-      </div>
+      <div class="timeRow">
+        <span id="currentTime">0:00</span>
+        <span id="duration">0:00</span>
+      </div>
 
-      <div class="volumeRow">
-        <span>🔊</span>
-        <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.7">
-      </div>
+      <div class="playerBtns">
+        <button onclick="previousSong()">⏮</button>
+        <button id="playBtn" onclick="togglePlay()">▶</button>
+        <button onclick="nextSong()">⏭</button>
+      </div>
 
-      <div class="trackText" id="trackText">track ?</div>
-    </div>
+      <div class="volumeRow">
+        <span>🔊</span>
+        <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.7">
+      </div>
 
-    <div class="rating-section">
-      <div class="rating-title">RATE THIS PAGE</div>
-      <div class="star-rating">
-        <button class="star" onclick="rateMe(1)">★</button>
-        <button class="star" onclick="rateMe(2)">★</button>
-        <button class="star" onclick="rateMe(3)">★</button>
-        <button class="star" onclick="rateMe(4)">★</button>
-        <button class="star" onclick="rateMe(5)">★</button>
-      </div>
-    </div>
+      <div class="trackText" id="trackText">track ?</div>
+    </div>
 
-    <div class="buttons">
-      <button class="bigBtn" id="sparkleBtn">✨ sparkles</button>
-      <button class="bigBtn" id="rainbowBtn">🌈 rainbow mode</button>
-      <button class="bigBtn" id="glitchBtn">⚡ glitch</button>
-      <button class="bigBtn panicBtn" id="panicBtn">🚨 PANIC.exe</button>
-    </div>
+    <!-- RATING -->
+    <div class="rating-section">
+      <div class="rating-title">RATE THIS PAGE</div>
+      <div class="star-rating">
+        <button class="star" onclick="rateMe(1)">★</button>
+        <button class="star" onclick="rateMe(2)">★</button>
+        <button class="star" onclick="rateMe(3)">★</button>
+        <button class="star" onclick="rateMe(4)">★</button>
+        <button class="star" onclick="rateMe(5)">★</button>
+      </div>
+    </div>
 
-    <div class="stickers-box">
-      <h2>stickers</h2>
+    <!-- BUTTONS -->
+    <div class="buttons">
+      <button class="bigBtn" id="sparkleBtn">✨ sparkles</button>
+      <button class="bigBtn" id="rainbowBtn">🌈 rainbow mode</button>
+      <button class="bigBtn" id="glitchBtn">⚡ glitch</button>
+      <button class="bigBtn panicBtn" id="panicBtn">🚨 PANIC.exe</button>
+    </div>
 
-      <div class="stickerGrid">
-        <div class="stickerTool" draggable="true" ondragstart="startStickerDrag(event,'nick.png')">
-          <img src="nick.png" alt="nick">
-        </div>
+    <!-- MOOT REQUEST -->
+    <div class="box">
+      <h2>moot request</h2>
+      <p>send request to become moots...</p>
+      <button class="guestBtn" id="mootRequestBtn">request moots</button>
+      <p class="smallText">requests sent: <span id="mootCount">0</span></p>
+    </div>
 
-        <div class="stickerTool" draggable="true" ondragstart="startStickerDrag(event,'rainbow.png')">
-          <img src="rainbow.png" alt="rainbow">
-        </div>
+    <!-- MOOTS -->
+    <div class="box">
+      <h2>moots</h2>
 
-        <div class="stickerTool" draggable="true" ondragstart="startStickerDrag(event,'star.png')">
-          <img src="star.png" alt="star">
-        </div>
-      </div>
+      <div class="mootsGrid">
+        <div class="mootCard">
+          <img src="ivlis.png" class="mootPfp" alt="allen">
+          <div class="mootName">allen</div>
+          <div class="mootPhrase">red velvets husband!</div>
+          <div class="mootDesc">mi amigo que intente matar pero sobrebibio :(( lo quiero mucho y estamos medio cerca!</div>
+        </div>
 
-      <div class="uploadRow">
-        <label class="uploadBtn">
-          📁 add custom sticker
-          <input type="file" id="customStickerInput" accept="image/*">
-        </label>
-      </div>
+        <div class="mootCard">
+          <img src="character.png" class="mootPfp" alt="flayder">
+          <div class="mootName">flayder</div>
+          <div class="mootDesc">miamiga quee es super mega biuena onda y la quiero mucho siiiiii mwwajjajajjja</div>
+        </div>
+      </div>
+    </div>
 
-      <button class="clearBtn" onclick="clearAllStickers()">clear all</button>
-    </div>
+    <!-- STAMPS -->
+    <div class="box">
+      <h2>stamps</h2>
+      <p>click to collect them</p>
 
-    <div class="box" id="guestbookBox">
-      <h2>guestbook</h2>
+      <div class="stampGrid">
+        <img src="1.png" class="stamp" data-stamp="1" alt="stamp1">
+        <img src="2.png" class="stamp" data-stamp="2" alt="stamp2">
+        <img src="3.png" class="stamp" data-stamp="3" alt="stamp3">
+        <img src="4.png" class="stamp" data-stamp="4" alt="stamp4">
+      </div>
 
-      <div class="guestbookForm">
-        <input type="text" id="guestName" placeholder="name..." maxlength="20">
-        <input type="text" id="guestMsg" placeholder="leave a message..." maxlength="80">
-        <button class="guestBtn" id="guestSubmit">sign</button>
-      </div>
-   
-      <!-- MOOT REQUEST -->
-    <div class="box">
-      <h2>moot request</h2>
-      <p>send request to become moots...</p>
-      <button class="guestBtn" id="mootRequestBtn">request moots</button>
-      <p class="smallText">requests sent: <span id="mootCount">0</span></p>
-    </div>
+      <p class="smallText">collected: <span id="stampCount">0</span>/4</p>
+    </div>
 
-    <!-- MOOTS -->
-    <div class="box">
-      <h2>moots</h2>
+    <!-- STICKERS -->
+    <div class="stickers-box">
+      <h2>stickers</h2>
 
-      <div class="mootsGrid">
+      <div class="stickerGrid">
+        <div class="stickerTool" draggable="true" ondragstart="startStickerDrag(event,'nick.png')">
+          <img src="nick.png" alt="nick">
+        </div>
 
-        <div class="mootCard">
-          <img src="ivlis.png" class="mootPfp" alt="allen">
-          <div class="mootName">allen</div>
-          <div class="mootPhrase">red velvets husband!</div>
-          <div class="mootDesc">
-            mi amigo que intente matar pero sobrebibio :(( lo quiero mucho y estamos medio cerca!
-          </div>
-        </div>
+        <div class="stickerTool" draggable="true" ondragstart="startStickerDrag(event,'rainbow.png')">
+          <img src="rainbow.png" alt="rainbow">
+        </div>
 
-        <div class="mootCard">
-          <img src="character.png" class="mootPfp" alt="flayder">
-          <div class="mootName">flayder</div>
-          <div class="mootDesc">
-            miamiga quee es super mega biuena onda y la quiero mucho siiiiii mwwajjajajjja
-          </div>
-        </div>
+        <div class="stickerTool" draggable="true" ondragstart="startStickerDrag(event,'star.png')">
+          <img src="star.png" alt="star">
+        </div>
 
-      </div>
-    </div>
+        <div class="stickerTool" draggable="true" ondragstart="startStickerDrag(event,'leon.png')">
+          <img src="leon.png" alt="leon">
+        </div>
 
-    <!-- STAMPS -->
-    <div class="box">
-      <h2>stamps</h2>
-      <p>click to collect them</p>
+        <div class="stickerTool" draggable="true" ondragstart="startStickerDrag(event,'skittlez.png')">
+          <img src="skittlez.png" alt="skittlez">
+        </div>
+      </div>
 
-      <div class="stampGrid">
-        <img src="1.png" class="stamp" data-stamp="1">
-        <img src="2.png" class="stamp" data-stamp="2">
-        <img src="3.gif" class="stamp" data-stamp="3">
-        <img src="4.gif" class="stamp" data-stamp="4">
-      </div>
+      <div class="uploadRow">
+        <label class="uploadBtn">
+          📁 add custom sticker
+          <input type="file" id="customStickerInput" accept="image/*">
+        </label>
+      </div>
 
-      <p class="smallText">
-        collected: <span id="stampCount">0</span>/4
-      </p>
-    </div>
-      
-      <div class="guestbookList" id="guestbookList"></div>
-    </div>
+      <button class="clearBtn" onclick="clearAllStickers()">clear all</button>
+    </div>
 
-    <div class="box" id="achievementsBox">
-      <h2>achievements</h2>
-      <div class="achievementsList" id="achievementsList"></div>
-    </div>
+    <!-- NPC CHATBOT -->
+    <div class="box" id="npcBox">
+      <h2>nick.bot</h2>
+      <p class="npcHint">talk to me. i might bite.</p>
 
-    <div class="footer">
-      <p>made with 💕 and pure chaos</p>
-      <p class="small">👁️ <span id="visitCount">0</span> visits</p>
-      <p class="small">© 2026 skittles fan universe</p>
-    </div>
+      <div class="npcChat" id="npcChat"></div>
 
-  </div>
+      <div class="npcRow">
+        <input type="text" id="npcInput" placeholder="say something..." maxlength="60">
+        <button class="npcBtn" id="npcSend">send</button>
+      </div>
+    </div>
 
-  <div class="sticker-canvas" id="stickerCanvas"></div>
+    <!-- BADGES -->
+    <div class="box" id="badgesBox">
+      <h2>badges</h2>
+      <div class="badgesList" id="badgesList"></div>
+    </div>
 
-  <div id="panicOverlay">
-    <div class="panicText">nothing to see here.</div>
-  </div>
+    <!-- GUESTBOOK -->
+    <div class="box" id="guestbookBox">
+      <h2>guestbook</h2>
 
-  <script src="script.js"></script>
+      <div class="guestbookForm">
+        <input type="text" id="guestName" placeholder="name..." maxlength="20">
+        <input type="text" id="guestMsg" placeholder="leave a message..." maxlength="80">
+        <button class="guestBtn" id="guestSubmit">sign</button>
+      </div>
+
+      <div class="guestbookList" id="guestbookList"></div>
+    </div>
+
+    <!-- ACHIEVEMENTS -->
+    <div class="box" id="achievementsBox">
+      <h2>achievements</h2>
+      <div class="achievementsList" id="achievementsList"></div>
+    </div>
+
+    <div class="footer">
+      <p>made with 💕 and pure chaos</p>
+      <p class="small">👁️ <span id="visitCount">0</span> visits</p>
+      <p class="small">© 2026 skittles fan universe</p>
+    </div>
+
+  </div>
+
+  <div class="sticker-canvas" id="stickerCanvas"></div>
+
+  <!-- PANIC OVERLAY -->
+  <div id="panicOverlay">
+    <div class="panicText">nothing to see here.</div>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
