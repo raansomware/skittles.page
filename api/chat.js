@@ -11,7 +11,7 @@ export default async function handler(req, res) {
 
     if (!apiKey) return res.status(500).json({ reply: "¡falta la key de openrouter en vercel! 🔑" });
 
-    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    const response = await fetch(""model": "mistralai/mistral-7b-instruct:free",", {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${apiKey}`,
