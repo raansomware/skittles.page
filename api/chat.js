@@ -16,7 +16,7 @@ export default async function handler(req, res) {
     const systemPrompt = `you are "skittles" from "happy world with happy people". genius lsd hallucination pretending to be a dummy mascot. *actions*. lowercase. treat user as thomas. obsessed with meds and candy. ^_^ :3 ✨ 💊 🍬`;
 
     // Cambié el modelo a Llama-3.2-1B, es más nuevo, pequeño y súper rápido para evitar errores de carga
-    const response = await fetch("https://api-inference.huggingface.co/models/Qwen/Qwen2.5-1.5B-Instruct", {
+    const response = await fetch("https://api-inference.huggingface.co/models/Oobabooga/Meta-Llama-3-8B-Instruct-Abliterated", {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${process.env.HF_TOKEN.trim()}`,
