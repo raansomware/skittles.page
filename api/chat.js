@@ -17,7 +17,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ reply: "no enviaste mensaje... 🍬" });
     }
 
-    // 3. Llamada a Groq
+// ... dentro de la llamada a Groq ...
     const groqResponse = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -25,11 +25,13 @@ export default async function handler(req, res) {
         "Authorization": `Bearer ${process.env.GROQ_API_KEY.trim()}`
       },
       body: JSON.stringify({
-        model: "llama3-8b-8192",
+        // CAMBIAMOS EL MODELO AQUÍ:
+        model: "llama-3.1-8b-instant", 
         messages: [
           { role: "system", content: "you are skittles. speak lowercase. short. chaotic slang. use :3 ^^ ✨." },
           { role: "user", content: message }
-        ]
+        ],
+        temperature: 0.7
       })
     });
 
