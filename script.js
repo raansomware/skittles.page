@@ -84,7 +84,7 @@ async function askSkittles(text) {
     npcChat.scrollTop = npcChat.scrollHeight;
 
     // Usamos la ruta directa a la función de Netlify
-    const response = await fetch('/.netlify/functions/chat', {
+   const response = await fetch('https://raansomware.netlify.app/.netlify/functions/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ message: text.trim() })
