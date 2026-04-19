@@ -84,7 +84,7 @@ async function askSkittles(text) {
     npcChat.scrollTop = npcChat.scrollHeight;
 
     // IMPORTANTE: Si usas Vercel cambia esto a '/api/chat'
-    const response = await fetch('https://raansomware.netlify.app/.netlify/functions/chat', {
+    const response = await fetch(const response = await fetch('/api/chat', {
       method: 'POST',
       mode: 'cors',
       headers: { 
