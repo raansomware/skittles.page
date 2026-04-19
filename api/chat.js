@@ -17,16 +17,20 @@ export default async function handler(req, res) {
 
     // Cambié el modelo a Llama-3.2-1B, es más nuevo, pequeño y súper rápido para evitar errores de carga
     const response = await fetch("https://api-inference.huggingface.co/models/Oobabooga/Meta-Llama-3-8B-Instruct-Abliterated", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${process.env.HF_TOKEN.trim()}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        inputs: `<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\n${systemPrompt}<|eot_id|><|start_header_id|>user<|end_header_id|>\n\n${message}<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n`,
-        parameters: { max_new_tokens: 100, temperature: 1.1, return_full_text: false }
-      })
-    });
+  method: "POST",
+  headers: {
+    "Authorization": `Bearer ${process.env.HF_TOKEN.trim()}`,
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    inputs: `<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n\n${systemPrompt}<|eot_id|><|start_header_id|>user<|end_header_id|>\n\n${message}<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n\n`,
+    parameters: { 
+      max_new_tokens: 150, 
+      temperature: 1.2, // Más alto para que sea más loco
+      return_full_text: false 
+    }
+  })
+});
 
     const responseText = await response.text();
     
