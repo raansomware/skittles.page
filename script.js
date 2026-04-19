@@ -953,11 +953,11 @@ function setupSkittlesBot() {
     const msg = npcInput.value.trim();
     if (!msg) return;
 
-    addNPCLine("you", msg);
-    npcInput.value = "";
-    askSkittles(msg);
+    addNPCLine("you", msg); // Dibujas tu mensaje
+    askSkittles(msg);       // Llamas a la API
+    npcInput.value = "";    // Limpias el cuadro
   };
-
+}
   npcInput.onkeydown = (e) => {
     if (e.key === "Enter") npcSend.click();
   };
