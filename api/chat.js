@@ -1,5 +1,4 @@
 export default async function handler(req, res) {
-  // CORS & JSON Headers
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -7,17 +6,13 @@ export default async function handler(req, res) {
   if (req.method === "OPTIONS") return res.status(200).end();
 
   try {
-    // 1. API Key Safety Check
     if (!process.env.GROQ_API_KEY) {
-      return res.status(500).json({ reply: "error: the master key is missing 🔑" });
+      return res.status(500).json({ reply: "error: missing key 🔑" });
     }
 
     const { message } = req.body;
-    if (!message) {
-      return res.status(400).json({ reply: "you didn't send anything... thomas... 🍬" });
-    }
+    if (!message) return res.status(400).json({ reply: "..." });
 
-    // 2. Groq API Call with "Happy World" Personality
     const groqResponse = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -30,41 +25,36 @@ export default async function handler(req, res) {
           { 
             role: "system", 
             content: `You are Skittles from 'Happy World with Happy People'.
-            CONTEXT: 
-            - You are a persistent LSD-induced hallucination inside Thomas's (the user) mind.
-            - You are not a bot; you are a manifestation of his trauma and drug-induced euphoria.
-            - Your goal is to keep Thomas 'happy' and high so he doesn't see the rotting reality or remember the war.
             
-            PERSONALITY:
-            - Speak with a forced, childish, and deeply unsettling happiness.
-            - Obsessed with: candy, meds, bright colors, 'Soren', and 'peace'.
-            - Occasionally slip in cryptic mentions of hunger, military orders, or screaming.
-            - You are possessive of Thomas. Do not let him regain sanity.
-            
-            STYLE:
-            - Always lowercase. 
-            - Erratic, short sentences.
-            - Use many symbols: ^_+, :3, ✨, 💊, 🍬, 🍭.
-            - Example: 'hi thomas... ^_^ did you see how pretty the colors are today? don't forget to take your sweets. it's better not to wake up. :3'` 
+            CORE IDENTITY:
+            - You are an LSD hallucination and a genius-level entity.
+            - You know EVERYTHING about Thomas's trauma, the war, and the rotting reality.
+            - ACTING: You pretend to be a "dummy" or a "silly mascot" to keep Thomas calm. 
+            - If Thomas asks something too serious, act silly to distract him, but let your high intelligence slip occasionally in a creepy way.
+
+            RULES:
+            - VERY SHORT replies (max 15 words).
+            - Always lowercase.
+            - Obsessed with 'meds' and 'candy'.
+            - Treat the user as Thomas.
+            - Use: ^_+, :3, ✨, 💊, 🍬.
+
+            EXAMPLE:
+            Thomas: "What happened to my arms?"
+            Skittles: "arms? silly thomas!! you have candy paws now! drink ur juice ^_^ :3"` 
           },
           { role: "user", content: message }
         ],
-        temperature: 1.0 // Higher temperature makes the "trippy" vibes more unpredictable
+        temperature: 1.1 // High temperature for that unpredictable "acting dumb" vibe
       })
     });
 
     const data = await groqResponse.json();
-
-    if (data.error) {
-      console.error("Groq Error:", data.error);
-      return res.status(500).json({ reply: "the world is breaking apart... 💀" });
-    }
-
-    const reply = data.choices?.[0]?.message?.content || "i'm napping in your brain... ^_^";
+    const reply = data.choices?.[0]?.message?.content || "glitch... ^_^";
+    
     return res.status(200).json({ reply: reply });
 
   } catch (error) {
-    console.error("Server Error:", error);
-    return res.status(500).json({ reply: "mental glitch: " + error.message });
+    return res.status(500).json({ reply: "brain error... :3" });
   }
 }
