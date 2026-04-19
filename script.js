@@ -844,17 +844,15 @@ function renderBadges() {
   });
 }
 
-// ==========================================
-// SKITTLES BOT - SIN ERRORES DE SINTAXIS
-// ==========================================
-
+// --- FUNCIÓN DE COMUNICACIÓN ---
 async function askSkittles(text) {
-  const npcChat = document.getElementById("npcChat");
-  if (!npcChat) return;
+  if (!text || text.trim() === "") return;
 
+  const npcChat = document.getElementById("npcChat");
   const loadingId = "loading-" + Date.now();
   
   try {
+    // 1. Mostrar que Skittles está pensando
     const loadingLine = document.createElement("div");
     loadingLine.id = loadingId;
     loadingLine.className = "npcLine";
@@ -862,14 +860,51 @@ async function askSkittles(text) {
     npcChat.appendChild(loadingLine);
     npcChat.scrollTop = npcChat.scrollHeight;
 
-   // ... código anterior de askSkittles ...
+    // 2. Enviar el mensaje a Vercel
     const response = await fetch('/api/chat', {
       method: 'POST',
       headers: { 
-        'Content-Type': 'application/json' 
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
       },
-      body: JSON.stringify({ message: text.trim() }) // Aseguramos que sea un objeto JSON puro
+      body: JSON.stringify({ message: String(text).trim() }) 
     });
+
+    const data = await response.json();
+    
+    // 3. Quitar los puntitos de carga
+    const loader = document.getElementById(loadingId);
+    if (loader) loader.remove();
+
+    // 4. Mostrar la respuesta real o el error
+    if (data && data.reply) {
+      addNPCLine("skittles", data.reply, true);
+      if (typeof triggerSparkles === "function") triggerSparkles();
+    } else {
+      console.log("Error de la API:", data);
+      addNPCLine("skittles", "i'm confused... 🍬", true);
+    }
+
+  } catch (error) {
+    console.error("API Error:", error);
+    const loader = document.getElementById(loadingId);
+    if (loader) loader.remove();
+    addNPCLine("skittles", "oopsie! skittles is busy eating candy ^_^", true);
+  }
+}
+
+// --- FUNCIÓN PARA DIBUJAR LAS LÍNEAS (Asegúrate de tenerla) ---
+function addNPCLine(sender, msg, isSkittles = false) {
+  const npcChat = document.getElementById("npcChat");
+  if (!npcChat) return;
+
+  const line = document.createElement("div");
+  line.className = "npcLine";
+  const labelClass = isSkittles ? 'skittles-label' : 'user-label';
+  line.innerHTML = `<b class="${labelClass}">${sender}:</b> ${msg}`;
+  npcChat.appendChild(line);
+  npcChat.scrollTop = npcChat.scrollHeight;
+}
     // ... resto del código ...
 
     const data = await response.json();
