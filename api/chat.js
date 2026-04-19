@@ -16,7 +16,7 @@ export default async function handler(req, res) {
       return res.status(500).json({ reply: "¡no encuentro la llave en vercel! 🔑" });
     }
 
-    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    const response = await fetch(""model": "huggingfaceh4/zephyr-7b-beta:free",", {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${apiKey}`,
@@ -25,7 +25,7 @@ export default async function handler(req, res) {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        "model": "mistralai/mistral-7b-instruct:free", 
+        "model": ""model": "zephyr-7b-beta:free", 
         "messages": [
           {
             "role": "system",
