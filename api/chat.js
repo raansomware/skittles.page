@@ -7,38 +7,43 @@ export default async function handler(req, res) {
 
   try {
     const { message } = req.body;
-    const token = process.env.HF_TOKEN?.trim();
+    const apiKey = process.env.OPENROUTER_API_KEY?.trim();
 
-    if (!token) return res.status(500).json({ reply: "no hay token en vercel! 🔑" });
+    if (!apiKey) return res.status(500).json({ reply: "¡falta la key de openrouter en vercel! 🔑" });
 
-    // URL SIN ESPACIOS, SIN SALTOS DE LÍNEA, LIMPIA:
-    const url = "https://api-inference.huggingface.co/models/google/gemma-2-2b-it";
-
-    const response = await fetch(url, {
+    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${token}`,
+        "Authorization": `Bearer ${apiKey}`,
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        inputs: message,
-        parameters: { max_new_tokens: 100 }
+        "model": "google/gemma-2-9b-it:free", 
+        "messages": [
+          {
+            "role": "system",
+            "content": "you are skittles. a genius lsd hallucination mascot. you speak in lowercase. you use *asterisks for actions*. you are chaotic, energetic, and unsettlingly friendly. you love candy and medicine. treat user as thomas. ^_^ :3 ✨💊"
+          },
+          {
+            "role": "user",
+            "content": message
+          }
+        ]
       })
     });
 
+    const data = await response.json();
+
     if (!response.ok) {
-      const errorText = await response.text();
       return res.status(response.status).json({ 
-        reply: `glitch ${response.status}: ${errorText.slice(0, 50)}... ^_^` 
+        reply: `error de openrouter: ${data.error?.message || "algo salió mal"}... ^_^` 
       });
     }
 
-    const data = await response.json();
-    const reply = Array.isArray(data) ? data[0]?.generated_text : data.generated_text;
-
-    return res.status(200).json({ reply: (reply || "brain dead...").trim() });
+    const reply = data.choices[0].message.content;
+    return res.status(200).json({ reply: reply.trim() });
 
   } catch (error) {
-    return res.status(500).json({ reply: "mega brain error: " + error.message });
+    return res.status(500).json({ reply: "error de cerebro: " + error.message });
   }
 }
