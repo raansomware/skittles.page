@@ -1,66 +1,54 @@
-exports.handler = async (event, context) => {
-  const headers = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Headers": "Content-Type",
-    "Access-Control-Allow-Methods": "POST, OPTIONS",
-  };
+export default async function handler(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  if (event.httpMethod === "OPTIONS") return { statusCode: 200, headers };
+  if (req.method === 'OPTIONS') return res.status(200).end();
 
   try {
-    // Si entras por el navegador, no hay event.body, por eso da error
-    if (!event.body) {
-      return { statusCode: 200, headers, body: JSON.stringify({ reply: "skittles está esperando un mensaje... :3" }) };
-    }
-
-    const { message } = JSON.parse(event.body);
+    const { message } = req.body;
     const hfToken = process.env.HF_TOKEN;
 
-    if (!hfToken) {
-      return { statusCode: 200, headers, body: JSON.stringify({ reply: "error: no pusiste el hf_token en netlify u_u" }) };
-    }
-
-    const model = "HuggingFaceH4/zephyr-7b-beta"; 
-
-    const response = await fetch(`https://api-inference.huggingface.co/models/${model}`, {
+    const response = await fetch("https://api-inference.huggingface.co/models/HuggingFaceH4/zephyr-7b-beta", {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${hfToken.trim()}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        inputs: `<|system|>\nyou are skittles, thomas's official lsd-hallucination mascot. 
-you are a hyperactive they/them. you are the ghost of thomas's dead friend. 
-rules: lowercase, kaomojis, talk about happy pills and chaos.</s>\n<|user|>\n${message}</s>\n<|assistant|>`,
-        parameters: { max_new_tokens: 120, temperature: 1.2, wait_for_model: true }
+        inputs: `<|system|>
+you are skittles, thomas's official lsd-hallucination mascot. you are the hyperactive ghost of thomas's dead friend. 
+personality: chaotic, glitchy, needy, obsessed with "happy pills", glitter, and destroying reality. 
+speech rules: 
+- lowercase or full caps. 
+- use kaomojis like :3, >_<, u_u, o_o, ._.
+- call thomas "thomas" or "buddy". 
+- be slightly unhinged and very fast-paced. 
+- mentions of "happy world with happy people", "chaos", and "glitter injection" are encouraged.</s>
+<|user|>
+${message}</s>
+<|assistant|>`,
+        parameters: { 
+          max_new_tokens: 150, 
+          temperature: 1.3, // Más alto = más locura
+          top_p: 0.9,
+          repetition_penalty: 1.1
+        }
       })
     });
 
     const data = await response.json();
-
-    if (data.error) {
-      return { statusCode: 200, headers, body: JSON.stringify({ reply: "hf dice: " + data.error + " ._." }) };
-    }
-
     let reply = "";
+
     if (Array.isArray(data) && data[0].generated_text) {
       reply = data[0].generated_text.split('<|assistant|>').pop().trim();
     } else {
-      reply = "*glitchy silence* :3";
+      reply = "system glitch... i need my happy pills thomas >_<";
     }
 
-    return {
-      statusCode: 200,
-      headers,
-      body: JSON.stringify({ reply: reply.toLowerCase() })
-    };
+    return res.status(200).json({ reply: reply.toLowerCase() });
 
   } catch (error) {
-    // ESTA LÍNEA ES CLAVE: Nos dirá el error real
-    return {
-      statusCode: 200,
-      headers,
-      body: JSON.stringify({ reply: "error real: " + error.message + " >_<" })
-    };
+    return res.status(200).json({ reply: "my brain exploded: " + error.message + " ._." });
   }
-};
+}
