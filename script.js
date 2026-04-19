@@ -845,9 +845,49 @@ function renderBadges() {
 }
 
 // ============================
-// nick.bot NPC CHAT (Skittles Integration)
+// nick.bot NPC CHAT (Skittles)
 // ============================
 
+// 1. Coloca la función askSkittles aquí afuera
+async function askSkittles(text) {
+  try {
+    const loadingId = "loading-" + Date.now();
+    const loadingLine = document.createElement("div");
+    loadingLine.id = loadingId;
+    loadingLine.className = "npcLine";
+    loadingLine.innerHTML = `<b class="skittles-label">Skittles:</b> ...`;
+    const npcChat = document.getElementById("npcChat");
+    if (!npcChat) return;
+    
+    npcChat.appendChild(loadingLine);
+    npcChat.scrollTop = npcChat.scrollHeight;
+
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: text }) 
+    });
+
+    const data = await response.json();
+    
+    const loader = document.getElementById(loadingId);
+    if (loader) loader.remove();
+
+    if (data.reply) {
+      addNPCLine("Skittles", data.reply, true);
+      unlockBadge("npc");
+      triggerSparkles();
+    } else {
+      addNPCLine("Skittles", "error 400: pixels lost 😭", true);
+    }
+
+  } catch (error) {
+    console.error("API Error:", error);
+    addNPCLine("Skittles", "api is down... take ur medz ^_^", true);
+  }
+}
+
+// 2. Esta es la función que configura los botones y el input
 function setupNickBot() {
   const npcChat = document.getElementById("npcChat");
   const npcInput = document.getElementById("npcInput");
@@ -855,64 +895,24 @@ function setupNickBot() {
 
   if (!npcChat || !npcInput || !npcSend) return;
 
-  // Función para añadir líneas al chat con estilo
-  function addNPCLine(sender, msg, isSkittles = false) {
+  // Función auxiliar para dibujar las líneas en la caja de chat
+  window.addNPCLine = function(sender, msg, isSkittles = false) {
     const line = document.createElement("div");
     line.className = "npcLine";
-    // Si es Skittles, le ponemos un color especial (rosa/fucsia)
-    const colorStyle = isSkittles ? 'style="color: #ff69b4; font-weight: bold;"' : "";
-    line.innerHTML = `<span ${colorStyle}>${sender}:</span> ${msg}`;
+    const labelClass = isSkittles ? 'skittles-label' : 'user-label';
+    line.innerHTML = `<b class="${labelClass}">${sender}:</b> ${msg}`;
     npcChat.appendChild(line);
     npcChat.scrollTop = npcChat.scrollHeight;
-  }
-
-  // Función principal para hablar con la API
-  async function askSkittles(text) {
-    try {
-      // Pequeño indicador de que está "pensando"
-      const loadingId = "loading-" + Date.now();
-      const loadingLine = document.createElement("div");
-      loadingLine.id = loadingId;
-      loadingLine.className = "npcLine";
-      loadingLine.innerHTML = `<span style="color: #ff69b4;">Skittles:</span> ...`;
-      npcChat.appendChild(loadingLine);
-
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: text })
-      });
-
-      const data = await response.json();
-      
-      // Quitamos el "pensando" y ponemos la respuesta real
-      document.getElementById(loadingId).remove();
-      
-      if (data.content) {
-        addNPCLine("Skittles", data.content, true);
-        unlockBadge("npc"); // Desbloquea tu badge de siempre
-        triggerSparkles();  // ¡Efecto de chispas cada vez que responde!
-      } else {
-        throw new Error("No content");
-      }
-
-    } catch (error) {
-      console.error("API Error:", error);
-      // Si falla, usa tus respuestas clásicas como respaldo (fallback)
-      const fallbackReplies = ["meow... (api error)", "Skittles is busy eating candies! ^_^"];
-      addNPCLine("Skittles", fallbackReplies[Math.floor(Math.random() * fallbackReplies.length)], true);
-    }
   }
 
   npcSend.addEventListener("click", () => {
     const msg = npcInput.value.trim();
     if (!msg) return;
 
-    addNPCLine("you", msg);
+    addNPCLine("you", msg); // Muestra lo que tú escribiste
     npcInput.value = "";
 
-    // Llamamos a la IA
-    askSkittles(msg);
+    askSkittles(msg); // Llama a la IA para que responda
   });
 
   npcInput.addEventListener("keydown", (e) => {
@@ -920,5 +920,5 @@ function setupNickBot() {
   });
 
   // Saludo inicial
-  addNPCLine("Skittles", "hi! i'm Soren, but call me Skittles! ^_^ do u have any candies?", true);
+  addNPCLine("Skittles", "hi. welcome to skittlesOS. do u have any candies? ^_^", true);
 }
