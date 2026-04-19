@@ -83,29 +83,37 @@ async function askSkittles(text) {
     npcChat.appendChild(loadingLine);
     npcChat.scrollTop = npcChat.scrollHeight;
 
-    // Usamos la ruta directa a la función de Netlify
-   const response = await fetch('https://raansomware.netlify.app/.netlify/functions/chat', {
+    // FORZAMOS LA URL DIRECTA PARA EVITAR EL ERROR DEL <
+    const response = await fetch('https://raansomware.netlify.app/.netlify/functions/chat', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      mode: 'cors', // Forzamos modo CORS por seguridad
+      headers: { 
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
       body: JSON.stringify({ message: text.trim() })
     });
 
-    // Si recibimos un error 404 o 500, el servidor nos manda HTML, por eso el error del "<"
-    if (!response.ok) {
-        throw new Error(`server status ${response.status}`);
+    // Si recibimos un HTML (que empieza con <), esto lo atrapará antes de que explote el JSON
+    const contentType = response.headers.get("content-type");
+    if (!contentType || !contentType.includes("application/json")) {
+        const textError = await response.text();
+        console.log("Respuesta no-JSON recibida:", textError);
+        throw new Error("El servidor no envió JSON, envió HTML. Revisa tus logs de Netlify.");
     }
 
     const data = await response.json();
     document.getElementById(loadingId)?.remove();
-
-    const finalMsg = data.reply || "*stares blankly* :3";
     
-    addNPCLine("skittles", finalMsg, true);
+    addNPCLine("skittles", data.reply || "*stares blankly* :3", true);
     triggerSparkles();
 
   } catch (error) {
     document.getElementById(loadingId)?.remove();
-    console.error("Bot error:", error);
+    console.error("DEBUG ERROR:", error);
+    addNPCLine("skittles", `*glitches* i can't see the void: ${error.message} ._.`, true);
+  }
+}
     // Mensaje de error con personalidad
     addNPCLine("skittles", `*glitches* error: ${error.message} ... i need happy pills >_<`, true);
   }
