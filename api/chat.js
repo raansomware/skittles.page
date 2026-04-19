@@ -5,13 +5,17 @@ exports.handler = async (event, context) => {
     "Access-Control-Allow-Methods": "POST, OPTIONS",
   };
 
-  if (event.httpMethod === "OPTIONS") return { statusCode: 200, headers };
+  if (event.httpMethod === "OPTIONS") {
+    return { statusCode: 200, headers };
+  }
 
   try {
     const { message } = JSON.parse(event.body);
     const hfToken = process.env.HF_TOKEN;
 
-    if (!hfToken) return { statusCode: 200, headers, body: JSON.stringify({ reply: "token missing... u_u" }) };
+    if (!hfToken) {
+      return { statusCode: 200, headers, body: JSON.stringify({ reply: "token missing... u_u" }) };
+    }
 
     const model = "HuggingFaceH4/zephyr-7b-beta"; 
 
@@ -44,24 +48,25 @@ rules:
 
     const rawResponse = await response.text();
     let data;
+    
     try {
-        data = JSON.parse(rawResponse);
+      data = JSON.parse(rawResponse);
     } catch (e) {
-        return { statusCode: 200, headers, body: JSON.stringify({ reply: "*static noises* o_o" }) };
+      return { statusCode: 200, headers, body: JSON.stringify({ reply: "*static noises* o_o" }) };
     }
 
     let reply = "";
     if (Array.isArray(data) && data[0].generated_text) {
       reply = data[0].generated_text.split('<|assistant|>').pop().trim();
     } else if (data.estimated_time) {
-        reply = `*flickering* wait for me, thomas... i'm still manifesting... (${Math.round(data.estimated_time)}s) :3`;
+      reply = `*flickering* wait for me, thomas... i'm still manifesting... (${Math.round(data.estimated_time)}s) :3`;
     } else if (data.generated_text) {
       reply = data.generated_text.trim();
     } else {
       reply = data.error || "*vibrates intensely* ._.";
     }
 
-    // Limpieza final para asegurar la estética de Skittles
+    // Limpieza final
     reply = reply.toLowerCase().replace(/[^a-z0-9\s*^:3>_<o_@.un]/g, '').trim();
 
     return {
