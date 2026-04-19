@@ -1,1 +1,115 @@
+/* --- MOTOR VISUAL SKITTLES --- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
+:root {
+  --hotpink: #ff1493;
+  --neongreen: #00ff88;
+  --neonblue: #00eaff;
+  --neonyellow: #fff700;
+  --dark: #050610;
+}
+
+body {
+  font-family: "Fredoka", sans-serif;
+  background: #000 url("bg.gif") fixed center; /* REVISA QUE bg.gif EXISTA */
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* Para que puedas hacer scroll */
+  min-height: 100vh;
+  padding: 40px 15px;
+  overflow-x: hidden;
+  color: white;
+}
+
+/* EL CONTENEDOR PRINCIPAL (La caja negra transparente) */
+.container {
+  width: 100%;
+  max-width: 650px;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(12px);
+  border: 2px solid var(--neonblue);
+  border-radius: 35px;
+  padding: 35px;
+  display: flex;
+  flex-direction: column;
+  gap: 25px; /* Esto separa las secciones automáticamente */
+  box-shadow: 0 0 40px rgba(0, 234, 255, 0.2);
+  z-index: 10;
+}
+
+/* CABECERA Y TEXTOS */
+.header { text-align: center; }
+.title { 
+  font-size: 45px; 
+  color: white; 
+  text-shadow: 0 0 15px var(--neonblue);
+  font-weight: 900;
+}
+.tagline { color: var(--neonyellow); font-weight: 700; }
+
+/* CAJAS DE CONTENIDO (About, Moots, Música) */
+.box, .profile-card, .music-player, .stickers-box {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 25px;
+  padding: 20px;
+}
+
+.box h2 { color: var(--neongreen); margin-bottom: 10px; font-size: 1.1rem; }
+
+/* MOOTS GRID - Arreglado para que no se encime */
+.mootsGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.mootCard {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background: rgba(0,0,0,0.4);
+  padding: 15px;
+  border-radius: 20px;
+  border-left: 4px solid var(--neonblue);
+}
+
+.mootPfp {
+  width: 55px;
+  height: 55px;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+/* TERMINAL (Escondida en móvil para que no estorbe) */
+#miniTerminal {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 300px;
+  height: 220px;
+  background: black;
+  border: 1px solid var(--neonblue);
+  border-radius: 15px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 800px) {
+  #miniTerminal { display: none; }
+}
+
+/* STICKERS */
+.stickerGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.stickerTool img { width: 100%; height: auto; }
