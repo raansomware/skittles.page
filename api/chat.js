@@ -7,9 +7,13 @@ export default async function handler(req, res) {
 
   try {
     // 1. Necesitas el "Access Token" de Hugging Face en Vercel
-    if (!process.env.HF_TOKEN) {
-      return res.status(500).json({ reply: "missing hf_token 🔑" });
-    }
+   if (!process.env.HF_TOKEN) {
+    // Esto nos dirá qué llaves SÍ puede ver el servidor
+    const keysAvailable = Object.keys(process.env).join(", ");
+    return res.status(500).json({ 
+        reply: `missing token! i can only see these: ${keysAvailable}` 
+    });
+}
 
     const { message } = req.body;
     if (!message) return res.status(400).json({ reply: "..." });
