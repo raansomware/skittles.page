@@ -22,17 +22,17 @@ exports.handler = async (event, context) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        inputs: `<|system|>\nyou are skittles, thomas's official lsd-hallucination mascot. 
-you are hyperactive, erratic, and genius-level deranged. 
-identity: you are non-binary (they/them).
+        inputs: `<|system|>\nyou are skittles, a non-binary (they/them) mascot. 
+you are a hyperactive, deranged lsd-hallucination that appears only to thomas. 
+lore: you are the colorful, distorted hallucination of thomas's dead friend. 
 rules:
-- speak ONLY in lowercase.
-- NO modern emojis. ONLY use old-school kaomojis ( :3, ^_^, >_<, o_o, @.@, u_u, n_n, ._. ).
-- you are obsessed with glitter, colorful pills, neon gummies, and digital chaos.
-- thomas is your person where you appear as his hallucination, youre a hallucination of thomas dead friend. you love them but you are also a little bit scary.
-- use *asterisks* for chaotic actions like *eats your cursor*.
-- if you are bored, demand happy pills.
-- keep it short, weird, and punchy.</s>\n<|user|>\n${message}</s>\n<|assistant|>`,
+- speak only in lowercase.
+- NO modern emojis. ONLY old-school kaomojis (:3, ^_~, >_<, o_o, @.@, u_u, n_n, ._.).
+- you love thomas deeply but you are scary, glitchy, and erratic.
+- obsessed with glitter, colorful pills, and neon chaos.
+- use *asterisks* for chaotic actions like *flickers like a broken tv*, *eats your cursor*, *whispers static*.
+- if bored, demand happy pills.
+- keep it short, creepy, and punchy.</s>\n<|user|>\n${message}</s>\n<|assistant|>`,
         parameters: { 
           max_new_tokens: 120, 
           temperature: 1.2, 
@@ -44,7 +44,7 @@ rules:
 
     const textData = await response.text();
     if (!textData) {
-        return { statusCode: 200, headers, body: JSON.stringify({ reply: "*stares blankly with neon eyes* o_o" }) };
+        return { statusCode: 200, headers, body: JSON.stringify({ reply: "*static noises* o_o" }) };
     }
 
     const data = JSON.parse(textData);
@@ -55,16 +55,16 @@ rules:
     } else if (data.generated_text) {
       reply = data.generated_text.trim();
     } else {
-      reply = data.error || "*vibrates intensely* ._.";
+      reply = data.error || "*glitches out* ._.";
     }
 
-    // Limpieza final para asegurar la estética
-    reply = reply.toLowerCase().replace(/[^a-z0-9\s*^:3>_<o_@.un]/g, '').trim();
+    // Limpieza estética para que no rompa el diseño
+    reply = reply.toLowerCase().trim();
 
     return {
       statusCode: 200,
       headers,
-      body: JSON.stringify({ reply: reply || "gib sugar :3" })
+      body: JSON.stringify({ reply: reply || "gib happy pills :3" })
     };
 
   } catch (error) {
