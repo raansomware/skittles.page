@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setupMootRequest();
   setupStamps();
 
-  setupNickBot();
+  setupSkittlesBot();
   setupQuote();
   setupTabTitles();
   setupKonami();
