@@ -11,7 +11,7 @@ export default async function handler(req, res) {
     const apiKey = process.env.OPENROUTER_API_KEY?.trim();
 
     if (!apiKey) {
-      return res.status(500).json({ reply: "¡falta la llave en vercel! 🔑" });
+      return res.status(500).json({ reply: "ESTOY USANDO EL CODIGO NUEVO!!!" });
     }
 
     const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
