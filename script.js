@@ -844,15 +844,20 @@ function renderBadges() {
   });
 }
 
-// --- FUNCIÓN DE COMUNICACIÓN ---
+// ==========================================
+// SKITTLES BOT - VERSIÓN FINAL LIMPIA
+// ==========================================
+
 async function askSkittles(text) {
   if (!text || text.trim() === "") return;
 
   const npcChat = document.getElementById("npcChat");
+  if (!npcChat) return;
+
   const loadingId = "loading-" + Date.now();
   
   try {
-    // 1. Mostrar que Skittles está pensando
+    // 1. Mostrar carga
     const loadingLine = document.createElement("div");
     loadingLine.id = loadingId;
     loadingLine.className = "npcLine";
@@ -860,7 +865,7 @@ async function askSkittles(text) {
     npcChat.appendChild(loadingLine);
     npcChat.scrollTop = npcChat.scrollHeight;
 
-    // 2. Enviar el mensaje a Vercel
+    // 2. Enviar a Vercel
     const response = await fetch('/api/chat', {
       method: 'POST',
       headers: { 
@@ -872,47 +877,11 @@ async function askSkittles(text) {
 
     const data = await response.json();
     
-    // 3. Quitar los puntitos de carga
+    // 3. Quitar carga
     const loader = document.getElementById(loadingId);
     if (loader) loader.remove();
 
-    // 4. Mostrar la respuesta real o el error
-    if (data && data.reply) {
-      addNPCLine("skittles", data.reply, true);
-      if (typeof triggerSparkles === "function") triggerSparkles();
-    } else {
-      console.log("Error de la API:", data);
-      addNPCLine("skittles", "i'm confused... 🍬", true);
-    }
-
-  } catch (error) {
-    console.error("API Error:", error);
-    const loader = document.getElementById(loadingId);
-    if (loader) loader.remove();
-    addNPCLine("skittles", "oopsie! skittles is busy eating candy ^_^", true);
-  }
-}
-
-// --- FUNCIÓN PARA DIBUJAR LAS LÍNEAS (Asegúrate de tenerla) ---
-function addNPCLine(sender, msg, isSkittles = false) {
-  const npcChat = document.getElementById("npcChat");
-  if (!npcChat) return;
-
-  const line = document.createElement("div");
-  line.className = "npcLine";
-  const labelClass = isSkittles ? 'skittles-label' : 'user-label';
-  line.innerHTML = `<b class="${labelClass}">${sender}:</b> ${msg}`;
-  npcChat.appendChild(line);
-  npcChat.scrollTop = npcChat.scrollHeight;
-}
-    // ... resto del código ...
-
-    const data = await response.json();
-    
-    const loader = document.getElementById(loadingId);
-    if (loader) loader.remove();
-
-    // Verificamos todas las rutas posibles del JSON
+    // 4. Mostrar respuesta (revisamos todas las rutas del JSON)
     const finalMsg = data.reply || data.content || (data.choices && data.choices[0].message.content);
 
     if (finalMsg) {
@@ -929,7 +898,7 @@ function addNPCLine(sender, msg, isSkittles = false) {
     if (loader) loader.remove();
     addNPCLine("skittles", "oopsie! skittles is busy eating candy ^_^", true);
   }
-} // <--- Asegúrate de que esta llave cierre bien askSkittles
+}
 
 function addNPCLine(sender, msg, isSkittles = false) {
   const npcChat = document.getElementById("npcChat");
@@ -953,14 +922,15 @@ function setupSkittlesBot() {
     const msg = npcInput.value.trim();
     if (!msg) return;
 
-    addNPCLine("you", msg); // Dibujas tu mensaje
-    askSkittles(msg);       // Llamas a la API
-    npcInput.value = "";    // Limpias el cuadro
+    addNPCLine("you", msg);
+    askSkittles(msg);
+    npcInput.value = "";
   };
-}
+
   npcInput.onkeydown = (e) => {
     if (e.key === "Enter") npcSend.click();
   };
 
+  // Saludo inicial
   addNPCLine("skittles", "hi!! i'm skittles! ^_^ do u have any glitter?", true);
 }
