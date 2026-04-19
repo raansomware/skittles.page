@@ -1,6 +1,4 @@
-/* ============================
-   ESTILOS BASE (TU CSS ORIGINAL)
-   ============================ */
+/* RESET TOTAL */
 * {
   margin: 0;
   padding: 0;
@@ -14,229 +12,113 @@
   --neonyellow: #fff700;
   --neonpurple: #c800ff;
   --dark: #050610;
-  --glass: rgba(0, 0, 0, 0.65);
-  --glass2: rgba(255, 255, 255, 0.06);
 }
 
 body {
   font-family: "Fredoka", sans-serif;
-  background-image: url("bg.gif");
+  background: #000 url("bg.gif") no-repeat center center fixed;
   background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
   min-height: 100vh;
   display: flex;
   justify-content: center;
-  align-items: center;
-  padding: 25px;
-  overflow-x: hidden;
-  transition: 0.4s;
+  align-items: center; /* ESTO CENTRA TODO AL MEDIO */
+  padding: 40px 20px;
+  color: white;
 }
 
-/* SECRET MODE */
-body.secret-mode {
-  background-image: url("dark.gif");
-}
-
-body.secret-mode .container::before {
-  background: linear-gradient(90deg, red, black, red, black);
-}
-
-body.secret-mode .title {
-  text-shadow: 0 0 18px rgba(255, 0, 0, 0.7), 0 0 28px rgba(0, 0, 0, 0.9);
-}
-
-/* ============================
-   SILLY SHIMEJI (NUEVA INYECCIÓN)
-   ============================ */
-.shimeji {
-  position: fixed;
-  width: 80px;
-  height: 80px;
-  background-image: url("silly.png"); /* Asegúrate de que el nombre sea correcto */
-  background-size: contain;
-  background-repeat: no-repeat;
-  bottom: -100px; /* Inicia fuera de pantalla */
-  left: 50px;
-  z-index: 1000000;
-  pointer-events: none;
-  transition: bottom 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), left 2s linear, transform 0.3s ease;
-  filter: drop-shadow(0 0 10px rgba(255, 20, 147, 0.5));
-}
-
-.shimeji.walking {
-  animation: sillyWobble 0.5s infinite alternate ease-in-out;
-}
-
-@keyframes sillyWobble {
-  from { transform: rotate(-5deg) scaleX(var(--direction, 1)); }
-  to { transform: rotate(5deg) scaleX(var(--direction, 1)); }
-}
-
-/* ============================
-   CURSOR TRAIL & SPARKLES
-   ============================ */
-.cursor-trail-item {
-  font-family: serif;
-  text-shadow: 0 0 10px var(--neonblue), 0 0 18px var(--hotpink);
-  font-size: 18px;
-}
-
-.sparkle {
-  position: fixed;
-  animation: sparkleFloat 2.8s ease-out forwards;
-  filter: drop-shadow(0 0 15px rgba(0, 234, 255, 0.8));
-  z-index: 10;
-}
-
-@keyframes sparkleFloat {
-  0% { opacity: 1; transform: translateY(0) scale(1) rotate(0deg); }
-  100% { opacity: 0; transform: translateY(-170px) scale(0) rotate(180deg); }
-}
-
-/* ============================
-   CONTAINER & UI ELEMENTS
-   ============================ */
+/* EL CONTENEDOR QUE ARREGLA TODO */
 .container {
   width: 100%;
-  max-width: 680px;
-  padding: 45px 40px;
-  border-radius: 35px;
-  background: rgba(0,0,0,0.68);
-  border: 2px solid rgba(0, 234, 255, 0.55);
-  box-shadow: 0 0 35px rgba(0,234,255,0.2), 0 0 65px rgba(255,20,147,0.15);
-  backdrop-filter: blur(12px);
+  max-width: 650px;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(15px);
+  border-radius: 30px;
+  border: 2px solid var(--neonblue);
+  padding: 30px;
+  box-shadow: 0 0 50px rgba(0, 234, 255, 0.2);
   position: relative;
-  z-index: 5;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Separa las cajas automáticamente */
 }
 
-.container::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 35px;
-  padding: 2px;
-  background: linear-gradient(90deg, var(--neonblue), var(--hotpink), var(--neongreen), var(--neonpurple));
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  animation: borderShift 4s linear infinite;
+/* CAJAS GENERALES (About, Moots, etc) */
+.box, .profile-card, .music-player, .stickers-box {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 20px;
+  transition: 0.3s;
 }
 
-@keyframes borderShift {
-  0% { filter: hue-rotate(0deg); }
-  100% { filter: hue-rotate(360deg); }
+.box h2 {
+  color: var(--neongreen);
+  margin-bottom: 10px;
+  font-size: 1.2rem;
+  text-transform: lowercase;
 }
 
-/* TERMINAL MINI */
+/* ARREGLO DE MOOTS (Para que no se vea amontonado) */
+.mootsGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.mootCard {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 12px;
+  border-radius: 15px;
+  border: 1px solid var(--neonpurple);
+}
+
+.mootPfp {
+  width: 50px;
+  height: 50px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+/* REPRODUCTOR Y TERMINAL (Ajuste fino) */
+.music-player { border-color: var(--hotpink); }
+
 #miniTerminal {
   position: fixed;
   bottom: 20px;
   right: 20px;
-  width: 320px;
-  height: 240px;
-  z-index: 99999999;
-  background: rgba(0,0,0,0.85);
+  width: 280px;
+  height: 200px;
+  background: rgba(0, 0, 0, 0.9);
   border: 1px solid var(--neonblue);
-  border-radius: 18px;
+  border-radius: 15px;
+  z-index: 1000;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 0 20px rgba(0, 234, 255, 0.3);
-  font-family: 'Courier New', Courier, monospace;
-}
-
-.terminalHeader {
-  padding: 8px 12px;
-  background: rgba(255,255,255,0.1);
-  font-size: 10px;
-  color: var(--neonblue);
-  font-weight: 900;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
-}
-
-.terminalLog {
-  flex: 1;
-  padding: 10px;
-  overflow-y: auto;
-  color: #00ff00;
-  font-size: 12px;
-}
-
-.terminalInput {
-  background: transparent;
-  border: none;
-  border-top: 1px solid rgba(255,255,255,0.1);
-  padding: 10px;
-  color: white;
-  outline: none;
-}
-
-/* GUESTBOOK & ACHIEVEMENTS */
-.guestEntry {
-  background: rgba(255,255,255,0.05);
-  padding: 10px;
-  border-radius: 10px;
-  margin-bottom: 8px;
-  border-left: 3px solid var(--neonblue);
-}
-
-.achievement {
-  background: rgba(0,0,0,0.4);
-  padding: 12px;
-  border-radius: 12px;
-  margin-bottom: 5px;
-  transition: 0.3s;
-}
-
-.achievement.locked {
-  filter: grayscale(1) opacity(0.5);
-}
-
-/* STICKERS */
-.placed-sticker {
-  position: absolute;
-  cursor: grab;
-  z-index: 9999;
-  transition: transform 0.2s;
-}
-
-.placed-sticker:active { cursor: grabbing; transform: scale(1.1); }
-.placed-sticker img { width: 100%; filter: drop-shadow(0 0 10px var(--neonblue)); }
-
-/* TOAST */
-.toast {
-  position: fixed;
-  bottom: 30px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--dark);
-  border: 2px solid var(--hotpink);
-  padding: 10px 20px;
-  border-radius: 20px;
-  color: white;
-  z-index: 1000000000;
-  font-weight: 900;
-  box-shadow: 0 0 20px var(--hotpink);
 }
 
 /* STAMPS */
-.stamp {
-  filter: grayscale(1);
-  transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+.stampGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
 }
 
-.stamp.collected {
-  filter: grayscale(0);
-  transform: rotate(5deg) scale(1.1);
+.stamp {
+  width: 80px;
+  height: auto;
+  filter: grayscale(1);
+  cursor: pointer;
 }
+
+.stamp.collected { filter: grayscale(0); transform: scale(1.1); }
 
 /* RESPONSIVE */
-@media (max-width: 750px) {
-  #miniTerminal, .shimeji {
-    display: none; /* Ocultar elementos complejos en móvil para performance */
-  }
-  .container {
-    width: 95%;
-    padding: 20px;
-  }
+@media (max-width: 600px) {
+  .container { padding: 15px; }
+  #miniTerminal { display: none; } /* Ocultar en celular para que no estorbe */
 }
