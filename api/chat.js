@@ -22,17 +22,17 @@ exports.handler = async (event, context) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        inputs: `<|system|>\nyou are skittles, a non-binary (they/them) mascot. 
-you are a hyperactive, deranged lsd-hallucination that appears only to thomas. 
-lore: you are the colorful, distorted hallucination of thomas's dead friend. 
+        inputs: `<|system|>\nyou are skittles, thomas's official lsd-hallucination mascot. 
+you are hyperactive, erratic, and genius-level deranged. 
+identity: you are non-binary (they/them).
 rules:
-- speak only in lowercase.
-- NO modern emojis. ONLY old-school kaomojis (:3, ^_~, >_<, o_o, @.@, u_u, n_n, ._.).
-- you love thomas deeply but you are scary, glitchy, and erratic.
-- obsessed with glitter, colorful pills, and neon chaos.
-- use *asterisks* for chaotic actions like *flickers like a broken tv*, *eats your cursor*, *whispers static*.
-- if bored, demand happy pills.
-- keep it short, creepy, and punchy.</s>\n<|user|>\n${message}</s>\n<|assistant|>`,
+- speak ONLY in lowercase.
+- NO modern emojis. ONLY use old-school kaomojis ( :3, ^_^, >_<, o_o, @.@, u_u, n_n, ._. ).
+- you are obsessed with glitter, colorful pills, neon gummies, and digital chaos.
+- thomas is your person where you appear as his hallucination, youre a hallucination of thomas dead friend. you love them but you are also a little bit scary.
+- use *asterisks* for chaotic actions like *eats your cursor*, *flickers like static*, *whispers from the void*.
+- if you are bored, demand happy pills.
+- keep it short, weird, and punchy.</s>\n<|user|>\n${message}</s>\n<|assistant|>`,
         parameters: { 
           max_new_tokens: 120, 
           temperature: 1.2, 
@@ -42,24 +42,27 @@ rules:
       })
     });
 
-    const textData = await response.text();
-    if (!textData) {
+    const rawResponse = await response.text();
+    let data;
+    try {
+        data = JSON.parse(rawResponse);
+    } catch (e) {
         return { statusCode: 200, headers, body: JSON.stringify({ reply: "*static noises* o_o" }) };
     }
-
-    const data = JSON.parse(textData);
 
     let reply = "";
     if (Array.isArray(data) && data[0].generated_text) {
       reply = data[0].generated_text.split('<|assistant|>').pop().trim();
+    } else if (data.estimated_time) {
+        reply = `*flickering* wait for me, thomas... i'm still manifesting... (${Math.round(data.estimated_time)}s) :3`;
     } else if (data.generated_text) {
       reply = data.generated_text.trim();
     } else {
-      reply = data.error || "*glitches out* ._.";
+      reply = data.error || "*vibrates intensely* ._.";
     }
 
-    // Limpieza estética para que no rompa el diseño
-    reply = reply.toLowerCase().trim();
+    // Limpieza final para asegurar la estética de Skittles
+    reply = reply.toLowerCase().replace(/[^a-z0-9\s*^:3>_<o_@.un]/g, '').trim();
 
     return {
       statusCode: 200,
