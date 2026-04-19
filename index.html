@@ -14,7 +14,6 @@
 
 <body>
 
-  <!-- LOADING BIOS SCREEN -->
   <div id="enterScreen">
     <div class="bootLog" id="bootLog"></div>
     <div class="enterText" id="enterText">click 2 funsies!</div>
@@ -31,7 +30,6 @@
 
   <div class="container">
 
-    <!-- SECRET MODE TRIGGER -->
     <div class="banner" id="secretBanner">
       <img src="thomas.png" alt="banner">
       <div class="bannerHint">click me...</div>
@@ -76,13 +74,11 @@
       <p>♡ follow to be moots + appreciated</p>
     </div>
 
-    <!-- QUOTE -->
     <div class="box" id="quoteBox">
       <h2>quote of the day</h2>
       <p id="quoteText">loading quote...</p>
     </div>
 
-    <!-- MUSIC PLAYER -->
     <div class="music-player">
       <audio id="audioPlayer"></audio>
 
@@ -126,7 +122,6 @@
       <div class="trackText" id="trackText">track ?</div>
     </div>
 
-    <!-- RATING -->
     <div class="rating-section">
       <div class="rating-title">RATE THIS PAGE</div>
       <div class="star-rating">
@@ -138,7 +133,6 @@
       </div>
     </div>
 
-    <!-- BUTTONS -->
     <div class="buttons">
       <button class="bigBtn" id="sparkleBtn">✨ sparkles</button>
       <button class="bigBtn" id="rainbowBtn">🌈 rainbow mode</button>
@@ -146,7 +140,6 @@
       <button class="bigBtn panicBtn" id="panicBtn">🚨 PANIC.exe</button>
     </div>
 
-    <!-- MOOT REQUEST -->
     <div class="box">
       <h2>moot request</h2>
       <p>send request to become moots...</p>
@@ -154,7 +147,6 @@
       <p class="smallText">requests sent: <span id="mootCount">0</span></p>
     </div>
 
-    <!-- MOOTS -->
     <div class="box">
       <h2>moots</h2>
 
@@ -174,7 +166,6 @@
       </div>
     </div>
 
-    <!-- STAMPS -->
     <div class="box">
       <h2>stamps</h2>
       <p>click to collect them</p>
@@ -189,7 +180,6 @@
       <p class="smallText">collected: <span id="stampCount">0</span>/4</p>
     </div>
 
-    <!-- STICKERS -->
     <div class="stickers-box">
       <h2>stickers</h2>
 
@@ -225,26 +215,23 @@
       <button class="clearBtn" onclick="clearAllStickers()">clear all</button>
     </div>
 
-    <!-- NPC CHATBOT -->
     <div class="box" id="npcBox">
-      <h2>nick.bot</h2>
-      <p class="npcHint">talk to me. i might bite.</p>
+      <h2>skittles.bot ^_^</h2>
+      <p class="npcHint">he's hungry for candies (and English!)</p>
 
-      <div class="npcChat" id="npcChat"></div>
+      <div class="npcChat" id="npcChat" style="max-height: 200px; overflow-y: auto; margin-bottom: 10px; text-align: left;"></div>
 
       <div class="npcRow">
-        <input type="text" id="npcInput" placeholder="say something..." maxlength="60">
-        <button class="npcBtn" id="npcSend">send</button>
+        <input type="text" id="npcInput" placeholder="say something to Soren..." maxlength="100">
+        <button class="npcBtn" id="npcSend" onclick="askSkittles()">send</button>
       </div>
     </div>
 
-    <!-- BADGES -->
     <div class="box" id="badgesBox">
       <h2>badges</h2>
       <div class="badgesList" id="badgesList"></div>
     </div>
 
-    <!-- GUESTBOOK -->
     <div class="box" id="guestbookBox">
       <h2>guestbook</h2>
 
@@ -257,7 +244,6 @@
       <div class="guestbookList" id="guestbookList"></div>
     </div>
 
-    <!-- ACHIEVEMENTS -->
     <div class="box" id="achievementsBox">
       <h2>achievements</h2>
       <div class="achievementsList" id="achievementsList"></div>
@@ -273,10 +259,45 @@
 
   <div class="sticker-canvas" id="stickerCanvas"></div>
 
-  <!-- PANIC OVERLAY -->
   <div id="panicOverlay">
     <div class="panicText">nothing to see here.</div>
   </div>
+
+  <script>
+    async function askSkittles() {
+      const input = document.getElementById('npcInput');
+      const chat = document.getElementById('npcChat');
+      const text = input.value;
+
+      if (!text) return;
+
+      // Mostrar tu mensaje
+      chat.innerHTML += `<div><b>You:</b> ${text}</div>`;
+      input.value = "";
+      chat.scrollTop = chat.scrollHeight;
+
+      try {
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          body: JSON.stringify({ prompt: text })
+        });
+        const data = await res.json();
+
+        // Mostrar respuesta de Skittles
+        chat.innerHTML += `<div style="color: #ff69b4;"><b>Skittles:</b> ${data.content}</div>`;
+        chat.scrollTop = chat.scrollHeight;
+      } catch (e) {
+        chat.innerHTML += `<div style="color: red;">^_^ Opsie! Skittles is busy eating candies!</div>`;
+      }
+    }
+
+    // Para que funcione al presionar ENTER
+    document.getElementById('npcInput').addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') {
+        askSkittles();
+      }
+    });
+  </script>
 
   <script src="script.js"></script>
 </body>
