@@ -36,11 +36,11 @@ your personality:
 <</SYS>>
 
 ${message} [/INST]`,
-        pparameters: {
-          max_new_tokens: 250,
-          temperature: 1.3, // <--- Súbelo aquí para la locura
-          top_p: 0.95,      // <--- Ayuda a que no se bloquee en una sola palabra
-          repetition_penalty: 1.15, // <--- Evita que repita la misma frase mil veces
+       parameters: {
+          max_new_tokens: 200,
+          temperature: 1.1, // Sigue siendo locota, pero más estable
+          top_p: 0.9,
+          repetition_penalty: 1.2,
           return_full_text: false
         }
         }
