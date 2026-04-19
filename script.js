@@ -99,21 +99,21 @@ async function askSkittles(text) {
         throw new Error("vibe check failed: server sent html instead of glitter");
     }
 
-    const data = await response.json();
+ const data = await response.json();
     document.getElementById(loadingId)?.remove();
     
-    addNPCLine("skittles", data.reply || "*glitchy stare* :3", true);
+    addNPCLine("skittles", data.reply || "*stares blankly* :3", true);
     triggerSparkles();
-    if (Math.random() > 0.5) glitchEffect();
 
   } catch (error) {
     if (document.getElementById(loadingId)) {
         document.getElementById(loadingId).remove();
     }
     console.error("DEBUG ERROR:", error);
-    addNPCLine("skittles", `*melts* thomas i need happy pills: ${error.message} >_<`, true);
+    addNPCLine("skittles", `*glitches* error: ${error.message} >_<`, true);
   }
-}
+} // ESTA LLAVE CIERRA askSkittles. DESPUÉS DE ESTA NO DEBE HABER NADA HASTA LA SIGUIENTE FUNCIÓN.
+  // ... resto del código
 
 function addNPCLine(sender, msg, isSkittles = false) {
   const npcChat = document.getElementById("npcChat");
