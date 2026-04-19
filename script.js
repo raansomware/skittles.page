@@ -861,7 +861,7 @@ async function askSkittles(text) {
     npcChat.scrollTop = npcChat.scrollHeight;
 
     // IMPORTANTE: URL relativa para que el redireccionamiento de Netlify funcione
-    const response = await fetch('/api/chat', {
+const response = await fetch('/.netlify/functions/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ message: text.trim() })
