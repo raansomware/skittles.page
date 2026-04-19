@@ -1,15 +1,10 @@
- // ============================
-// LEON KENNEDY CONSOLE EASTER EGG
 // ============================
-console.log("%cLEON KENNEDY WAS HERE.", "color: #00ff88; font-size: 20px; font-weight: 900; text-shadow: 0 0 10px #00ff88;");
-console.log("%cprotecting nick from los illuminados 💀", "color: #ff1493; font-size: 14px; font-weight: 800;");
+// PLAYLIST REAL MP3
+// ============================
 
-// ============================
-// PLAYLIST (MP3 FILES REQUIRED)
-// ============================
 const playlist = [
-  { name: "buttercup", artist: "Jack Stauber", file: "buttercup.mp3" },
-  { name: "resonance", artist: "Home", file: "resonance.mp3" }
+  { name: "buttercup", artist: "Jack Stauber", file: "buttercup.mp3" },
+  { name: "resonance", artist: "Home", file: "resonance.mp3" }
 ];
 
 let currentTrack = 0;
@@ -18,807 +13,908 @@ let isPlaying = false;
 // ============================
 // INIT
 // ============================
+
 document.addEventListener("DOMContentLoaded", () => {
-  updateSongDisplay();
-  updateTrackDisplay();
-  loadVisitCount();
-  createInitialSparkles();
-  startCursorTrail();
-  setupCustomStickerUpload();
-  setupEnterScreen();
-  setupSecretMode();
-  setupButtons();
-  setupGuestbook();
-  setupAchievements();
-  setupAudioSystem();
-  setupVisualizer();
+  loadVisitCount();
+  createInitialSparkles();
+  startCursorTrail();
+
+  setupButtons();
+  setupEnterScreen();
+  setupSecretMode();
+  setupPanicMode();
+
+  setupMusicPlayer();
+  setupGuestbook();
+  setupAchievements();
+  setupMootRequest();
+  setupStamps();
+
+  setupNickBot();
+  setupQuote();
+  setupTabTitles();
+  setupKonami();
+
+  renderBadges();
 });
 
 // ============================
-// ENTER SCREEN
+// ENTER BIOS SCREEN
 // ============================
+
 function setupEnterScreen() {
-  const enterScreen = document.getElementById("enterScreen");
-  if (!enterScreen) return;
+  const screen = document.getElementById("enterScreen");
+  const bootLog = document.getElementById("bootLog");
+  const enterText = document.getElementById("enterText");
 
-  enterScreen.addEventListener("click", () => {
-    enterScreen.classList.add("hidden");
-    triggerSparkles();
-  });
-}
+  if (!screen || !bootLog || !enterText) return;
 
-// ============================
-// SECRET MODE (CLICK BANNER)
-// ============================
-function setupSecretMode() {
-  const banner = document.getElementById("secretBanner");
-  if (!banner) return;
+  const bootLines = [
+    "booting skittlesOS v6.66...",
+    "loading chaos modules...",
+    "injecting glitter...",
+    "connecting to nick.bot...",
+    "checking thomas.png integrity...",
+    "warning: vibes unstable",
+    "system ready."
+  ];
 
-  banner.addEventListener("click", () => {
-    document.body.classList.toggle("secret-mode");
-    unlockAchievement("secret mode entered");
-    toast("🔥 secret mode");
-    triggerSparkles();
-  });
-}
+  let i = 0;
 
-// ============================
-// BUTTON EVENTS
-// ============================
-function setupButtons() {
-  document.getElementById("sparkleBtn")?.addEventListener("click", triggerSparkles);
-  document.getElementById("rainbowBtn")?.addEventListener("click", createRainbow);
-  document.getElementById("glitchBtn")?.addEventListener("click", glitchEffect);
-  document.getElementById("panicBtn")?.addEventListener("click", panicMode);
-}
+  function typeLine() {
+    if (i >= bootLines.length) {
+      unlockBadge("boot");
+      return;
+    }
 
-// ============================
-// AUDIO PLAYER SYSTEM (REAL)
-// ============================
-function setupAudioSystem() {
-  const audio = document.getElementById("audioPlayer");
-  const volume = document.getElementById("volumeSlider");
+    bootLog.textContent += bootLines[i] + "\n";
+    i++;
+    setTimeout(typeLine, 350);
+  }
 
-  if (!audio) return;
+  typeLine();
 
-  audio.volume = 0.7;
-
-  volume?.addEventListener("input", () => {
-    audio.volume = volume.value;
-  });
-
-  audio.addEventListener("loadedmetadata", () => {
-    document.getElementById("duration").textContent = formatTime(audio.duration);
-  });
-
-  audio.addEventListener("timeupdate", () => {
-    const progressFill = document.getElementById("progressFill");
-    const progressSlider = document.getElementById("progressSlider");
-
-    if (!audio.duration) return;
-
-    const percent = (audio.currentTime / audio.duration) * 100;
-    progressFill.style.width = percent + "%";
-    progressSlider.value = percent;
-
-    document.getElementById("currentTime").textContent = formatTime(audio.currentTime);
-  });
-
-  audio.addEventListener("ended", () => {
-    nextSong();
-  });
-
-  audio.addEventListener("error", () => {
-    document.getElementById("songName").textContent = "MP3 missing";
-    document.getElementById("artistName").textContent = "file not found 💀";
-    toast("MP3 missing 💀");
-  });
-
-  document.getElementById("progressSlider")?.addEventListener("input", (e) => {
-    if (!audio.duration) return;
-    audio.currentTime = (e.target.value / 100) * audio.duration;
-  });
-}
-
-// ============================
-// MUSIC FUNCTIONS
-// ============================
-function updateSongDisplay() {
-  const song = playlist[currentTrack];
-  const audio = document.getElementById("audioPlayer");
-
-  document.getElementById("songName").textContent = song.name;
-  document.getElementById("artistName").textContent = song.artist;
-
-  if (audio) {
-    audio.src = song.file;
-    audio.load();
-  }
-}
-
-function updateTrackDisplay() {
-  document.getElementById("trackText").textContent =
-    `track ${currentTrack + 1} of ${playlist.length}`;
-}
-
-function togglePlay() {
-  const audio = document.getElementById("audioPlayer");
-  if (!audio) return;
-
-  isPlaying = !isPlaying;
-
-  if (isPlaying) {
-    audio.play();
-    document.getElementById("playBtn").textContent = "⏸";
-    toast("playing 🎵");
-  } else {
-    audio.pause();
-    document.getElementById("playBtn").textContent = "▶";
-    toast("paused");
-  }
-}
-
-function nextSong() {
-  currentTrack = (currentTrack + 1) % playlist.length;
-  updateSongDisplay();
-  updateTrackDisplay();
-  triggerSparkles();
-
-  if (isPlaying) {
-    document.getElementById("audioPlayer").play();
-  }
-
-  toast("next song 🎵");
-}
-
-function previousSong() {
-  currentTrack = (currentTrack - 1 + playlist.length) % playlist.length;
-  updateSongDisplay();
-  updateTrackDisplay();
-  triggerSparkles();
-
-  if (isPlaying) {
-    document.getElementById("audioPlayer").play();
-  }
-
-  toast("previous song 🎵");
-}
-
-function formatTime(seconds) {
-  if (!seconds || isNaN(seconds)) return "0:00";
-  const mins = Math.floor(seconds / 60);
-  const secs = Math.floor(seconds % 60);
-  return `${mins}:${secs.toString().padStart(2, "0")}`;
+  screen.addEventListener("click", () => {
+    screen.classList.add("hidden");
+  });
 }
 
 // ============================
 // VISITS
 // ============================
-function loadVisitCount() {
-  let count = localStorage.getItem("visitCount") || 0;
-  count = parseInt(count) + 1;
-  localStorage.setItem("visitCount", count);
 
-  const el = document.getElementById("visitCount");
-  if (el) el.textContent = count;
+function loadVisitCount() {
+  let count = localStorage.getItem("visitCount") || 0;
+  count = parseInt(count) + 1;
+  localStorage.setItem("visitCount", count);
+
+  const el = document.getElementById("visitCount");
+  if (el) el.textContent = count;
 }
 
 // ============================
 // SPARKLES
 // ============================
+
 function createInitialSparkles() {
-  for (let i = 0; i < 12; i++) {
-    setTimeout(() => createSparkle(), i * 160);
-  }
+  for (let i = 0; i < 15; i++) {
+    setTimeout(() => createSparkle(), i * 200);
+  }
 }
 
 function createSparkle(x = null, y = null) {
-  const container = document.querySelector(".sparkles-container");
-  if (!container) return;
+  const container = document.querySelector(".sparkles-container");
+  if (!container) return;
 
-  const sparkle = document.createElement("div");
-  const emojis = ["✨", "💫", "⭐", "🌟", "💥", "🎆", "🎇", "💖", "🌈"];
+  const sparkle = document.createElement("div");
+  const emojis = ["✨", "💫", "⭐", "🌟", "💥", "🎆", "🎇", "💖", "🌈"];
 
-  sparkle.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-  sparkle.className = "sparkle";
+  sparkle.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+  sparkle.className = "sparkle";
 
-  sparkle.style.left = (x !== null ? x : Math.random() * window.innerWidth) + "px";
-  sparkle.style.top = (y !== null ? y : Math.random() * window.innerHeight) + "px";
-  sparkle.style.fontSize = 12 + Math.random() * 24 + "px";
+  sparkle.style.left = (x !== null ? x : Math.random() * window.innerWidth) + "px";
+  sparkle.style.top = (y !== null ? y : Math.random() * window.innerHeight) + "px";
+  sparkle.style.fontSize = 12 + Math.random() * 24 + "px";
 
-  container.appendChild(sparkle);
-  setTimeout(() => sparkle.remove(), 3500);
+  container.appendChild(sparkle);
+  setTimeout(() => sparkle.remove(), 3500);
 }
 
 function triggerSparkles() {
-  for (let i = 0; i < 35; i++) {
-    setTimeout(() => {
-      createSparkle(
-        Math.random() * window.innerWidth,
-        Math.random() * window.innerHeight
-      );
-    }, i * 25);
-  }
+  for (let i = 0; i < 40; i++) {
+    setTimeout(() => {
+      createSparkle(
+        Math.random() * window.innerWidth,
+        Math.random() * window.innerHeight
+      );
+    }, i * 30);
+  }
 }
 
 // ============================
 // CURSOR TRAIL
 // ============================
+
 function startCursorTrail() {
-  document.addEventListener("mousemove", (e) => {
-    const trail = document.createElement("div");
-    const emojis = ["✦", "✧", "★", "☆", "✺", "✹", "✷", "✵"];
+  document.addEventListener("mousemove", (e) => {
+    const trail = document.createElement("div");
+    const emojis = ["✦", "✧", "★", "☆", "✺", "✹", "✷", "✵"];
 
-    trail.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-    trail.style.position = "fixed";
-    trail.style.left = e.clientX + "px";
-    trail.style.top = e.clientY + "px";
-    trail.style.transform = "translate(-50%, -50%)";
-    trail.style.pointerEvents = "none";
-    trail.style.zIndex = "99999999";
-    trail.style.fontSize = (12 + Math.random() * 16) + "px";
-    trail.style.color = "white";
-    trail.style.textShadow =
-      "0 0 10px rgba(0,234,255,0.8), 0 0 18px rgba(255,20,147,0.6)";
+    trail.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    trail.style.position = "fixed";
+    trail.style.left = e.clientX + "px";
+    trail.style.top = e.clientY + "px";
+    trail.style.transform = "translate(-50%, -50%)";
+    trail.style.pointerEvents = "none";
+    trail.style.zIndex = "99999999";
+    trail.style.fontSize = (12 + Math.random() * 16) + "px";
+    trail.style.color = "white";
+    trail.style.textShadow =
+      "0 0 10px rgba(0,234,255,0.8), 0 0 18px rgba(255,20,147,0.6)";
 
-    document.body.appendChild(trail);
+    document.body.appendChild(trail);
 
-    setTimeout(() => {
-      trail.style.transition = "0.6s";
-      trail.style.opacity = "0";
-      trail.style.transform = "translate(-50%, -80%) scale(0)";
-    }, 10);
+    setTimeout(() => {
+      trail.style.transition = "0.6s";
+      trail.style.opacity = "0";
+      trail.style.transform = "translate(-50%, -80%) scale(0)";
+    }, 10);
 
-    setTimeout(() => trail.remove(), 650);
-  });
+    setTimeout(() => trail.remove(), 650);
+  });
 }
 
 // ============================
 // TOAST
 // ============================
+
 function toast(msg) {
-  const old = document.querySelector(".toast");
-  if (old) old.remove();
+  const old = document.querySelector(".toast");
+  if (old) old.remove();
 
-  const t = document.createElement("div");
-  t.className = "toast";
-  t.textContent = msg;
-  document.body.appendChild(t);
+  const t = document.createElement("div");
+  t.className = "toast";
+  t.textContent = msg;
+  document.body.appendChild(t);
 
-  setTimeout(() => {
-    t.style.transition = "0.4s";
-    t.style.opacity = "0";
-    t.style.transform = "translateX(-50%) translateY(15px)";
-  }, 1400);
+  setTimeout(() => {
+    t.style.transition = "0.4s";
+    t.style.opacity = "0";
+    t.style.transform = "translateX(-50%) translateY(15px)";
+  }, 1400);
 
-  setTimeout(() => t.remove(), 1900);
+  setTimeout(() => t.remove(), 1900);
 }
 
 // ============================
-// BUTTON FUNCTIONS
+// BUTTONS
 // ============================
+
+function setupButtons() {
+  document.getElementById("sparkleBtn")?.addEventListener("click", () => {
+    triggerSparkles();
+    toast("sparkles unleashed ✨");
+  });
+
+  document.getElementById("rainbowBtn")?.addEventListener("click", () => {
+    createRainbow();
+  });
+
+  document.getElementById("glitchBtn")?.addEventListener("click", () => {
+    glitchEffect();
+  });
+}
+
 function createRainbow() {
-  triggerSparkles();
-  document.body.style.transition = "0.6s";
-  document.body.style.filter = "hue-rotate(220deg) saturate(2)";
+  triggerSparkles();
+  document.body.style.transition = "0.6s";
+  document.body.style.filter = "hue-rotate(220deg) saturate(2)";
 
-  setTimeout(() => {
-    document.body.style.filter = "none";
-  }, 650);
+  setTimeout(() => {
+    document.body.style.filter = "none";
+  }, 650);
 
-  toast("🌈 rainbow mode activated");
+  toast("🌈 rainbow mode activated");
 }
 
 function glitchEffect() {
-  triggerSparkles();
+  triggerSparkles();
 
-  const container = document.querySelector(".container");
-  if (!container) return;
+  const container = document.querySelector(".container");
+  if (!container) return;
 
-  container.style.transition = "0.08s";
-  container.style.transform = "translateX(8px) skewX(3deg)";
+  container.style.transition = "0.08s";
+  container.style.transform = "translateX(8px) skewX(3deg)";
 
-  setTimeout(() => {
-    container.style.transform = "translateX(-8px) skewX(-3deg)";
-  }, 80);
+  setTimeout(() => {
+    container.style.transform = "translateX(-8px) skewX(-3deg)";
+  }, 80);
 
-  setTimeout(() => {
-    container.style.transform = "translateX(5px) skewX(2deg)";
-  }, 160);
+  setTimeout(() => {
+    container.style.transform = "translateX(5px) skewX(2deg)";
+  }, 160);
 
-  setTimeout(() => {
-    container.style.transform = "translateX(0px) skewX(0deg)";
-  }, 250);
+  setTimeout(() => {
+    container.style.transform = "translateX(0px) skewX(0deg)";
+  }, 250);
 
-  toast("⚡ glitch");
+  toast("⚡ glitch");
 }
 
 // ============================
-// PANIC BUTTON
+// SECRET MODE
 // ============================
-function panicMode() {
-  const audio = document.getElementById("audioPlayer");
-  const overlay = document.getElementById("panicOverlay");
 
-  if (audio) {
-    audio.pause();
-    audio.currentTime = 0;
-    isPlaying = false;
-    document.getElementById("playBtn").textContent = "▶";
-  }
+function setupSecretMode() {
+  const banner = document.getElementById("secretBanner");
+  if (!banner) return;
 
-  document.querySelectorAll(".placed-sticker").forEach(s => s.remove());
-  document.querySelectorAll(".sparkle").forEach(s => s.remove());
+  banner.addEventListener("click", () => {
+    document.body.classList.toggle("secret-mode");
 
-  overlay.classList.add("show");
+    if (document.body.classList.contains("secret-mode")) {
+      toast("SECRET MODE UNLOCKED 💀");
+      unlockAchievement("secret");
+      unlockBadge("konami");
+    } else {
+      toast("secret mode off");
+    }
+  });
+}
 
-  overlay.onclick = () => {
-    overlay.classList.remove("show");
-  };
+// ============================
+// PANIC MODE
+// ============================
 
-  toast("panic executed 💀");
+function setupPanicMode() {
+  const btn = document.getElementById("panicBtn");
+  const overlay = document.getElementById("panicOverlay");
+
+  if (!btn || !overlay) return;
+
+  btn.addEventListener("click", () => {
+    overlay.classList.add("show");
+    toast("panic mode.");
+  });
+
+  overlay.addEventListener("click", () => {
+    overlay.classList.remove("show");
+    toast("back to chaos");
+  });
+}
+
+// ============================
+// MUSIC PLAYER
+// ============================
+
+function setupMusicPlayer() {
+  const audio = document.getElementById("audioPlayer");
+  if (!audio) return;
+
+  const volumeSlider = document.getElementById("volumeSlider");
+  if (volumeSlider) {
+    audio.volume = volumeSlider.value;
+    volumeSlider.addEventListener("input", () => {
+      audio.volume = volumeSlider.value;
+    });
+  }
+
+  loadTrack(currentTrack);
+  setupProgress(audio);
+  setupVisualizer();
+}
+
+function loadTrack(index) {
+  const audio = document.getElementById("audioPlayer");
+  if (!audio) return;
+
+  const song = playlist[index];
+  audio.src = song.file;
+
+  document.getElementById("songName").textContent = song.name;
+  document.getElementById("artistName").textContent = song.artist;
+  document.getElementById("trackText").textContent = `track ${index + 1} of ${playlist.length}`;
+
+  audio.load();
+
+  audio.onerror = () => {
+    toast("MP3 missing 💀");
+  };
+
+  audio.onloadedmetadata = () => {
+    document.getElementById("duration").textContent = formatTime(audio.duration);
+  };
+}
+
+function togglePlay() {
+  const audio = document.getElementById("audioPlayer");
+  if (!audio) return;
+
+  isPlaying = !isPlaying;
+  document.getElementById("playBtn").textContent = isPlaying ? "⏸" : "▶";
+
+  if (isPlaying) {
+    audio.play().catch(() => toast("cant autoplay 😭 click again"));
+  } else {
+    audio.pause();
+  }
+}
+
+function nextSong() {
+  currentTrack = (currentTrack + 1) % playlist.length;
+  loadTrack(currentTrack);
+  triggerSparkles();
+  toast("next song 🎵");
+
+  if (isPlaying) {
+    document.getElementById("audioPlayer").play();
+  }
+}
+
+function previousSong() {
+  currentTrack = (currentTrack - 1 + playlist.length) % playlist.length;
+  loadTrack(currentTrack);
+  triggerSparkles();
+  toast("previous song 🎵");
+
+  if (isPlaying) {
+    document.getElementById("audioPlayer").play();
+  }
+}
+
+function setupProgress(audio) {
+  const slider = document.getElementById("progressSlider");
+  const fill = document.getElementById("progressFill");
+  const current = document.getElementById("currentTime");
+
+  if (!slider || !fill || !current) return;
+
+  audio.addEventListener("timeupdate", () => {
+    if (!audio.duration) return;
+
+    const percent = (audio.currentTime / audio.duration) * 100;
+    slider.value = percent;
+    fill.style.width = percent + "%";
+    current.textContent = formatTime(audio.currentTime);
+  });
+
+  slider.addEventListener("input", (e) => {
+    if (!audio.duration) return;
+    audio.currentTime = (e.target.value / 100) * audio.duration;
+  });
+
+  audio.addEventListener("ended", () => {
+    nextSong();
+  });
+}
+
+function formatTime(seconds) {
+  if (!seconds || isNaN(seconds)) return "0:00";
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${mins}:${secs.toString().padStart(2, "0")}`;
+}
+
+// ============================
+// VISUALIZER FAKE
+// ============================
+
+let visInterval = null;
+
+function setupVisualizer() {
+  const visualizer = document.getElementById("visualizer");
+  if (!visualizer) return;
+
+  visualizer.innerHTML = "";
+
+  for (let i = 0; i < 18; i++) {
+    const bar = document.createElement("div");
+    bar.className = "visBar";
+    visualizer.appendChild(bar);
+  }
+
+  if (visInterval) clearInterval(visInterval);
+
+  visInterval = setInterval(() => {
+    document.querySelectorAll(".visBar").forEach((bar) => {
+      bar.style.height = (10 + Math.random() * 45) + "px";
+    });
+  }, 120);
 }
 
 // ============================
 // RATING
 // ============================
+
 function rateMe(rating) {
-  const stars = document.querySelectorAll(".star");
+  const stars = document.querySelectorAll(".star");
 
-  stars.forEach((star, index) => {
-    if (index < rating) star.classList.add("active");
-    else star.classList.remove("active");
-  });
+  stars.forEach((star, index) => {
+    if (index < rating) star.classList.add("active");
+    else star.classList.remove("active");
+  });
 
-  triggerSparkles();
-  toast("thankz 4 rating!!");
+  triggerSparkles();
+  toast("thankz 4 rating!!");
+  unlockAchievement("rating");
 }
 
 // ============================
 // STICKERS
 // ============================
+
 let draggedStickerType = null;
 
 function startStickerDrag(e, stickerType) {
-  draggedStickerType = stickerType;
-  e.dataTransfer.setData("text/plain", stickerType);
-  e.dataTransfer.effectAllowed = "copy";
+  draggedStickerType = stickerType;
+  e.dataTransfer.setData("text/plain", stickerType);
+  e.dataTransfer.effectAllowed = "copy";
 }
 
 document.addEventListener("dragover", (e) => {
-  e.preventDefault();
+  e.preventDefault();
 });
 
 document.addEventListener("drop", (e) => {
-  e.preventDefault();
+  e.preventDefault();
 
-  if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-    const file = e.dataTransfer.files[0];
-    if (!file.type.startsWith("image/")) return;
+  if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+    const file = e.dataTransfer.files[0];
+    if (!file.type.startsWith("image/")) return;
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      createPlacedSticker(reader.result, e.clientX, e.clientY);
-      toast("custom sticker dropped!");
-    };
-    reader.readAsDataURL(file);
-    return;
-  }
+    const reader = new FileReader();
+    reader.onload = () => {
+      createPlacedSticker(reader.result, e.clientX, e.clientY);
+    };
+    reader.readAsDataURL(file);
+    return;
+  }
 
-  const stickerType = e.dataTransfer.getData("text/plain") || draggedStickerType;
-  if (!stickerType) return;
+  const stickerType = e.dataTransfer.getData("text/plain") || draggedStickerType;
+  if (!stickerType) return;
 
-  createPlacedSticker(stickerType, e.clientX, e.clientY);
+  createPlacedSticker(stickerType, e.clientX, e.clientY);
 });
 
 function createPlacedSticker(src, x, y) {
-  const canvas = document.getElementById("stickerCanvas");
-  if (!canvas) return;
+  const canvas = document.getElementById("stickerCanvas");
+  if (!canvas) return;
 
-  const sticker = document.createElement("div");
-  sticker.className = "placed-sticker";
+  const sticker = document.createElement("div");
+  sticker.className = "placed-sticker";
 
-  const size = 90;
-  sticker.style.width = size + "px";
-  sticker.style.height = size + "px";
-  sticker.style.left = x - size / 2 + "px";
-  sticker.style.top = y - size / 2 + "px";
+  const size = 90;
+  sticker.style.width = size + "px";
+  sticker.style.height = size + "px";
+  sticker.style.left = x - size / 2 + "px";
+  sticker.style.top = y - size / 2 + "px";
 
-  const img = document.createElement("img");
-  img.src = src;
-  img.draggable = false;
+  const img = document.createElement("img");
+  img.src = src;
+  img.draggable = false;
 
-  sticker.appendChild(img);
-  canvas.appendChild(sticker);
+  sticker.appendChild(img);
+  canvas.appendChild(sticker);
 
-  makeStickerDraggable(sticker);
+  makeStickerDraggable(sticker);
 }
 
 function makeStickerDraggable(sticker) {
-  let dragging = false;
-  let offsetX = 0;
-  let offsetY = 0;
+  let dragging = false;
+  let offsetX = 0;
+  let offsetY = 0;
 
-  sticker.addEventListener("mousedown", (e) => {
-    dragging = true;
-    sticker.style.zIndex = 999999999;
-    offsetX = e.clientX - sticker.offsetLeft;
-    offsetY = e.clientY - sticker.offsetTop;
-  });
+  sticker.addEventListener("mousedown", (e) => {
+    dragging = true;
+    sticker.style.zIndex = 999999999;
+    offsetX = e.clientX - sticker.offsetLeft;
+    offsetY = e.clientY - sticker.offsetTop;
+  });
 
-  document.addEventListener("mousemove", (e) => {
-    if (!dragging) return;
-    sticker.style.left = e.clientX - offsetX + "px";
-    sticker.style.top = e.clientY - offsetY + "px";
-  });
+  document.addEventListener("mousemove", (e) => {
+    if (!dragging) return;
+    sticker.style.left = e.clientX - offsetX + "px";
+    sticker.style.top = e.clientY - offsetY + "px";
+  });
 
-  document.addEventListener("mouseup", () => {
-    dragging = false;
-  });
+  document.addEventListener("mouseup", () => {
+    dragging = false;
+  });
 }
 
 function clearAllStickers() {
-  document.querySelectorAll(".placed-sticker").forEach((s) => s.remove());
-  triggerSparkles();
-  toast("stickers cleared");
+  document.querySelectorAll(".placed-sticker").forEach((s) => s.remove());
+  triggerSparkles();
+  toast("stickers cleared");
 }
 
-function setupCustomStickerUpload() {
-  const input = document.getElementById("customStickerInput");
-  if (!input) return;
+// custom upload
+document.getElementById("customStickerInput")?.addEventListener("change", (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  if (!file.type.startsWith("image/")) return;
 
-  input.addEventListener("change", (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    if (!file.type.startsWith("image/")) {
-      toast("only images 😭");
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = () => {
-      createPlacedSticker(reader.result, window.innerWidth / 2, window.innerHeight / 2);
-      triggerSparkles();
-      toast("custom sticker added!! 💖");
-    };
-
-    reader.readAsDataURL(file);
-  });
-}
+  const reader = new FileReader();
+  reader.onload = () => {
+    createPlacedSticker(reader.result, window.innerWidth / 2, window.innerHeight / 2);
+    triggerSparkles();
+    toast("custom sticker added!! 💖");
+  };
+  reader.readAsDataURL(file);
+});
 
 // ============================
-// GUESTBOOK (LOCALSTORAGE)
+// GUESTBOOK
 // ============================
+
 function setupGuestbook() {
-  const submit = document.getElementById("guestSubmit");
-  const list = document.getElementById("guestbookList");
+  const btn = document.getElementById("guestSubmit");
+  const list = document.getElementById("guestbookList");
 
-  if (!submit || !list) return;
+  if (!btn || !list) return;
 
-  loadGuestbook();
+  const saved = JSON.parse(localStorage.getItem("guestbook") || "[]");
 
-  submit.addEventListener("click", () => {
-    const name = document.getElementById("guestName").value.trim();
-    const msg = document.getElementById("guestMsg").value.trim();
+  function render() {
+    list.innerHTML = "";
+    saved.slice(-15).reverse().forEach((g) => {
+      const div = document.createElement("div");
+      div.className = "guestEntry";
+      div.innerHTML = `<span>${g.name}</span>: ${g.msg}`;
+      list.appendChild(div);
+    });
+  }
 
-    if (!name || !msg) {
-      toast("fill both 😭");
-      return;
-    }
+  render();
 
-    const entry = { name, msg, time: Date.now() };
+  btn.addEventListener("click", () => {
+    const name = document.getElementById("guestName").value.trim();
+    const msg = document.getElementById("guestMsg").value.trim();
 
-    let entries = JSON.parse(localStorage.getItem("guestbookEntries") || "[]");
-    entries.unshift(entry);
+    if (!name || !msg) {
+      toast("fill both 😭");
+      return;
+    }
 
-    if (entries.length > 12) entries.pop();
+    saved.push({ name, msg });
+    localStorage.setItem("guestbook", JSON.stringify(saved));
 
-    localStorage.setItem("guestbookEntries", JSON.stringify(entries));
+    document.getElementById("guestName").value = "";
+    document.getElementById("guestMsg").value = "";
 
-    document.getElementById("guestName").value = "";
-    document.getElementById("guestMsg").value = "";
-
-    loadGuestbook();
-    toast("signed 💖");
-    triggerSparkles();
-  });
-}
-
-function loadGuestbook() {
-  const list = document.getElementById("guestbookList");
-  if (!list) return;
-
-  let entries = JSON.parse(localStorage.getItem("guestbookEntries") || "[]");
-
-  list.innerHTML = "";
-
-  entries.forEach((e) => {
-    const div = document.createElement("div");
-    div.className = "guestEntry";
-    div.innerHTML = `<span>${escapeHTML(e.name)}</span>: ${escapeHTML(e.msg)}`;
-    list.appendChild(div);
-  });
-}
-
-function escapeHTML(text) {
-  return text.replace(/[&<>"']/g, (m) => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#039;"
-  }[m]));
+    toast("signed!!");
+    triggerSparkles();
+    unlockAchievement("guestbook");
+    render();
+  });
 }
 
 // ============================
-// ACHIEVEMENTS (LOCALSTORAGE)
+// ACHIEVEMENTS
 // ============================
-let achievements = [
-  { name: "visited page", key: "visit" },
-  { name: "secret mode entered", key: "secret" }
+
+const achievements = [
+  { id: "secret", name: "entered secret mode 😈" },
+  { id: "rating", name: "rated the page ⭐" },
+  { id: "guestbook", name: "signed guestbook ✍️" },
+  { id: "moot", name: "requested moots 💌" },
+  { id: "stamps", name: "collected all stamps 📌" },
+  { id: "konami", name: "konami code gamer 🎮" }
 ];
 
-function setupAchievements() {
-  achievements.forEach(a => {
-    if (a.key === "visit") unlockAchievement(a.name);
-  });
+let unlockedAchievements = JSON.parse(localStorage.getItem("unlockedAchievements") || "[]");
 
-  renderAchievements();
+function unlockAchievement(id) {
+  if (!unlockedAchievements.includes(id)) {
+    unlockedAchievements.push(id);
+    localStorage.setItem("unlockedAchievements", JSON.stringify(unlockedAchievements));
+    renderAchievements();
+    toast("achievement unlocked!!");
+  }
 }
 
-function unlockAchievement(name) {
-  let unlocked = JSON.parse(localStorage.getItem("unlockedAchievements") || "[]");
-
-  if (!unlocked.includes(name)) {
-    unlocked.push(name);
-    localStorage.setItem("unlockedAchievements", JSON.stringify(unlocked));
-    toast("achievement unlocked: " + name);
-    renderAchievements();
-  }
+function setupAchievements() {
+  renderAchievements();
 }
 
 function renderAchievements() {
-  const list = document.getElementById("achievementsList");
-  if (!list) return;
+  const list = document.getElementById("achievementsList");
+  if (!list) return;
 
-  const unlocked = JSON.parse(localStorage.getItem("achievementsUnlocked") || "[]");
-  list.innerHTML = "";
+  list.innerHTML = "";
 
-  achievements.forEach((a) => {
-    const div = document.createElement("div");
-    div.className = "achievement";
+  achievements.forEach((a) => {
+    const div = document.createElement("div");
+    div.className = "achievement";
 
-    if (!unlocked.includes(a.name)) {
-      div.classList.add("locked");
-      div.textContent = "??? locked achievement";
-    } else {
-      div.textContent = "🏆 " + a.name;
-    }
+    if (!unlockedAchievements.includes(a.id)) {
+      div.classList.add("locked");
+      div.textContent = "??? locked";
+    } else {
+      div.textContent = a.name;
+    }
 
-    list.appendChild(div);
-  });
+    list.appendChild(div);
+  });
 }
 
 // ============================
-// VISUALIZER (REAL)
-// ============================
-let audioContext;
-let analyser;
-let sourceNode;
-let bars = [];
-
-function setupVisualizer() {
-  const audio = document.getElementById("audioPlayer");
-  const vis = document.getElementById("visualizer");
-
-  if (!audio || !vis) return;
-
-  for (let i = 0; i < 28; i++) {
-    const bar = document.createElement("div");
-    bar.className = "visBar";
-    vis.appendChild(bar);
-    bars.push(bar);
-  }
-
-  audio.addEventListener("play", () => {
-    if (!audioContext) {
-      audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      analyser = audioContext.createAnalyser();
-      analyser.fftSize = 64;
-
-      sourceNode = audioContext.createMediaElementSource(audio);
-      sourceNode.connect(analyser);
-      analyser.connect(audioContext.destination);
-    }
-
-    animateBars();
-  });
-}
-
-function animateBars() {
-  if (!analyser) return;
-
-  const bufferLength = analyser.frequencyBinCount;
-  const dataArray = new Uint8Array(bufferLength);
-
-  analyser.getByteFrequencyData(dataArray);
-
-  for (let i = 0; i < bars.length; i++) {
-    const val = dataArray[i] || 0;
-    bars[i].style.height = Math.max(6, val / 2) + "px";
-  }
-
-  requestAnimationFrame(animateBars);
-}
-
-// ============================
-// MINI TERMINAL
-// ============================
-document.addEventListener("DOMContentLoaded", () => {
-  createTerminalUI();
-});
-
-function createTerminalUI() {
-  // avoid duplicate
-  if (document.getElementById("miniTerminal")) return;
-
-  const terminal = document.createElement("div");
-  terminal.id = "miniTerminal";
-
-  terminal.innerHTML = `
-    <div class="terminalHeader">terminal.exe</div>
-    <div class="terminalLog" id="terminalLog"></div>
-    <input class="terminalInput" id="terminalInput" placeholder="type command... (help)" autocomplete="off">
-  `;
-
-  document.body.appendChild(terminal);
-
-  const input = document.getElementById("terminalInput");
-  const log = document.getElementById("terminalLog");
-
-  terminalPrint("type 'help' to see commands");
-
-  input.addEventListener("keydown", (e) => {
-    if (e.key !== "Enter") return;
-
-    const cmd = input.value.trim().toLowerCase();
-    input.value = "";
-
-    if (!cmd) return;
-
-    terminalPrint("> " + cmd);
-
-    runTerminalCommand(cmd);
-  });
-}
-
-function terminalPrint(msg) {
-  const log = document.getElementById("terminalLog");
-  if (!log) return;
-
-  const line = document.createElement("div");
-  line.className = "terminalLine";
-  line.textContent = msg;
-
-  log.appendChild(line);
-  log.scrollTop = log.scrollHeight;
-}
-
-function runTerminalCommand(cmd) {
-  const audio = document.getElementById("audioPlayer");
-
-  if (cmd === "help") {
-    terminalPrint("commands:");
-    terminalPrint("help - show this");
-    terminalPrint("play - start music");
-    terminalPrint("panic - activate panic.exe");
-    terminalPrint("leon - summon leon");
-    terminalPrint("skittles - summon skittlez");
-    terminalPrint("clear - delete all stickers");
-    terminalPrint("");
-    terminalPrint("hint: click the banner if you want something darker...");
-    terminalPrint("hint: achievements exist. you were warned.");
-    return;
-  }
-
-  if (cmd === "play") {
-    if (!audio) {
-      terminalPrint("audioPlayer missing 💀");
-      return;
-    }
-
-    audio.play().then(() => {
-      terminalPrint("playing music 🎵");
-      toast("🎵 music started");
-    }).catch(() => {
-      terminalPrint("can't autoplay. click play button first 😭");
-      toast("click play first (browser blocked autoplay)");
-    });
-
-    return;
-  }
-
-  if (cmd === "panic") {
-    terminalPrint("running panic.exe...");
-    panicMode();
-    return;
-  }
-
-  if (cmd === "clear") {
-    clearAllStickers();
-    terminalPrint("stickers cleared");
-    return;
-  }
-
-  if (cmd === "leon") {
-    terminalPrint("leon kennedy deployed.");
-    createPlacedSticker("leon.png", window.innerWidth / 2, window.innerHeight / 2);
-    triggerSparkles();
-    toast("🦁 leon spawned");
-    return;
-  }
-
-  if (cmd === "skittles") {
-    terminalPrint("summoning skittlez...");
-    createPlacedSticker("skittlez.png", window.innerWidth / 2, window.innerHeight / 2);
-    triggerSparkles();
-    toast("🍬 skittlez spawned");
-    return;
-  }
-
-  terminalPrint("unknown command. try: help");
-}
-// ========================
 // MOOT REQUEST
-// ========================
+// ============================
 
-const mootBtn = document.getElementById("mootRequestBtn");
-const mootCountEl = document.getElementById("mootCount");
+function setupMootRequest() {
+  const btn = document.getElementById("mootRequestBtn");
+  const countEl = document.getElementById("mootCount");
+  if (!btn || !countEl) return;
 
-if (mootBtn) {
-  let count = parseInt(localStorage.getItem("mootRequests") || "0");
-  if (mootCountEl) mootCountEl.textContent = count;
+  let count = parseInt(localStorage.getItem("mootRequests") || "0");
+  countEl.textContent = count;
 
-  mootBtn.addEventListener("click", () => {
-    count++;
-    localStorage.setItem("mootRequests", count);
-    if (mootCountEl) mootCountEl.textContent = count;
-    toast("moot request sent 💌");
-  });
+  btn.addEventListener("click", () => {
+    count++;
+    localStorage.setItem("mootRequests", count);
+    countEl.textContent = count;
+
+    toast("request sent 💌");
+    triggerSparkles();
+    unlockAchievement("moot");
+  });
 }
 
-// ========================
+// ============================
 // STAMPS
-// ========================
+// ============================
 
-const stamps = document.querySelectorAll(".stamp");
-const stampCountEl = document.getElementById("stampCount");
+function setupStamps() {
+  const stamps = document.querySelectorAll(".stamp");
+  const counter = document.getElementById("stampCount");
 
-let collected = JSON.parse(localStorage.getItem("collectedStamps") || "[]");
+  let collected = JSON.parse(localStorage.getItem("collectedStamps") || "[]");
 
-function updateStampUI() {
-  stamps.forEach(stamp => {
-    const id = stamp.dataset.stamp;
-    if (collected.includes(id)) {
-      stamp.classList.add("collected");
-    }
-  });
+  function updateCount() {
+    if (counter) counter.textContent = collected.length;
+  }
 
-  if (stampCountEl) stampCountEl.textContent = collected.length;
+  stamps.forEach((stamp) => {
+    const id = stamp.dataset.stamp;
+
+    if (collected.includes(id)) {
+      stamp.classList.add("collected");
+    }
+
+    stamp.addEventListener("click", () => {
+      if (!collected.includes(id)) {
+        collected.push(id);
+        localStorage.setItem("collectedStamps", JSON.stringify(collected));
+        stamp.classList.add("collected");
+        toast("stamp collected!");
+        triggerSparkles();
+        updateCount();
+
+        if (collected.length >= 4) {
+          unlockAchievement("stamps");
+        }
+      }
+    });
+  });
+
+  updateCount();
 }
 
-stamps.forEach(stamp => {
-  stamp.addEventListener("click", () => {
-    const id = stamp.dataset.stamp;
+// ============================
+// QUOTE
+// ============================
 
-    if (!collected.includes(id)) {
-      collected.push(id);
-      localStorage.setItem("collectedStamps", JSON.stringify(collected));
-      updateStampUI();
-      toast("stamp collected ✨");
-    }
-  });
-});
+function setupQuote() {
+  const quotes = [
+    "i am literally just pixels",
+    "ur vibes are suspicious",
+    "if u see this u owe me a moot request",
+    "do not trust thomas.png",
+    "the glitter is inside the walls",
+    "leon kennedy is protecting this page",
+    "this site is 90% chaos 10% sleep deprivation",
+    "warning: excessive cuteness detected",
+    "nick.bot is online and unstable"
+  ];
 
-updateStampUI();
+  const quoteText = document.getElementById("quoteText");
+  if (!quoteText) return;
+
+  quoteText.textContent = quotes[Math.floor(Math.random() * quotes.length)];
+}
+
+// ============================
+// TAB TITLE CHANGER
+// ============================
+
+function setupTabTitles() {
+  const titles = [
+    "skittles.lol fan",
+    "nick is watching",
+    "come back rn",
+    "error.exe",
+    "moot request pending",
+    "leon is here",
+    "do not refresh",
+    "glitter injection"
+  ];
+
+  let titleIndex = 0;
+
+  setInterval(() => {
+    document.title = titles[titleIndex % titles.length];
+    titleIndex++;
+  }, 2000);
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      document.title = "COME BACK.";
+    } else {
+      document.title = "welcome back loser ♡";
+    }
+  });
+}
+
+// ============================
+// FAKE IP GRABBER
+// ============================
+
+function fakeIPGrab() {
+  toast("logging ip...");
+  setTimeout(() => {
+    toast("IP: 127.0.0.1 (jk)");
+    unlockBadge("ip");
+  }, 900);
+}
+
+window.fakeIPGrab = fakeIPGrab;
+
+// ============================
+// KONAMI CODE
+// ============================
+
+function setupKonami() {
+  const konami = [
+    "ArrowUp","ArrowUp",
+    "ArrowDown","ArrowDown",
+    "ArrowLeft","ArrowRight",
+    "ArrowLeft","ArrowRight",
+    "b","a"
+  ];
+
+  let konamiIndex = 0;
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === konami[konamiIndex]) {
+      konamiIndex++;
+
+      if (konamiIndex === konami.length) {
+        toast("KONAMI UNLOCKED 💀");
+        unlockAchievement("konami");
+        unlockBadge("konami");
+        triggerSparkles();
+        glitchEffect();
+        konamiIndex = 0;
+      }
+    } else {
+      konamiIndex = 0;
+    }
+  });
+}
+
+// ============================
+// BADGES
+// ============================
+
+const allBadges = [
+  { id: "ip", label: "IP logged 😈" },
+  { id: "konami", label: "konami unlocked 🎮" },
+  { id: "npc", label: "nick.bot approved 🤖" },
+  { id: "boot", label: "booted skittlesOS 💻" }
+];
+
+let unlockedBadges = JSON.parse(localStorage.getItem("unlockedBadges") || "[]");
+
+function unlockBadge(id) {
+  if (!unlockedBadges.includes(id)) {
+    unlockedBadges.push(id);
+    localStorage.setItem("unlockedBadges", JSON.stringify(unlockedBadges));
+    renderBadges();
+    toast("badge unlocked!!");
+  }
+}
+
+function renderBadges() {
+  const list = document.getElementById("badgesList");
+  if (!list) return;
+
+  list.innerHTML = "";
+
+  allBadges.forEach((b) => {
+    const div = document.createElement("div");
+    div.className = "badgeItem";
+    div.textContent = b.label;
+
+    if (unlockedBadges.includes(b.id)) {
+      div.classList.add("unlocked");
+    }
+
+    list.appendChild(div);
+  });
+}
+
+// ============================
+// nick.bot NPC CHAT
+// ============================
+
+function setupNickBot() {
+  const npcChat = document.getElementById("npcChat");
+  const npcInput = document.getElementById("npcInput");
+  const npcSend = document.getElementById("npcSend");
+
+  if (!npcChat || !npcInput || !npcSend) return;
+
+  const npcReplies = [
+    "meow. (that means hi)",
+    "ur on my page now. no escape",
+    "moot request accepted. mentally.",
+    "do not click thomas.png too much",
+    "leon is watching from the corner",
+    "i ate ur cookies sorry",
+    "error: emotions detected",
+    "pls stop refreshing i get dizzy",
+    "ip logged. just kidding. unless?"
+  ];
+
+  function addNPCLine(sender, msg) {
+    const line = document.createElement("div");
+    line.className = "npcLine";
+    line.innerHTML = `<span>${sender}:</span> ${msg}`;
+    npcChat.appendChild(line);
+    npcChat.scrollTop = npcChat.scrollHeight;
+  }
+
+  function npcRespond(text) {
+    const lower = text.toLowerCase();
+
+    if (lower.includes("ip")) {
+      fakeIPGrab();
+      return "ip logged 💀";
+    }
+
+    if (lower.includes("leon")) {
+      return "where's everyone going? bingo?";
+    }
+
+    if (lower.includes("help")) {
+      return "hint: konami code = ↑↑↓↓←→←→BA";
+    }
+
+    if (lower.includes("secret")) {
+      return "click thomas.png. trust me.";
+    }
+
+    return npcReplies[Math.floor(Math.random() * npcReplies.length)];
+  }
+
+  npcSend.addEventListener("click", () => {
+    const msg = npcInput.value.trim();
+    if (!msg) return;
+
+    addNPCLine("you", msg);
+    npcInput.value = "";
+
+    setTimeout(() => {
+      const reply = npcRespond(msg);
+      addNPCLine("nick.bot", reply);
+      unlockBadge("npc");
+    }, 500);
+  });
+
+  npcInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") npcSend.click();
+  });
+
+  addNPCLine("nick.bot", "hi. welcome to skittlesOS.");
+}
