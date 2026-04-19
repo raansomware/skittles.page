@@ -14,7 +14,7 @@ export default async function handler(req, res) {
     const response = await fetch(""model": "mistralai/mistral-7b-instruct:free",", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${apiKey}`,
+        const apiKey = process.env.OPENROUTER_API_KEY?.trim();
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
