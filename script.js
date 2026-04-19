@@ -919,4 +919,36 @@ function setupNickBot() {
   addNPCLine("nick.bot", "hi. welcome to skittlesOS.");
 }
 
-const API_URL = "https://nick-bot-api-nj7j-11hki2zmw-raansomwares-projects.vercel.app/api/chat";
+async function askSkittles() {
+    const inputField = document.getElementById('user-input'); // Asegúrate que tu <input> tenga este ID
+    const chatWindow = document.getElementById('chat-display'); // Donde se verán los mensajes
+    const userText = inputField.value;
+
+    if (!userText) return; // Si no hay texto, no hace nada
+
+    // 1. Poner lo que tú escribiste en la pantalla
+    chatWindow.innerHTML += `<div style="color: white;"><b>You:</b> ${userText}</div>`;
+    inputField.value = ""; // Limpiar el cuadrito
+
+    try {
+        // 2. LLAMADA MÁGICA A VERCEL
+        const response = await fetch('/api/chat', {
+            method: 'POST',
+            body: JSON.stringify({ prompt: userText })
+        });
+
+        const data = await response.json();
+
+        // 3. MOSTRAR LA RESPUESTA DE SKITTLES ^_^
+        chatWindow.innerHTML += `<div style="color: #ff69b4; font-weight: bold;">
+            <b>Skittles:</b> ${data.content}
+        </div>`;
+        
+        // Auto-scroll hacia abajo
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+
+    } catch (error) {
+        console.error("Oh no!", error);
+        chatWindow.innerHTML += `<p style="color: red;">Skittles got confused! Try again! ^_^</p>`;
+    }
+}
