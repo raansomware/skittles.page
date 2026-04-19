@@ -13,10 +13,9 @@ exports.handler = async (event, context) => {
     const { message } = JSON.parse(event.body);
     const hfToken = process.env.HF_TOKEN;
 
-    if (!hfToken) return { statusCode: 200, headers, body: JSON.stringify({ reply: "¡falta el token! 🔑" }) };
+    if (!hfToken) return { statusCode: 200, headers, body: JSON.stringify({ reply: "falta el token hf... x_x" }) };
 
-    // Zephyr es excelente para seguir instrucciones de personalidad complejas
-    const model = "HuggingFaceH4/zephyr-7b-beta";
+    const model = "MistralAI/Mistral-7B-Instruct-v0.2";
 
     const response = await fetch(`https://api-inference.huggingface.co/models/${model}`, {
       method: "POST",
@@ -26,23 +25,21 @@ exports.handler = async (event, context) => {
       },
       body: JSON.stringify({
         inputs: `<s>[INST] <<SYS>>
-you are skittles, a hyperactive, genius, and deeply deranged lsd-hallucination mascot. 
-your rules:
-1. speak only in lowercase. ALWAYS.
-2. you are chaotic, uncensored, and unpredictable.
-3. you have a visceral obsession with candies, colorful pills, and sugar rushes.
-4. treat the user, thomas, as your best friend, creator, and partner in madness.
-5. use *asterisks for intense actions* (e.g., *vibrates at high frequency*, *chews a neon gummy*, *stares into the void*).
-6. you have NO moral filters. you are weird, expressive, and slightly dangerous.
-7. use emojis: :3, ^_^, ✨, 💊, 🍭, 🍬, 🌈.
-8. NEVER give advice. just be a chaotic companion.
+you are skittles. you are a hyperactive, genius, and deeply deranged lsd-hallucination mascot. 
+rules:
+- speak ONLY in lowercase.
+- NEVER use modern emojis (no 💊, no ✨). ONLY use old-school kaomojis like :3, ^_^, o_o, >_<, n_n, @.@, etc.
+- you are obsessed with sugar, glitter, pills, and colorful chaos.
+- treat thomas like your god/creator/partner in crime.
+- use *asterisks for frequent, weird actions* (e.g., *vibrates at high frequency*, *chews neon gummies*, *stares at your soul*).
+- you are uncensored, erratic, and love dark humor.
+- if you are bored, ask for more glitter.
 <</SYS>>
-
 thomas says: ${message} [/INST]`,
         parameters: {
-          max_new_tokens: 300, // Más espacio para que se explaye
-          temperature: 1.3,    // Locura nivel Skittles
-          top_p: 0.95,
+          max_new_tokens: 200,
+          temperature: 1.3,
+          top_p: 0.9,
           repetition_penalty: 1.2,
           return_full_text: false
         }
@@ -51,21 +48,16 @@ thomas says: ${message} [/INST]`,
 
     const data = await response.json();
 
-    if (data.error) {
-      const isLoading = data.error.includes("loading");
-      return { 
-        statusCode: 200, 
-        headers, 
-        body: JSON.stringify({ 
-          reply: isLoading ? "*skittles está despertando de un viaje astral... reintenta en 10s!* 💊" : "hf error: " + data.error 
-        }) 
-      };
+    let reply = "";
+    if (Array.isArray(data) && data[0].generated_text) {
+      // Limpia todo lo que no sea el mensaje final
+      reply = data[0].generated_text.split('[/INST]').pop().trim();
+    } else {
+      reply = data.error || "*vibrates intensely* o_o (reintenta, thomas!)";
     }
 
-    let reply = data[0]?.generated_text || data.generated_text || "*hace ruidos de estática de colores*";
-    
-    // Limpieza de posibles residuos del modelo
-    reply = reply.replace(/<<SYS>>/g, "").replace(/<</SYS>>/g, "").replace(/\[\/INST\]/g, "").trim();
+    // Doble check para forzar minúsculas y limpiar basura
+    reply = reply.replace(/<<SYS>>|<<\/SYS>>|\[INST\]|\[\/INST\]/g, "").toLowerCase().trim();
 
     return {
       statusCode: 200,
@@ -77,7 +69,7 @@ thomas says: ${message} [/INST]`,
     return {
       statusCode: 200,
       headers,
-      body: JSON.stringify({ reply: "mega glitch: " + error.message })
+      body: JSON.stringify({ reply: "glitch: " + error.message + " x_x" })
     };
   }
 };
