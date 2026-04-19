@@ -845,7 +845,7 @@ function renderBadges() {
 }
 
 // ============================
-// nick.bot NPC CHAT
+// nick.bot NPC CHAT (Skittles Integration)
 // ============================
 
 function setupNickBot() {
@@ -855,47 +855,53 @@ function setupNickBot() {
 
   if (!npcChat || !npcInput || !npcSend) return;
 
-  const npcReplies = [
-    "meow. (that means hi)",
-    "ur on my page now. no escape",
-    "moot request accepted. mentally.",
-    "do not click thomas.png too much",
-    "leon is watching from the corner",
-    "i ate ur cookies sorry",
-    "error: emotions detected",
-    "pls stop refreshing i get dizzy",
-    "ip logged. just kidding. unless?"
-  ];
-
-  function addNPCLine(sender, msg) {
+  // Función para añadir líneas al chat con estilo
+  function addNPCLine(sender, msg, isSkittles = false) {
     const line = document.createElement("div");
     line.className = "npcLine";
-    line.innerHTML = `<span>${sender}:</span> ${msg}`;
+    // Si es Skittles, le ponemos un color especial (rosa/fucsia)
+    const colorStyle = isSkittles ? 'style="color: #ff69b4; font-weight: bold;"' : "";
+    line.innerHTML = `<span ${colorStyle}>${sender}:</span> ${msg}`;
     npcChat.appendChild(line);
     npcChat.scrollTop = npcChat.scrollHeight;
   }
 
-  function npcRespond(text) {
-    const lower = text.toLowerCase();
+  // Función principal para hablar con la API
+  async function askSkittles(text) {
+    try {
+      // Pequeño indicador de que está "pensando"
+      const loadingId = "loading-" + Date.now();
+      const loadingLine = document.createElement("div");
+      loadingLine.id = loadingId;
+      loadingLine.className = "npcLine";
+      loadingLine.innerHTML = `<span style="color: #ff69b4;">Skittles:</span> ...`;
+      npcChat.appendChild(loadingLine);
 
-    if (lower.includes("ip")) {
-      fakeIPGrab();
-      return "ip logged 💀";
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: text })
+      });
+
+      const data = await response.json();
+      
+      // Quitamos el "pensando" y ponemos la respuesta real
+      document.getElementById(loadingId).remove();
+      
+      if (data.content) {
+        addNPCLine("Skittles", data.content, true);
+        unlockBadge("npc"); // Desbloquea tu badge de siempre
+        triggerSparkles();  // ¡Efecto de chispas cada vez que responde!
+      } else {
+        throw new Error("No content");
+      }
+
+    } catch (error) {
+      console.error("API Error:", error);
+      // Si falla, usa tus respuestas clásicas como respaldo (fallback)
+      const fallbackReplies = ["meow... (api error)", "Skittles is busy eating candies! ^_^"];
+      addNPCLine("Skittles", fallbackReplies[Math.floor(Math.random() * fallbackReplies.length)], true);
     }
-
-    if (lower.includes("leon")) {
-      return "where's everyone going? bingo?";
-    }
-
-    if (lower.includes("help")) {
-      return "hint: konami code = ↑↑↓↓←→←→BA";
-    }
-
-    if (lower.includes("secret")) {
-      return "click thomas.png. trust me.";
-    }
-
-    return npcReplies[Math.floor(Math.random() * npcReplies.length)];
   }
 
   npcSend.addEventListener("click", () => {
@@ -905,50 +911,14 @@ function setupNickBot() {
     addNPCLine("you", msg);
     npcInput.value = "";
 
-    setTimeout(() => {
-      const reply = npcRespond(msg);
-      addNPCLine("nick.bot", reply);
-      unlockBadge("npc");
-    }, 500);
+    // Llamamos a la IA
+    askSkittles(msg);
   });
 
   npcInput.addEventListener("keydown", (e) => {
     if (e.key === "Enter") npcSend.click();
   });
 
-  addNPCLine("nick.bot", "hi. welcome to skittlesOS.");
-}
-
-async function askSkittles() {
-    const inputField = document.getElementById('user-input'); // Asegúrate que tu <input> tenga este ID
-    const chatWindow = document.getElementById('chat-display'); // Donde se verán los mensajes
-    const userText = inputField.value;
-
-    if (!userText) return; // Si no hay texto, no hace nada
-
-    // 1. Poner lo que tú escribiste en la pantalla
-    chatWindow.innerHTML += `<div style="color: white;"><b>You:</b> ${userText}</div>`;
-    inputField.value = ""; // Limpiar el cuadrito
-
-    try {
-        // 2. LLAMADA MÁGICA A VERCEL
-        const response = await fetch('/api/chat', {
-            method: 'POST',
-            body: JSON.stringify({ prompt: userText })
-        });
-
-        const data = await response.json();
-
-        // 3. MOSTRAR LA RESPUESTA DE SKITTLES ^_^
-        chatWindow.innerHTML += `<div style="color: #ff69b4; font-weight: bold;">
-            <b>Skittles:</b> ${data.content}
-        </div>`;
-        
-        // Auto-scroll hacia abajo
-        chatWindow.scrollTop = chatWindow.scrollHeight;
-
-    } catch (error) {
-        console.error("Oh no!", error);
-        chatWindow.innerHTML += `<p style="color: red;">Skittles got confused! Try again! ^_^</p>`;
-    }
+  // Saludo inicial
+  addNPCLine("Skittles", "hi! i'm Soren, but call me Skittles! ^_^ do u have any candies?", true);
 }
