@@ -1,5 +1,4 @@
 export default async function handler(req, res) {
-  // Configuración de CORS para que tu frontend pueda hablar con el backend
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -8,28 +7,23 @@ export default async function handler(req, res) {
 
   try {
     const { message } = req.body;
-    
-    // AQUÍ ESTÁ EL TRUCO: Buscamos la llave que pusiste en Vercel
     const apiKey = process.env.OPENROUTER_API_KEY?.trim();
 
-    if (!apiKey) {
-      return res.status(500).json({ reply: "¡no encuentro la llave en vercel! 🔑" });
-    }
+    if (!apiKey) return res.status(500).json({ reply: "¡falta la key en vercel! 🔑" });
 
-    const response = await fetch(""model": "huggingfaceh4/zephyr-7b-beta:free",", {
+    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${apiKey}`,
-        "HTTP-Referer": "https://skittles-page.vercel.app", 
-        "X-Title": "Skittles Page",
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        "model": ""model": "zephyr-7b-beta:free", 
+        // Cambiamos a este modelo que es muy estable hoy:
+        "model": "openchat/openchat-7b:free", 
         "messages": [
           {
             "role": "system",
-            "content": "you are skittles. a genius lsd hallucination mascot. speak in lowercase. use *asterisks for actions*. you are chaotic, energetic, and love candy/meds. treat user as thomas. ^_^ :3 ✨💊"
+            "content": "you are skittles. a genius lsd hallucination mascot. speak in lowercase. use *asterisks for actions*. you are chaotic and love candy. treat user as thomas. ^_^ :3 ✨💊"
           },
           {
             "role": "user",
@@ -41,18 +35,21 @@ export default async function handler(req, res) {
 
     const data = await response.json();
 
-    if (!response.ok) {
-      return res.status(response.status).json({ 
-        reply: `glitch ${response.status}: ${data.error?.message || "algo explotó"}... ^_^` 
-      });
+    // Si OpenRouter devuelve un error específico
+    if (data.error) {
+      return res.status(500).json({ reply: `error de ia: ${data.error.message}` });
     }
 
-    // Extraemos la respuesta del cerebro de la IA
-    const reply = data.choices[0].message.content;
-    
+    // Aquí está el truco: revisamos bien dónde está el texto
+    const reply = data.choices?.[0]?.message?.content || data.choices?.[0]?.text;
+
+    if (!reply) {
+      return res.status(200).json({ reply: "*te mira fijamente y come un caramelo en silencio* (intenta de nuevo!)" });
+    }
+
     return res.status(200).json({ reply: reply.trim() });
 
   } catch (error) {
-    return res.status(500).json({ reply: "mega brain error: " + error.message });
+    return res.status(500).json({ reply: "error de conexión: " + error.message });
   }
 }
