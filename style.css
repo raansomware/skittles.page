@@ -1,3 +1,6 @@
+/* ============================
+   ESTILOS BASE (TU CSS ORIGINAL)
+   ============================ */
 * {
   margin: 0;
   padding: 0;
@@ -40,122 +43,71 @@ body.secret-mode .container::before {
 }
 
 body.secret-mode .title {
-  text-shadow: 0 0 18px rgba(255, 0, 0, 0.7),
-               0 0 28px rgba(0, 0, 0, 0.9);
+  text-shadow: 0 0 18px rgba(255, 0, 0, 0.7), 0 0 28px rgba(0, 0, 0, 0.9);
 }
 
-body.secret-mode .divider {
-  background: linear-gradient(90deg, transparent, red, black, transparent);
-}
-
-body.secret-mode .badge {
-  background: linear-gradient(90deg, red, black);
-  color: white;
-}
-
-body.secret-mode .box h2,
-body.secret-mode .stickers-box h2 {
-  color: red;
-  text-shadow: 0 0 14px rgba(255, 0, 0, 0.5);
-}
-
-body.secret-mode .profile-card,
-body.secret-mode .box,
-body.secret-mode .music-player,
-body.secret-mode .stickers-box,
-body.secret-mode .mootCard {
-  border: 1px solid rgba(255, 0, 0, 0.35);
-  box-shadow: 0 0 25px rgba(255, 0, 0, 0.12);
-}
-
-/* ENTER SCREEN */
-#enterScreen {
+/* ============================
+   SILLY SHIMEJI (NUEVA INYECCIÓN)
+   ============================ */
+.shimeji {
   position: fixed;
-  inset: 0;
-  z-index: 999999999;
-  background: rgba(0, 0, 0, 0.75);
-  backdrop-filter: blur(15px);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  transition: 0.6s;
-}
-
-#enterScreen.hidden {
-  opacity: 0;
+  width: 80px;
+  height: 80px;
+  background-image: url("silly.png"); /* Asegúrate de que el nombre sea correcto */
+  background-size: contain;
+  background-repeat: no-repeat;
+  bottom: -100px; /* Inicia fuera de pantalla */
+  left: 50px;
+  z-index: 1000000;
   pointer-events: none;
+  transition: bottom 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), left 2s linear, transform 0.3s ease;
+  filter: drop-shadow(0 0 10px rgba(255, 20, 147, 0.5));
 }
 
-.enterText {
-  font-size: 42px;
-  font-weight: 900;
-  text-transform: lowercase;
-  color: white;
-  text-shadow: 0 0 20px rgba(0, 234, 255, 0.7),
-               0 0 25px rgba(255, 20, 147, 0.6);
-  animation: enterPulse 1.2s infinite ease-in-out;
+.shimeji.walking {
+  animation: sillyWobble 0.5s infinite alternate ease-in-out;
 }
 
-@keyframes enterPulse {
-  0%, 100% { transform: scale(1); opacity: 0.85; }
-  50% { transform: scale(1.08); opacity: 1; }
+@keyframes sillyWobble {
+  from { transform: rotate(-5deg) scaleX(var(--direction, 1)); }
+  to { transform: rotate(5deg) scaleX(var(--direction, 1)); }
 }
 
-/* scanlines */
-.scanlines {
-  position: fixed;
-  inset: 0;
-  background: repeating-linear-gradient(
-    to bottom,
-    rgba(255,255,255,0.03) 0px,
-    rgba(255,255,255,0.03) 1px,
-    rgba(0,0,0,0.02) 2px,
-    rgba(0,0,0,0.02) 4px
-  );
-  pointer-events: none;
-  z-index: 3;
-  opacity: 0.55;
-  mix-blend-mode: overlay;
-}
-
-/* sparkles */
-.sparkles-container {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 10;
+/* ============================
+   CURSOR TRAIL & SPARKLES
+   ============================ */
+.cursor-trail-item {
+  font-family: serif;
+  text-shadow: 0 0 10px var(--neonblue), 0 0 18px var(--hotpink);
+  font-size: 18px;
 }
 
 .sparkle {
   position: fixed;
   animation: sparkleFloat 2.8s ease-out forwards;
   filter: drop-shadow(0 0 15px rgba(0, 234, 255, 0.8));
+  z-index: 10;
 }
 
 @keyframes sparkleFloat {
-  0% { opacity: 1; transform: translateY(0) scale(1); }
-  100% { opacity: 0; transform: translateY(-170px) scale(0); }
+  0% { opacity: 1; transform: translateY(0) scale(1) rotate(0deg); }
+  100% { opacity: 0; transform: translateY(-170px) scale(0) rotate(180deg); }
 }
 
-/* main container - ACTUALIZADO CON VIDRIO */
+/* ============================
+   CONTAINER & UI ELEMENTS
+   ============================ */
 .container {
   width: 100%;
   max-width: 680px;
   padding: 45px 40px;
   border-radius: 35px;
-  
-  /* Glassmorphism */
-  background: rgba(0, 0, 0, 0.55) !important;
-  backdrop-filter: blur(15px) saturate(160%);
-  -webkit-backdrop-filter: blur(15px) saturate(160%);
-  
-  border: 2px solid rgba(0, 234, 255, 0.4);
-  box-shadow: 0 0 35px rgba(0,234,255,0.2),
-              0 0 65px rgba(255,20,147,0.15);
+  background: rgba(0,0,0,0.68);
+  border: 2px solid rgba(0, 234, 255, 0.55);
+  box-shadow: 0 0 35px rgba(0,234,255,0.2), 0 0 65px rgba(255,20,147,0.15);
+  backdrop-filter: blur(12px);
   position: relative;
   z-index: 5;
-  overflow: hidden;
 }
 
 .container::before {
@@ -168,55 +120,15 @@ body.secret-mode .mootCard {
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
-  opacity: 0.9;
-  pointer-events: none;
   animation: borderShift 4s linear infinite;
 }
 
-/* cajas internas - ACTUALIZADAS CON VIDRIO */
-.profile-card, .box, .music-player, .stickers-box, .mootCard {
-  background: rgba(255, 255, 255, 0.04) !important;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border-radius: 22px;
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  padding: 20px;
-  margin-bottom: 18px;
-  transition: 0.3s;
+@keyframes borderShift {
+  0% { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(360deg); }
 }
 
-.box:hover, .mootCard:hover {
-  background: rgba(255, 255, 255, 0.08) !important;
-  transform: translateY(-5px);
-  border-color: var(--neonblue) !important;
-}
-
-/* ESTILOS DE SILLY (SHIMEJI) */
-.shimeji {
-  position: fixed;
-  bottom: -100px;
-  left: 50px;
-  width: 64px; 
-  height: 64px;
-  background-image: url('silly.png'); 
-  background-size: contain;
-  background-repeat: no-repeat;
-  z-index: 9999998;
-  pointer-events: none;
-  transition: transform 0.3s ease, left 1.5s ease, bottom 0.5s ease;
-  image-rendering: pixelated;
-}
-
-@keyframes shimejiWalk {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px) rotate(5deg); }
-}
-
-.shimeji.walking {
-  animation: shimejiWalk 0.4s infinite;
-}
-
-/* MINI TERMINAL - ACTUALIZADO CON VIDRIO */
+/* TERMINAL MINI */
 #miniTerminal {
   position: fixed;
   bottom: 20px;
@@ -224,77 +136,107 @@ body.secret-mode .mootCard {
   width: 320px;
   height: 240px;
   z-index: 99999999;
-  background: rgba(0, 0, 0, 0.75) !important;
-  border: 1px solid rgba(0, 234, 255, 0.4);
+  background: rgba(0,0,0,0.85);
+  border: 1px solid var(--neonblue);
   border-radius: 18px;
-  backdrop-filter: blur(15px);
-  box-shadow: 0 0 25px rgba(0,234,255,0.15);
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  box-shadow: 0 0 20px rgba(0, 234, 255, 0.3);
+  font-family: 'Courier New', Courier, monospace;
 }
 
-/* Mantengo el resto de tus estilos originales para no romper nada */
-.logo {
-  width: 120px;
-  height: 120px;
-  border-radius: 28px;
-  object-fit: cover;
-  border: 2px solid rgba(255,255,255,0.3);
-  z-index: 2;
-  animation: bounce 2.4s ease infinite;
-}
-
-.title {
-  font-size: 52px;
+.terminalHeader {
+  padding: 8px 12px;
+  background: rgba(255,255,255,0.1);
+  font-size: 10px;
+  color: var(--neonblue);
   font-weight: 900;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.terminalLog {
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto;
+  color: #00ff00;
+  font-size: 12px;
+}
+
+.terminalInput {
+  background: transparent;
+  border: none;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding: 10px;
   color: white;
-  text-shadow: 0 0 15px rgba(0,234,255,0.7),
-               0 0 25px rgba(255,20,147,0.45);
+  outline: none;
 }
 
-.divider {
-  height: 2px;
-  margin: 20px 0;
-  background: linear-gradient(90deg, transparent, var(--neongreen), var(--hotpink), transparent);
+/* GUESTBOOK & ACHIEVEMENTS */
+.guestEntry {
+  background: rgba(255,255,255,0.05);
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  border-left: 3px solid var(--neonblue);
 }
 
-.progressFill {
-  height: 100%;
-  width: 0%;
-  background: linear-gradient(90deg, var(--neongreen), var(--neonyellow), var(--hotpink));
+.achievement {
+  background: rgba(0,0,0,0.4);
+  padding: 12px;
+  border-radius: 12px;
+  margin-bottom: 5px;
+  transition: 0.3s;
 }
 
-.star.active {
-  color: var(--neonyellow);
-  text-shadow: 0 0 22px rgba(255,247,0,0.9);
+.achievement.locked {
+  filter: grayscale(1) opacity(0.5);
 }
 
-/* mobile hide */
-@media (max-width: 750px) {
-  #miniTerminal, .sticker-canvas {
-    display: none;
-  }
-  body { align-items: flex-start; }
-  .container { padding: 30px 20px; }
-  .title { font-size: 40px; }
-}
-
-/* stickers puestos */
+/* STICKERS */
 .placed-sticker {
   position: absolute;
   cursor: grab;
-  z-index: 9999999;
-}
-.placed-sticker img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  filter: drop-shadow(0 0 18px rgba(0,234,255,0.55));
+  z-index: 9999;
+  transition: transform 0.2s;
 }
 
-/* ... (resto de tus estilos de stamps, guestbook, etc.) ... */
+.placed-sticker:active { cursor: grabbing; transform: scale(1.1); }
+.placed-sticker img { width: 100%; filter: drop-shadow(0 0 10px var(--neonblue)); }
+
+/* TOAST */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--dark);
+  border: 2px solid var(--hotpink);
+  padding: 10px 20px;
+  border-radius: 20px;
+  color: white;
+  z-index: 1000000000;
+  font-weight: 900;
+  box-shadow: 0 0 20px var(--hotpink);
+}
+
+/* STAMPS */
+.stamp {
+  filter: grayscale(1);
+  transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
 .stamp.collected {
-  opacity: 1;
-  transform: scale(1.05);
+  filter: grayscale(0);
+  transform: rotate(5deg) scale(1.1);
+}
+
+/* RESPONSIVE */
+@media (max-width: 750px) {
+  #miniTerminal, .shimeji {
+    display: none; /* Ocultar elementos complejos en móvil para performance */
+  }
+  .container {
+    width: 95%;
+    padding: 20px;
+  }
 }
