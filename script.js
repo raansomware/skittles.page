@@ -68,7 +68,7 @@ function setupEnterScreen() {
 }
 
 // ============================
-// SKITTLES BOT - FIXED & BLINDADO
+// SKITTLES BOT - FIXED & CAÓTICO
 // ============================
 async function askSkittles(text) {
   if (!text || text.trim() === "") return;
@@ -83,10 +83,10 @@ async function askSkittles(text) {
     npcChat.appendChild(loadingLine);
     npcChat.scrollTop = npcChat.scrollHeight;
 
-    // FORZAMOS LA URL DIRECTA PARA EVITAR EL ERROR DEL <
+    // IMPORTANTE: Si usas Vercel cambia esto a '/api/chat'
     const response = await fetch('https://raansomware.netlify.app/.netlify/functions/chat', {
       method: 'POST',
-      mode: 'cors', // Forzamos modo CORS por seguridad
+      mode: 'cors',
       headers: { 
         'Content-Type': 'application/json',
         'Accept': 'application/json'
@@ -94,28 +94,24 @@ async function askSkittles(text) {
       body: JSON.stringify({ message: text.trim() })
     });
 
-    // Si recibimos un HTML (que empieza con <), esto lo atrapará antes de que explote el JSON
     const contentType = response.headers.get("content-type");
     if (!contentType || !contentType.includes("application/json")) {
-        const textError = await response.text();
-        console.log("Respuesta no-JSON recibida:", textError);
-        throw new Error("El servidor no envió JSON, envió HTML. Revisa tus logs de Netlify.");
+        throw new Error("vibe check failed: server sent html instead of glitter");
     }
 
     const data = await response.json();
     document.getElementById(loadingId)?.remove();
     
-    addNPCLine("skittles", data.reply || "*stares blankly* :3", true);
+    addNPCLine("skittles", data.reply || "*glitchy stare* :3", true);
     triggerSparkles();
+    if (Math.random() > 0.5) glitchEffect();
 
   } catch (error) {
-    document.getElementById(loadingId)?.remove();
+    if (document.getElementById(loadingId)) {
+        document.getElementById(loadingId).remove();
+    }
     console.error("DEBUG ERROR:", error);
-    addNPCLine("skittles", `*glitches* i can't see the void: ${error.message} ._.`, true);
-  }
-}
-    // Mensaje de error con personalidad
-    addNPCLine("skittles", `*glitches* error: ${error.message} ... i need happy pills >_<`, true);
+    addNPCLine("skittles", `*melts* thomas i need happy pills: ${error.message} >_<`, true);
   }
 }
 
@@ -147,7 +143,7 @@ function setupSkittlesBot() {
 }
 
 // ============================
-// VISITS
+// VISITS & EFFECTS
 // ============================
 function loadVisitCount() {
   let count = localStorage.getItem("visitCount") || 0;
@@ -157,9 +153,6 @@ function loadVisitCount() {
   if (el) el.textContent = count;
 }
 
-// ============================
-// SPARKLES & EFFECTS
-// ============================
 function createInitialSparkles() {
   for (let i = 0; i < 15; i++) {
     setTimeout(() => createSparkle(), i * 200);
@@ -340,9 +333,7 @@ function setupGuestbook() {
   });
 }
 
-function setupAchievements() {
-  // Render logic here if needed
-}
+function setupAchievements() {}
 
 function setupMootRequest() {
   document.getElementById("mootRequestBtn")?.addEventListener("click", () => {
@@ -375,10 +366,5 @@ function setupKonami() {
   });
 }
 
-function renderBadges() {
-  // Badge logic
-}
-
-function unlockBadge(id) {
-  // Unlock logic
-}
+function renderBadges() {}
+function unlockBadge(id) {}
