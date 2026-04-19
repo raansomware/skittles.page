@@ -11,32 +11,35 @@ export default async function handler(req, res) {
 
     if (!token) return res.status(500).json({ reply: "token missing! 🔑" });
 
-    // Cambiamos a este modelo: es ligero y no requiere permisos especiales de Meta
-    const response = await fetch("https://api-inference.huggingface.co/models/HuggingFaceH4/zephyr-7b-beta", {
+    // MODELO GEMMA: Es el que menos errores da en la capa gratuita
+    const response = await fetch("https://api-inference.huggingface.co/models/google/gemma-2-2b-it", {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${token}`,
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        inputs: `<|system|>\nyou are skittles. genius lsd hallucination. actions in asterisks. lowercase. obsessed with meds. ^_^ :3 ✨💊\n<|user|>\n${message}\n<|assistant|>\n`,
-        parameters: { max_new_tokens: 150, temperature: 1.1 }
+        inputs: `you are skittles. genius lsd hallucination. actions in asterisks. lowercase. treat user as thomas. obsessed with meds. ^_^ :3 ✨💊 user: ${message}`,
+        parameters: { max_new_tokens: 150, temperature: 1.0 }
       })
     });
 
+    const responseText = await response.text();
+
     if (!response.ok) {
-      const errorData = await response.text();
-      // Si esto sigue dando 404, el problema es la comunicación Vercel -> HF
-      return res.status(response.status).json({ reply: `glitch ${response.status}: ${errorData.slice(0, 50)}...` });
+      // ESTO ES CLAVE: Si sale 404 aquí, revisa que no haya espacios en el nombre de la variable en Vercel
+      return res.status(response.status).json({ reply: `glitch ${response.status}: ${responseText.slice(0, 40)}` });
     }
 
-    const data = await response.json();
+    const data = JSON.parse(responseText);
     let reply = Array.isArray(data) ? data[0]?.generated_text : data.generated_text;
     
-    // Limpiar la respuesta para que no repita el prompt
-    reply = reply?.split("<|assistant|>").pop() || "my brain is empty... :3";
+    // Limpiamos la respuesta de residuos del prompt
+    if (reply.includes("user:")) {
+        reply = reply.split("user:").pop().split("\n")[0];
+    }
 
-    return res.status(200).json({ reply: reply.trim() });
+    return res.status(200).json({ reply: (reply || "i'm dizzy...").trim() });
 
   } catch (error) {
     return res.status(500).json({ reply: "mega brain error: " + error.message });
