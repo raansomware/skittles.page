@@ -817,33 +817,68 @@ body.secret-mode .stickers-box {
   filter: grayscale(1);
 }
 
-/* npc */
+/* npc chat - skittles edition ^_^ */
 .npcHint {
   font-size: 12px;
   font-weight: 900;
-  color: rgba(255,255,255,0.6);
+  color: rgba(255, 255, 255, 0.6);
   margin-bottom: 10px;
 }
 
 .npcChat {
-  background: rgba(0,0,0,0.55);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(0, 0, 0, 0.6); /* Más oscuro para que resalten los neones */
+  border: 1px solid rgba(0, 234, 255, 0.25);
   border-radius: 16px;
-  padding: 12px;
-  height: 140px;
+  padding: 15px;
+  height: 250px; /* Le damos más altura para poder leer bien */
   overflow-y: auto;
-  font-size: 12px;
-  font-weight: 900;
-  color: rgba(255,255,255,0.85);
-  margin-bottom: 10px;
+  font-size: 13px;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 15px;
+  box-shadow: inset 0 0 15px rgba(0, 234, 255, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Scrollbar personalizada para que combine */
+.npcChat::-webkit-scrollbar {
+  width: 6px;
+}
+.npcChat::-webkit-scrollbar-thumb {
+  background: var(--hotpink);
+  border-radius: 10px;
 }
 
 .npcLine {
-  margin-bottom: 8px;
+  line-height: 1.4;
+  word-wrap: break-word; /* Evita que el texto se salga */
+  animation: messageIn 0.3s ease-out;
 }
 
-.npcLine span {
+@keyframes messageIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Estilo para los nombres */
+.npcLine b {
+  text-transform: lowercase;
+  font-size: 11px;
+  letter-spacing: 1px;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.user-label {
   color: var(--neonblue);
+  text-shadow: 0 0 8px rgba(0, 234, 255, 0.4);
+}
+
+.skittles-label {
+  color: var(--hotpink);
+  text-shadow: 0 0 10px rgba(255, 20, 147, 0.5);
 }
 
 .npcRow {
@@ -855,21 +890,35 @@ body.secret-mode .stickers-box {
   flex: 1;
   padding: 12px;
   border-radius: 14px;
-  border: 1px solid rgba(255,255,255,0.1);
-  background: rgba(0,0,0,0.6);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(0, 0, 0, 0.6);
   color: white;
-  font-weight: 900;
+  font-family: "Fredoka", sans-serif;
+  font-weight: 700;
   outline: none;
+  transition: 0.3s;
+}
+
+#npcInput:focus {
+  border-color: var(--neonblue);
+  box-shadow: 0 0 15px rgba(0, 234, 255, 0.2);
 }
 
 .npcBtn {
-  padding: 12px 14px;
+  padding: 12px 18px;
   border-radius: 14px;
   border: none;
   cursor: pointer;
   font-weight: 900;
   background: linear-gradient(90deg, var(--neonblue), var(--hotpink));
   color: white;
+  text-transform: lowercase;
+  transition: 0.2s;
+}
+
+.npcBtn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(255, 20, 147, 0.4);
 }
 
 /* badges */
