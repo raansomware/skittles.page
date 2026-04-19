@@ -845,13 +845,15 @@ function renderBadges() {
 }
 
 // ==========================================
-// SKITTLES BOT - UNIFICADO Y SIN ERRORES
+// SKITTLES BOT - SIN ERRORES DE SINTAXIS
 // ==========================================
 
 async function askSkittles(text) {
   const npcChat = document.getElementById("npcChat");
-  const loadingId = "loading-" + Date.now();
+  if (!npcChat) return;
 
+  const loadingId = "loading-" + Date.now();
+  
   try {
     const loadingLine = document.createElement("div");
     loadingLine.id = loadingId;
@@ -871,17 +873,14 @@ async function askSkittles(text) {
     const loader = document.getElementById(loadingId);
     if (loader) loader.remove();
 
-    // --- EL FIX AQUÍ ---
-    // Buscamos en data.reply, o en data.content, o en data.choices... 
-    // Si nada funciona, mostramos el error real.
+    // Verificamos todas las rutas posibles del JSON
     const finalMsg = data.reply || data.content || (data.choices && data.choices[0].message.content);
 
     if (finalMsg) {
       addNPCLine("skittles", finalMsg, true);
       if (typeof triggerSparkles === "function") triggerSparkles();
     } else {
-      // Si sigue saliendo esto, imprime en consola qué recibió realmente
-      console.log("Datos recibidos de la API:", data);
+      console.log("Datos recibidos:", data);
       addNPCLine("skittles", "i got an empty response... 🍬", true);
     }
 
@@ -891,29 +890,8 @@ async function askSkittles(text) {
     if (loader) loader.remove();
     addNPCLine("skittles", "oopsie! skittles is busy eating candy ^_^", true);
   }
-}
+} // <--- Asegúrate de que esta llave cierre bien askSkittles
 
-    const data = await response.json();
-    
-    const loader = document.getElementById(loadingId);
-    if (loader) loader.remove();
-
-    if (data && data.reply) {
-      addNPCLine("skittles", data.reply, true);
-      if (typeof triggerSparkles === "function") triggerSparkles();
-    } else {
-      addNPCLine("skittles", "undefined response... 💀", true);
-    }
-
-  } catch (error) {
-    console.error("API Error:", error);
-    const loader = document.getElementById(loadingId);
-    if (loader) loader.remove();
-    addNPCLine("skittles", "oopsie! skittles is busy eating candy ^_^", true);
-  }
-}
-
-// 2. La función que dibuja en pantalla (AQUÍ ESTABA EL ERROR)
 function addNPCLine(sender, msg, isSkittles = false) {
   const npcChat = document.getElementById("npcChat");
   if (!npcChat) return;
@@ -926,7 +904,6 @@ function addNPCLine(sender, msg, isSkittles = false) {
   npcChat.scrollTop = npcChat.scrollHeight;
 }
 
-// 3. La función que inicializa todo
 function setupSkittlesBot() {
   const npcInput = document.getElementById("npcInput");
   const npcSend = document.getElementById("npcSend");
@@ -946,9 +923,5 @@ function setupSkittlesBot() {
     if (e.key === "Enter") npcSend.click();
   };
 
-  // Saludo inicial
   addNPCLine("skittles", "hi!! i'm skittles! ^_^ do u have any glitter?", true);
 }
-
-// HACERLO GLOBAL para que el DOM lo vea
-window.setupSkittlesBot = setupSkittlesBot;
