@@ -1,33 +1,19 @@
 export default async function handler(req, res) {
-  // ============================
-  // CONFIGURACIÓN DE CORS
-  // ============================
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-  // Manejo de pre-vuelo de CORS
-  if (req.method === "OPTIONS") {
-    return res.status(200).end();
-  }
-
-  // Solo aceptamos peticiones POST
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method Not Allowed" });
-  }
+  if (req.method === "OPTIONS") return res.status(200).end();
+  if (req.method !== "POST") return res.status(405).json({ error: "Method Not Allowed" });
 
   try {
-    // Extraemos el prompt o message del cuerpo de la petición
-    const { prompt, message } = req.body;
-    const userText = prompt || message; // Acepta ambos nombres de variable por si acaso
+    // Leemos el mensaje sin importar si viene como 'message' o 'prompt'
+    const userMessage = req.body.message || req.body.prompt;
 
-    if (!userText) {
-      return res.status(400).json({ error: "No message provided" });
+    if (!userMessage) {
+      return res.status(400).json({ error: "No message provided in body" });
     }
 
-    // ============================
-    // LLAMADA A GROQ API
-    // ============================
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -39,9 +25,9 @@ export default async function handler(req, res) {
         messages: [
           {
             role: "system",
-            content: "you are nick.bot (aka skittles/soren). you speak like skittles from hwwhp. always lowercase. short replies. cute chaotic slang. use ^^ :3 ✨💖. sometimes remind people to take ur medz. never formal. stay in character as a pixels/glitter entity."
+            content: "you are nick.bot (aka skittles). you speak like skittles from hwwhp. always lowercase. short replies. cute chaotic slang. use ^^ :3 ✨💖. sometimes remind people to take ur medz. never formal."
           },
-          { role: "user", content: userText }
+          { role: "user", content: userMessage }
         ],
         temperature: 1.1,
         max_tokens: 120
@@ -49,24 +35,12 @@ export default async function handler(req, res) {
     });
 
     const data = await response.json();
-
-    // Verificamos si Groq devolvió un error (como API Key inválida)
-    if (data.error) {
-      console.error("Groq Error:", data.error);
-      return res.status(500).json({ error: data.error.message });
-    }
-
-    // Devolvemos la respuesta formateada
-    const reply = data.choices?.[0]?.message?.content || "nick.bot crashed 💀";
     
-    // Devolvemos tanto 'content' como 'reply' para que coincida con lo que busque tu script.js
-    return res.status(200).json({
-      content: reply,
-      reply: reply 
-    });
+    // Enviamos la respuesta siempre bajo la clave 'reply'
+    const botReply = data.choices?.[0]?.message?.content || "nick.bot crashed 💀";
+    return res.status(200).json({ reply: botReply });
 
   } catch (err) {
-    console.error("Server Error:", err);
     return res.status(500).json({ error: "Server error" });
   }
 }
