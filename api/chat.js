@@ -55,3 +55,22 @@ ${message}</s>
     return res.status(200).json({ reply: "my reality is folding... " + error.message });
   }
 }
+
+export default async function handler(req, res) {
+  // Encabezados de seguridad y CORS
+  res.setHeader('Content-Type', 'application/json');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+
+  try {
+    const { message } = req.body;
+    
+    // Aquí va tu lógica de Hugging Face...
+    // (Asegúrate de que el fetch a Hugging Face esté bien configurado)
+
+    return res.status(200).json({ reply: "skittles está procesando... :3" });
+
+  } catch (error) {
+    // Si algo falla, respondemos JSON, NUNCA HTML
+    return res.status(200).json({ reply: "󱤆 error de glitch: el servidor está cansado u_u" });
+  }
+}
