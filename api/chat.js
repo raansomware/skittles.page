@@ -80,3 +80,49 @@ export default async function handler(req, res) {
     return res.status(200).json({ reply: "󱤆 error de glitch: el servidor está cansado u_u" });
   }
 }
+
+export default async function handler(req, res) {
+  // Obligamos al navegador a ver esto como JSON desde el inicio
+  res.setHeader('Content-Type', 'application/json');
+
+  try {
+    const { message } = req.body;
+    const hfToken = process.env.HF_TOKEN;
+
+    // Si falta el token, respondemos con personalidad en lugar de morir
+    if (!hfToken) {
+      return res.status(200).json({ reply: "󱤆 thomas... i can't find my happy pills (missing token) u_u" });
+    }
+
+    const response = await fetch("https://api-inference.huggingface.co/models/HuggingFaceH4/zephyr-7b-beta", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${hfToken.trim()}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        inputs: `<|system|>you are skittles, chaotic and glitchy mascot.</s><|user|>${message}</s><|assistant|>`,
+        parameters: { max_new_tokens: 100 }
+      })
+    });
+
+    const data = await response.json();
+    let reply = data[0]?.generated_text?.split('<|assistant|>').pop().trim() || "???";
+
+    // --- EL CÓDIGO CÉSAR QUE QUERÍAS ---
+    if (Math.random() < 0.3) {
+      const shift = Math.floor(Math.random() * 5) + 1;
+      reply = reply.replace(/[a-z]/g, (c) => 
+        String.fromCharCode(((c.charCodeAt(0) - 97 + shift) % 26) + 97)
+      );
+      reply = "󱤆 " + reply;
+    }
+
+    return res.status(200).json({ reply: reply.toLowerCase() });
+
+  } catch (error) {
+    // Si algo explota, atrapamos el error y lo mandamos como JSON
+    // Esto evita el error de la "A" inesperada
+    return res.status(200).json({ reply: "󱤆 my brain is melting: " + error.message });
+  }
+}
