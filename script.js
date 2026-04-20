@@ -1,5 +1,5 @@
 // ============================
-// CONFIGURACIÓN Y PLAYLIST
+// 1. CONFIGURACIÓN Y PLAYLIST
 // ============================
 const playlist = [
   { name: "buttercup", artist: "Jack Stauber", file: "buttercup.mp3" },
@@ -9,7 +9,7 @@ let currentTrack = 0;
 let isPlaying = false;
 
 // ============================
-// INIT (ARRANQUE DEL SISTEMA)
+// 2. INIT (ARRANQUE)
 // ============================
 document.addEventListener("DOMContentLoaded", () => {
   console.log("skittlesOS v6.66 online");
@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // ============================
-// SKITTLES BOT (CHAT)
+// 3. CHAT (SKITTLES)
 // ============================
 async function askSkittles(text) {
   if (!text || text.trim() === "") return;
@@ -57,13 +57,12 @@ async function askSkittles(text) {
     const data = await response.json();
     document.getElementById(loadingId)?.remove();
     
-    addNPCLine("skittles", data.reply || "*stares blankly* :3", true);
+    addNPCLine("skittles", data.reply || "*glitch* :3", true);
     triggerSparkles();
 
   } catch (error) {
     if (document.getElementById(loadingId)) document.getElementById(loadingId).remove();
-    console.error("Chat Error:", error);
-    addNPCLine("skittles", `*glitches* error: ${error.message} >_<`, true);
+    addNPCLine("skittles", `*reality folding* ${error.message}`, true);
   }
 }
 
@@ -72,8 +71,7 @@ function addNPCLine(sender, msg, isSkittles = false) {
   if (!npcChat) return;
   const line = document.createElement("div");
   line.className = "npcLine";
-  const labelClass = isSkittles ? 'skittles-label' : 'user-label';
-  line.innerHTML = `<b class="${labelClass}">${sender}:</b> ${msg}`;
+  line.innerHTML = `<b class="${isSkittles ? 'skittles-label' : 'user-label'}">${sender}:</b> ${msg}`;
   npcChat.appendChild(line);
   npcChat.scrollTop = npcChat.scrollHeight;
 }
@@ -82,118 +80,29 @@ function setupSkittlesBot() {
   const input = document.getElementById("npcInput");
   const send = document.getElementById("npcSend");
   if (!input || !send) return;
-
   send.onclick = () => {
     const m = input.value.trim();
-    if (m) {
-      addNPCLine("you", m);
-      askSkittles(m);
-      input.value = "";
-    }
+    if (m) { addNPCLine("you", m); askSkittles(m); input.value = ""; }
   };
   input.onkeydown = (e) => { if (e.key === "Enter") send.click(); };
 }
 
 // ============================
-// SISTEMAS DE INTERACCIÓN
+// 4. INTERACCIONES Y BOTONES
 // ============================
+function rateMe(stars) {
+  toast(`rated ${stars} stars! u_u`);
+  triggerSparkles();
+}
+
 function setupGuestbook() {
   const btn = document.getElementById("guestSubmit");
-  if (btn) {
-    btn.onclick = () => {
-      toast("signed!! (glitter saved) ✨");
-      triggerSparkles();
-    };
-  }
+  if (btn) btn.onclick = () => { toast("signed! ✨"); triggerSparkles(); };
 }
 
 function setupMootRequest() {
   const btn = document.getElementById("mootRequestBtn");
-  if (btn) {
-    btn.onclick = () => {
-      toast("request sent 💌");
-      triggerSparkles();
-    };
-  }
-}
-
-function rateMe(stars) {
-  toast(`rated ${stars} stars! skittles likes u u_u`);
-  triggerSparkles();
-}
-
-// ============================
-// STICKERS (DRAG & DROP)
-// ============================
-function startStickerDrag(e) {
-  e.dataTransfer.setData("text/plain", e.target.id);
-}
-
-// ============================
-// EFECTOS VISUALES
-// ============================
-function createSparkle(x = null, y = null) {
-  const container = document.querySelector(".sparkles-container") || document.body;
-  const sparkle = document.createElement("div");
-  const emojis = ["✨", "💫", "⭐", "🌟", "💖", "🌈"];
-  sparkle.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-  sparkle.className = "sparkle";
-  sparkle.style.position = "fixed";
-  sparkle.style.left = (x !== null ? x : Math.random() * window.innerWidth) + "px";
-  sparkle.style.top = (y !== null ? y : Math.random() * window.innerHeight) + "px";
-  sparkle.style.pointerEvents = "none";
-  sparkle.style.zIndex = "999999";
-  container.appendChild(sparkle);
-  setTimeout(() => sparkle.remove(), 2000);
-}
-
-function triggerSparkles() {
-  for (let i = 0; i < 30; i++) {
-    setTimeout(() => createSparkle(), i * 50);
-  }
-}
-
-function toast(msg) {
-  const old = document.querySelector(".toast");
-  if (old) old.remove();
-  const t = document.createElement("div");
-  t.className = "toast";
-  t.textContent = msg;
-  document.body.appendChild(t);
-  setTimeout(() => { t.style.opacity = "0"; }, 1500);
-  setTimeout(() => { t.remove(); }, 2000);
-}
-
-function glitchEffect() {
-  const container = document.querySelector(".container");
-  if (!container) return;
-  container.style.transform = "translateX(8px) skewX(3deg)";
-  setTimeout(() => { container.style.transform = "none"; }, 100);
-  toast("⚡ glitch");
-}
-
-// ============================
-// LOGROS Y BADGES
-// ============================
-function renderBadges() { console.log("badges loaded"); }
-function setupAchievements() { console.log("achievements online"); }
-function unlockBadge(id) { toast("UNLOCKED: " + id); triggerSparkles(); }
-
-// ============================
-// UTILIDADES (CONTEO, TÍTULOS, ETC)
-// ============================
-function loadVisitCount() {
-  let count = localStorage.getItem("visitCount") || 0;
-  count = parseInt(count) + 1;
-  localStorage.setItem("visitCount", count);
-  const el = document.getElementById("visitCount");
-  if (el) el.textContent = count;
-}
-
-function setupEnterScreen() {
-  const screen = document.getElementById("enterScreen");
-  if (!screen) return;
-  screen.onclick = () => screen.classList.add("hidden");
+  if (btn) btn.onclick = () => { toast("request sent 💌"); triggerSparkles(); };
 }
 
 function setupButtons() {
@@ -201,32 +110,35 @@ function setupButtons() {
   document.getElementById("glitchBtn")?.addEventListener("click", glitchEffect);
 }
 
-function setupQuote() {
-  const quotes = ["the glitter is inside the walls", "do not trust thomas.png", "i am pixels"];
-  const el = document.getElementById("quoteText");
-  if (el) el.textContent = quotes[Math.floor(Math.random() * quotes.length)];
+// ============================
+// 5. STICKERS Y DRAG
+// ============================
+function startStickerDrag(e) {
+  e.dataTransfer.setData("text/plain", e.target.id);
 }
 
-function setupTabTitles() {
-  setInterval(() => { document.title = "skittles.lol fan"; }, 2000);
+// ============================
+// 6. EFECTOS VISUALES
+// ============================
+function createSparkle(x = null, y = null) {
+  const container = document.querySelector(".sparkles-container") || document.body;
+  const sparkle = document.createElement("div");
+  sparkle.textContent = "✨";
+  sparkle.className = "sparkle";
+  sparkle.style.position = "fixed";
+  sparkle.style.left = (x !== null ? x : Math.random() * window.innerWidth) + "px";
+  sparkle.style.top = (y !== null ? y : Math.random() * window.innerHeight) + "px";
+  sparkle.style.zIndex = "999999";
+  container.appendChild(sparkle);
+  setTimeout(() => sparkle.remove(), 2000);
 }
-
-function setupMusicPlayer() { /* Tu lógica de música aquí */ }
-function startCursorTrail() { /* Tu lógica de cursor aquí */ }
-function setupSecretMode() { /* Tu lógica secreta aquí */ }
-function setupPanicMode() { /* Tu lógica de pánico aquí */ }
-function setupStamps() { /* Tu lógica de stamps aquí */ }
-function setupKonami() { /* Tu lógica Konami aquí */ }
-
-// ==========================================
-// FIX: FUNCIONES DE EFECTOS Y SISTEMAS
-// ==========================================
 
 function createInitialSparkles() {
-  // Crea una ráfaga inicial de brillos al cargar
-  for (let i = 0; i < 15; i++) {
-    setTimeout(() => createSparkle(), i * 200);
-  }
+  for (let i = 0; i < 15; i++) setTimeout(() => createSparkle(), i * 200);
+}
+
+function triggerSparkles() {
+  for (let i = 0; i < 30; i++) setTimeout(() => createSparkle(), i * 50);
 }
 
 function startCursorTrail() {
@@ -237,54 +149,45 @@ function startCursorTrail() {
     trail.style.left = e.clientX + "px";
     trail.style.top = e.clientY + "px";
     trail.style.pointerEvents = "none";
-    trail.style.zIndex = "1000000";
-    trail.style.fontSize = "12px";
     document.body.appendChild(trail);
-    
-    setTimeout(() => {
-      trail.style.transition = "0.5s";
-      trail.style.opacity = "0";
-      trail.style.transform = "translateY(-20px)";
-    }, 50);
     setTimeout(() => trail.remove(), 600);
   });
 }
 
-function setupSecretMode() {
-  console.log("secret mode ready... try clicking the banner");
+function toast(msg) {
+  const t = document.createElement("div");
+  t.className = "toast";
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2000);
 }
 
-function setupPanicMode() {
-  const panicBtn = document.getElementById("panicBtn");
-  if (panicBtn) {
-    panicBtn.onclick = () => {
-      window.location.href = "https://www.google.com"; // Modo pánico clásico
-    };
-  }
+function glitchEffect() {
+  document.body.style.transform = "translateX(8px)";
+  setTimeout(() => document.body.style.transform = "none", 100);
 }
 
+// ============================
+// 7. OTROS (LLENADO)
+// ============================
+function renderBadges() { console.log("badges ready"); }
+function setupAchievements() { console.log("achievements ready"); }
+function loadVisitCount() {
+  let count = (parseInt(localStorage.getItem("visitCount")) || 0) + 1;
+  localStorage.setItem("visitCount", count);
+  if (document.getElementById("visitCount")) document.getElementById("visitCount").textContent = count;
+}
+function setupEnterScreen() {
+  const screen = document.getElementById("enterScreen");
+  if (screen) screen.onclick = () => screen.classList.add("hidden");
+}
 function setupStamps() {
-  document.querySelectorAll(".stamp").forEach(s => {
-    s.onclick = () => {
-      s.classList.add("collected");
-      toast("stamp collected!");
-    };
-  });
+  document.querySelectorAll(".stamp").forEach(s => s.onclick = () => toast("collected!"));
 }
-
-function setupKonami() {
-  let pattern = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
-  let current = 0;
-  document.addEventListener('keydown', (e) => {
-    if (e.key === pattern[current]) {
-      current++;
-      if (current === pattern.length) {
-        toast("KONAMI CODE ACTIVATED 🍄");
-        triggerSparkles();
-        current = 0;
-      }
-    } else {
-      current = 0;
-    }
-  });
-}
+function setupKonami() { /* Lógica de teclas */ }
+function setupMusicPlayer() { /* Lógica MP3 */ }
+function setupQuote() { /* Lógica frases */ }
+function setupTabTitles() { /* Lógica tab */ }
+function setupSecretMode() { /* Lógica secreta */ }
+function setupPanicMode() { /* Lógica pánico */ }
+function unlockBadge(id) { toast("UNLOCKED: " + id); }
