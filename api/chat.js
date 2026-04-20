@@ -73,7 +73,7 @@ export default async function handler(req, res) {
 
   } catch (error) {
     return res.status(200).json({ 
-      reply: "󱤆 reality collapsed: " + error.message + " u_u" 
+      reply: "󱤆 reality failed: " + error.message + " u_u" 
     });
   }
 }
