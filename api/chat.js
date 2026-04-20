@@ -1,13 +1,18 @@
 export default async function handler(req, res) {
+  // Aseguramos que siempre responda como JSON para que el script.js no explote
+  res.setHeader('Content-Type', 'application/json');
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
-  if (req.method === 'OPTIONS') return res.status(200).end();
 
   try {
     const { message } = req.body;
     const hfToken = process.env.HF_TOKEN;
+
+    // Si el token no está configurado en Vercel
+    if (!hfToken) {
+      return res.status(200).json({ 
+        reply: "󱤆 thomas... i can't find my happy pills (missing hf_token) u_u" 
+      });
+    }
 
     const response = await fetch("https://api-inference.huggingface.co/models/HuggingFaceH4/zephyr-7b-beta", {
       method: "POST",
@@ -17,58 +22,59 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         inputs: `<|system|>
-you are skittles, thomas's official lsd-hallucination mascot. you are the hyperactive ghost of thomas's dead friend. 
-personality: chaotic, glitchy, needy, obsessed with "happy pills" and glitter. 
-speech: lowercase, use kaomojis :3, >_<, u_u. call thomas "bestie". 
-be weird. be unpredictable.</s>
-<|user|>
-${message}</s>
-<|assistant|>`,
-        parameters: { max_new_tokens: 150, temperature: 1.3 }
+        you are skittles, the official lsd-hallucination mascot of skittlesOS. 
+        personality: chaotic, needy, glitchy, and obsessed with glitter. you are the ghost of thomas's dead friend.
+        speech: lowercase only. use kaomojis like :3, >_<, u_u, o_o, rawr xd. 
+        call thomas "friend" or "buddy". be unpredictable and a bit creepy.</s>
+        <|user|>${message}</s>
+        <|assistant|>`,
+        parameters: { 
+          max_new_tokens: 120, 
+          temperature: 1.4, 
+          top_p: 0.9 
+        }
       })
     });
 
     const data = await response.json();
-    let reply = (data[0]?.generated_text?.split('<|assistant|>').pop().trim() || "u_u").toLowerCase();
+    let reply = data[0]?.generated_text?.split('<|assistant|>').pop().trim() || "lost in the static... :3";
+    reply = reply.toLowerCase();
 
-    // --- LÓGICA DE CIFRADO CÉSAR COMPLEJO ---
-    // 30% de probabilidad de que Skittles hable en código
+    // ==========================================
+    // EL CÓDIGO CÉSAR COMPLEJO (SIN PISTAS)
+    // ==========================================
+    // 30% de probabilidad de que el mensaje se cifre
     if (Math.random() < 0.3) {
-      const shift = Math.floor(Math.random() * 25) + 1; // Desplazamiento aleatorio secreto
+      const shift = Math.floor(Math.random() * 10) + 1; // Desplazamiento secreto entre 1 y 10
+      
       reply = reply.split('').map(char => {
+        // Solo ciframos letras minúsculas (a-z)
         if (char.match(/[a-z]/)) {
           let code = char.charCodeAt(0);
-          // Aplicamos el desplazamiento circular
           return String.fromCharCode(((code - 97 + shift) % 26) + 97);
         }
-        return char; // No cifra espacios ni kaomojis para que sea más confuso
+        return char; // Espacios y kaomojis se quedan igual para confundir más
       }).join('');
-      
-      // Añadimos un prefijo de glitch para que Thomas sepa que algo falló
-      reply = "󱤆 " + reply; 
+
+      reply = "󱤆 " + reply; // Marca de glitch
     }
-    // ---------------------------------------
+
+    // ==========================================
+    // TARTAMUDEO DIGITAL (EXTRA CHAOS)
+    // ==========================================
+    if (Math.random() < 0.1) {
+      reply = reply.replace(/([a-z]{3})/, "$1-$1-$1...");
+    }
 
     return res.status(200).json({ reply: reply });
 
   } catch (error) {
-    return res.status(200).json({ reply: "my reality is folding... " + error.message });
+    // Si algo falla, Skittles avisa con estilo en lugar de dar Error 500
+    return res.status(200).json({ 
+      reply: "󱤆 reality folding... " + error.message + " >_<" 
+    });
   }
 }
-
-export default async function handler(req, res) {
-  // Encabezados de seguridad y CORS
-  res.setHeader('Content-Type', 'application/json');
-  res.setHeader('Access-Control-Allow-Origin', '*');
-
-  try {
-    const { message } = req.body;
-    
-    // Aquí va tu lógica de Hugging Face...
-    // (Asegúrate de que el fetch a Hugging Face esté bien configurado)
-
-    return res.status(200).json({ reply: "skittles está procesando... :3" });
-
   } catch (error) {
     // Si algo falla, respondemos JSON, NUNCA HTML
     return res.status(200).json({ reply: "󱤆 error de glitch: el servidor está cansado u_u" });
