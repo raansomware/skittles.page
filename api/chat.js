@@ -7,11 +7,11 @@ export default async function handler(req, res) {
 
     if (!hfToken) {
       return res.status(200).json({ 
-        reply: "󱤆 thomas... i can't find soren's pills (missing token) u_u" 
+        reply: "󱤆... i can't find thomas's pills (missing token) u_u" 
       });
     }
 
-    const response = await fetch("https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2", {
+    const response = await fetch(https://api-inference.huggingface.co/models/gpt2", {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${hfToken.trim()}`,
