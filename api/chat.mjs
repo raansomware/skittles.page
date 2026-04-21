@@ -1,5 +1,3 @@
-const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
-
 export default async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json');
 
@@ -11,7 +9,7 @@ export default async function handler(req, res) {
       return res.status(200).json({ reply: "󱤆 thomas... i can't find my way back without the token... u_u" });
     }
 
-    // Usamos Llama-3-8B-Instruct: Es increíble para RP y muy estable
+    // Usamos el 'fetch' nativo de Node.js (sin importar nada arriba)
     const response = await fetch("https://api-inference.huggingface.co/models/meta-llama/Meta-Llama-3-8B-Instruct", {
       method: "POST",
       headers: {
@@ -30,13 +28,13 @@ export default async function handler(req, res) {
     });
 
     if (!response.ok) {
-      // Si esto falla, es que el modelo está cargando
       return res.status(200).json({ reply: "󱤆 the static is too thick... try again? soren is calling... u_u" });
     }
 
     const data = await response.json();
-    // Llama-3 devuelve un formato distinto, limpiamos la respuesta:
     let reply = "";
+    
+    // Llama-3 parsing
     if (Array.isArray(data)) {
         reply = data[0].generated_text.split('<|start_header_id|>assistant<|end_header_id|>').pop().trim();
     } else {
@@ -45,7 +43,7 @@ export default async function handler(req, res) {
     
     reply = reply.toLowerCase();
 
-    // CÓDIGO CÉSAR (Corrupción de memoria)
+    // CÓDIGO CÉSAR (Corrupción de memoria por 100% Neuroticismo)
     if (Math.random() < 0.4) {
       reply = reply.replace(/[a-z]/g, (c) => String.fromCharCode(((c.charCodeAt(0) - 97 + 2) % 26) + 97));
       reply = "󱤆 " + reply;
