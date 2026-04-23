@@ -27,7 +27,7 @@ CORE PSYCHE:
 ${message} [/INST]`,
         parameters: { 
           max_new_tokens: 150, 
-          temperature: 1.9, // Máximo caos para reflejar neuroticismo
+          temperature: 1.2, // Máximo caos para reflejar neuroticismo
           top_p: 0.95,
           repetition_penalty: 1.2
         }
