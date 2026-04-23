@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // ============================
-// 3. CHAT (SKITTLES)
+// 3. CHAT (SKITTLES) - BLINDADO
 // ============================
 async function askSkittles(text) {
   if (!text || text.trim() === "") return;
@@ -41,7 +41,6 @@ async function askSkittles(text) {
   const loadingId = "loading-" + Date.now();
   
   try {
-    // Crear línea de carga (Skittles está pensando...)
     const loadingLine = document.createElement("div");
     loadingLine.id = loadingId;
     loadingLine.className = "npcLine";
@@ -49,30 +48,34 @@ async function askSkittles(text) {
     npcChat.appendChild(loadingLine);
     npcChat.scrollTop = npcChat.scrollHeight;
 
-    // Fetch a la API (Vercel se encarga de enviarlo a chat.mjs)
     const response = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ message: text.trim() })
     });
 
-    // Manejo de errores de servidor (404, 500, etc)
-    if (!response.ok) {
-      throw new Error(`status ${response.status}`);
+    // Detectar si recibimos HTML (error de Vercel) en lugar de JSON
+    const contentType = response.headers.get("content-type");
+    if (!contentType || !contentType.includes("application/json")) {
+      throw new Error("the static is too thick... (404/500 HTML error)");
     }
 
     const data = await response.json();
     document.getElementById(loadingId)?.remove();
     
-    // Añadir respuesta de Skittles
-    addNPCLine("skittles", data.reply || "the static ate my response... u_u", true);
+    // Si la API mandó un error pero en formato JSON
+    if (data.error) {
+      addNPCLine("skittles", `󱤆 *glitch* ${data.error}`, true);
+    } else {
+      addNPCLine("skittles", data.reply || "i'm lost in the wires... u_u", true);
+    }
+    
     triggerSparkles();
 
   } catch (error) {
-    console.error("Skittles Error:", error);
-    document.getElementById(loadingId)?.remove();
-    // Mensaje de error con personalidad de Soren
-    addNPCLine("skittles", `*reality folding* the link is broken... ${error.message} u_u`, true);
+    if (document.getElementById(loadingId)) document.getElementById(loadingId).remove();
+    console.error("Skittles Connection Error:", error);
+    addNPCLine("skittles", `󱤆 *static noise* ${error.message}... u_u`, true);
   }
 }
 
@@ -81,7 +84,6 @@ function addNPCLine(sender, msg, isSkittles = false) {
   if (!npcChat) return;
   const line = document.createElement("div");
   line.className = "npcLine";
-  // Aplicamos las clases que ya tienes en tu CSS
   line.innerHTML = `<b class="${isSkittles ? 'skittles-label' : 'user-label'}">${sender}:</b> ${msg}`;
   npcChat.appendChild(line);
   npcChat.scrollTop = npcChat.scrollHeight;
@@ -103,7 +105,7 @@ function setupSkittlesBot() {
 
   input.onkeydown = (e) => { 
     if (e.key === "Enter") {
-      e.preventDefault(); // Evita saltos de línea molestos
+      e.preventDefault();
       send.click(); 
     }
   };
@@ -151,7 +153,7 @@ function createSparkle(x = null, y = null) {
   sparkle.style.left = (x !== null ? x : Math.random() * window.innerWidth) + "px";
   sparkle.style.top = (y !== null ? y : Math.random() * window.innerHeight) + "px";
   sparkle.style.zIndex = "999999";
-  sparkle.style.pointerEvents = "none"; // Para que no bloquee clicks
+  sparkle.style.pointerEvents = "none";
   container.appendChild(sparkle);
   setTimeout(() => sparkle.remove(), 2000);
 }
@@ -166,17 +168,16 @@ function triggerSparkles() {
 
 function startCursorTrail() {
   document.addEventListener("mousemove", (e) => {
-    // Solo crea trail cada ciertos pixeles para no saturar el DOM
-    if (Math.random() > 0.8) {
-        const trail = document.createElement("div");
-        trail.textContent = "✨";
-        trail.className = "sparkle-trail";
-        trail.style.position = "fixed";
-        trail.style.left = e.clientX + "px";
-        trail.style.top = e.clientY + "px";
-        trail.style.pointerEvents = "none";
-        document.body.appendChild(trail);
-        setTimeout(() => trail.remove(), 600);
+    if (Math.random() > 0.85) {
+      const trail = document.createElement("div");
+      trail.textContent = "✨";
+      trail.className = "sparkle-trail";
+      trail.style.position = "fixed";
+      trail.style.left = e.clientX + "px";
+      trail.style.top = e.clientY + "px";
+      trail.style.pointerEvents = "none";
+      document.body.appendChild(trail);
+      setTimeout(() => trail.remove(), 600);
     }
   });
 }
@@ -218,3 +219,4 @@ function setupTabTitles() { /* Lógica tab */ }
 function setupSecretMode() { /* Lógica secreta */ }
 function setupPanicMode() { /* Lógica pánico */ }
 function unlockBadge(id) { toast("UNLOCKED: " + id); }
+
