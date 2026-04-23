@@ -1,8 +1,6 @@
 {
   "version": 2,
-  "functions": {
-    "api/chat.js": {
-      "runtime": "vercel-nodejs@latest"
-    }
-  }
+  "rewrites": [
+    { "source": "/api/chat", "destination": "/api/chat.js" }
+  ]
 }
