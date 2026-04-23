@@ -264,38 +264,45 @@
   </div>
 
   <script>
-    async function askSkittles() {
+   async function askSkittles() {
       const input = document.getElementById('npcInput');
       const chat = document.getElementById('npcChat');
       const text = input.value.trim();
 
       if (!text) return;
 
-      // Mostrar tu mensaje en el chat
+      // Mostrar tu mensaje
       chat.innerHTML += `<div style="margin-bottom: 8px;"><b>You:</b> ${text}</div>`;
       input.value = "";
       chat.scrollTop = chat.scrollHeight;
 
       try {
-        // Llamada a la API de Vercel
-        const res = await fetch('/api/chat', {
+        // Forzamos la ruta absoluta para que Vercel no se confunda
+        const res = await fetch('/api/chat', { 
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Accept': 'application/json' // Le decimos que SOLO queremos JSON
           },
-          body: JSON.stringify({ message: text }) // Enviamos "message"
+          body: JSON.stringify({ message: text })
         });
+
+        // Si la respuesta no es OK (ej. un 404), lanzamos error para que no intente leer HTML
+        if (!res.ok) {
+           throw new Error(`Server error: ${res.status}`);
+        }
 
         const data = await res.json();
 
-        // Mostrar respuesta de Skittles usando "reply"
         const skittlesReply = data.reply || "*está distraído con un caramelo*";
         chat.innerHTML += `<div style="color: #ff69b4; margin-bottom: 8px;"><b>Skittles:</b> ${skittlesReply}</div>`;
         chat.scrollTop = chat.scrollHeight;
 
       } catch (e) {
         console.error("Error:", e);
-        chat.innerHTML += `<div style="color: red; margin-bottom: 8px;"><b>Skittles:</b> ^_^ Opsie! The brain is melting!</div>`;
+        // Mensaje de error con estilo Skittles
+        chat.innerHTML += `<div style="color: #ff0000; font-size: 0.8em; margin-bottom: 8px;"><b>Skittles:</b> 󱤆 thomas... 1943 is leaking... i can't hear you through the rain... (error de conexión)</div>`;
+        chat.scrollTop = chat.scrollHeight;
       }
     }
 
