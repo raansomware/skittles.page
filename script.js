@@ -48,7 +48,7 @@ async function askSkittles(text) {
     npcChat.appendChild(loadingLine);
     npcChat.scrollTop = npcChat.scrollHeight;
 
-    const response = await fetch('/api/chat', {
+    const response = await fetch('/api/chat.js', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ message: text.trim() })
