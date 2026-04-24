@@ -276,7 +276,7 @@
       chat.scrollTop = chat.scrollHeight;
 
       try {
-        const res = await fetch('/api/chat', { // Ruta exacta de tu imagen de Vercel
+        const res = await fetch('/api/chat.mjs', { // Ruta exacta de tu imagen de Vercel
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
