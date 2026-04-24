@@ -264,32 +264,31 @@
   </div>
 
   <script>
-   async function askSkittles() {
+  async function askSkittles() {
       const input = document.getElementById('npcInput');
       const chat = document.getElementById('npcChat');
       const text = input.value.trim();
 
       if (!text) return;
 
-      // Mostrar tu mensaje
       chat.innerHTML += `<div style="margin-bottom: 8px;"><b>You:</b> ${text}</div>`;
       input.value = "";
       chat.scrollTop = chat.scrollHeight;
 
       try {
-        // Forzamos la ruta absoluta para que Vercel no se confunda
-        const res = await fetch('/api/chat.js', { 
+        const res = await fetch('/api/chat', { // Ruta exacta de tu imagen de Vercel
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Accept': 'application/json' // Le decimos que SOLO queremos JSON
+            'Accept': 'application/json' // <--- ¡Vuelve el escudo!
           },
           body: JSON.stringify({ message: text })
         });
 
-        // Si la respuesta no es OK (ej. un 404), lanzamos error para que no intente leer HTML
-        if (!res.ok) {
-           throw new Error(`Server error: ${res.status}`);
+        // Si Vercel se rinde y manda HTML, esto lo detiene en seco
+        const contentType = res.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          throw new TypeError("󱤆 thomas... i see the rain... (El servidor mandó HTML en vez de arcoíris)");
         }
 
         const data = await res.json();
@@ -300,8 +299,7 @@
 
       } catch (e) {
         console.error("Error:", e);
-        // Mensaje de error con estilo Skittles
-        chat.innerHTML += `<div style="color: #ff0000; font-size: 0.8em; margin-bottom: 8px;"><b>Skittles:</b> 󱤆 thomas... 1943 is leaking... i can't hear you through the rain... (error de conexión)</div>`;
+        chat.innerHTML += `<div style="color: #ff0000; font-size: 0.8em; margin-bottom: 8px;"><b>Skittles:</b> ^_^ oopsie! ${e.message}</div>`;
         chat.scrollTop = chat.scrollHeight;
       }
     }
